@@ -1,9 +1,9 @@
-
 #include <string>
 
 using namespace std;
 
-enum TokenType {
+enum TokenType
+{
     KEYWORD,
     IDENTIFIER,
     INTEGER_LITERAL,
@@ -17,20 +17,19 @@ enum TokenType {
 
 };
 
-class Token {
+class Token
+{
 
-    
 public:
-	string type;
-	string content;
-    Token(){}
-    Token(string t, const string& v)
-        : type(t)
-        , content(v)
+    string type;
+    string content;
+    Token() {}
+    Token(string t, const string &v)
+        : type(t), content(v)
     {
     }
-     operator string() const {
+    operator string() const
+    {
         return type + " " + content + "\n";
     }
 };
-

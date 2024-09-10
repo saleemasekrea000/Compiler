@@ -1,52 +1,51 @@
 
-#include "../../include/token.hpp"
 #include <fstream>
 #include <unordered_map>
 #include <string>
 
+#include "token.hpp"
+
 using namespace std;
 
-
-
-
-class Lexer {
+class Lexer
+{
 private:
     const int keywords_number = 9;
     ifstream fin;
     string code = "";
-    int ind=0;
+    int ind = 0;
     unordered_map<string, TokenType> keywords;
 
     void initKeywords()
-        {
-            keywords["integer"] = TokenType::KEYWORD;
-            keywords["real"] = TokenType::KEYWORD;
-            keywords["boolean"] = TokenType::KEYWORD;
-            keywords["var"] = TokenType::KEYWORD;
-            keywords["is"] = TokenType::KEYWORD;
-            keywords["type"] = TokenType::KEYWORD;
-            keywords["record"] = TokenType::KEYWORD;
-            keywords["end"] = TokenType::KEYWORD;
-            keywords["true"] = TokenType::KEYWORD;
-            keywords["false"] = TokenType::KEYWORD;
-            keywords["array"] = TokenType::KEYWORD;
-            keywords["while"] = TokenType::KEYWORD;
-            keywords["loop"] = TokenType::KEYWORD;
-            keywords["for"] = TokenType::KEYWORD;
-            keywords["in"] = TokenType::KEYWORD;
-            keywords["reverse"] = TokenType::KEYWORD;
-            keywords["if"] = TokenType::KEYWORD;
-            keywords["then"] = TokenType::KEYWORD;
-            keywords["else"] = TokenType::KEYWORD;
-            keywords["routine"] = TokenType::KEYWORD;
-            keywords["and"] = TokenType::KEYWORD;
-            keywords["xor"] = TokenType::KEYWORD;
-            keywords["or"] = TokenType::KEYWORD;
-            keywords["not"] = TokenType::KEYWORD;
-            keywords["foreach"] = TokenType::KEYWORD;
-            keywords["from"] = TokenType::KEYWORD;
-            keywords["return"] = TokenType::KEYWORD;
-        }
+    {
+        keywords["integer"] = TokenType::KEYWORD;
+        keywords["real"] = TokenType::KEYWORD;
+        keywords["boolean"] = TokenType::KEYWORD;
+        keywords["var"] = TokenType::KEYWORD;
+        keywords["is"] = TokenType::KEYWORD;
+        keywords["type"] = TokenType::KEYWORD;
+        keywords["record"] = TokenType::KEYWORD;
+        keywords["end"] = TokenType::KEYWORD;
+        keywords["true"] = TokenType::KEYWORD;
+        keywords["false"] = TokenType::KEYWORD;
+        keywords["array"] = TokenType::KEYWORD;
+        keywords["while"] = TokenType::KEYWORD;
+        keywords["loop"] = TokenType::KEYWORD;
+        keywords["for"] = TokenType::KEYWORD;
+        keywords["in"] = TokenType::KEYWORD;
+        keywords["reverse"] = TokenType::KEYWORD;
+        keywords["if"] = TokenType::KEYWORD;
+        keywords["then"] = TokenType::KEYWORD;
+        keywords["else"] = TokenType::KEYWORD;
+        keywords["routine"] = TokenType::KEYWORD;
+        keywords["and"] = TokenType::KEYWORD;
+        keywords["xor"] = TokenType::KEYWORD;
+        keywords["or"] = TokenType::KEYWORD;
+        keywords["not"] = TokenType::KEYWORD;
+        keywords["foreach"] = TokenType::KEYWORD;
+        keywords["from"] = TokenType::KEYWORD;
+        keywords["return"] = TokenType::KEYWORD;
+    }
     bool is_identifier(const string &s);
     bool is_bracket(char c);
     bool is_boolean(const string &s);
@@ -61,13 +60,16 @@ private:
     Token next_token();
 
 public:
-    Lexer (string filename) {
+    Lexer(string filename)
+    {
         fin.open(filename);
-        initKeywords(); 
+        initKeywords();
     }
 
-    ~Lexer() {
-        if (fin.is_open()) {
+    ~Lexer()
+    {
+        if (fin.is_open())
+        {
             fin.close();
         }
     }

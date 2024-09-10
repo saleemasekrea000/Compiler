@@ -1,0 +1,19 @@
+type StudentWithGrades is record
+    var grades : array[5] integer;
+end
+routine avgGrade(studentGrade:StudentWithGrades )is
+   var total: real is 0.0;
+   for i in 1 .. 5 loop 
+      total := total + studentGrade.grades[i];
+    end
+    return total/5;
+end 
+
+var student : StudentWithGrades;
+student.grades[1] := 88;
+student.grades[2] := 92;
+student.grades[3] := 75;
+student.grades[4] := 80;
+student.grades[5] := 95;
+
+var averageGrade : real is avgGrade(student);
