@@ -14,7 +14,7 @@ enum TokenType
     RPAR,
     LBRAC,
     RBRAC,
-
+    RANGE,
 };
 
 class Token

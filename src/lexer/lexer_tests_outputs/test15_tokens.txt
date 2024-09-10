@@ -2,7 +2,7 @@ KEYWORD type
 IDENTIFIER plane
 PUNCTUATOR :
 KEYWORD record
-ERROR {
+RELPAR {
 KEYWORD var
 IDENTIFIER depart_time
 PUNCTUATOR :
@@ -13,13 +13,13 @@ IDENTIFIER arrival_time
 PUNCTUATOR :
 KEYWORD real
 PUNCTUATOR ;
-ERROR }
+RERLPR }
 KEYWORD end
 KEYWORD type
 IDENTIFIER person
 PUNCTUATOR :
 KEYWORD record
-ERROR {
+RELPAR {
 KEYWORD var
 IDENTIFIER phone_number
 PUNCTUATOR :
@@ -30,7 +30,7 @@ IDENTIFIER plane_time
 PUNCTUATOR :
 IDENTIFIER plane
 PUNCTUATOR ;
-ERROR }
+RERLPR }
 KEYWORD end
 KEYWORD routine
 IDENTIFIER find_person_with_latest_arrival
@@ -63,7 +63,7 @@ KEYWORD for
 IDENTIFIER i
 KEYWORD in
 INT 2
-ERROR ..
+RANGE ..
 IDENTIFIER numberOfPeople
 KEYWORD loop
 PUNCTUATOR ;
@@ -74,7 +74,7 @@ IDENTIFIER i
 RBRAC ]
 ERROR .plane_time.arrival_time
 OPERATOR >
-ERROR latest_person.plane_time.arrival_time
+IDENTIFIER latest_person.plane_time.arrival_time
 KEYWORD then
 IDENTIFIER latest_person
 PUNCTUATOR :

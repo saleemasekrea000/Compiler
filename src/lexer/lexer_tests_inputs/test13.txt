@@ -6,7 +6,7 @@ routine avgGrade(studentGrade:StudentWithGrades )is
    for i in 1 .. 5 loop 
       total := total + studentGrade.grades[i];
     end
-    return total/5;
+    return total / 5;
 end 
 
 var student : StudentWithGrades;

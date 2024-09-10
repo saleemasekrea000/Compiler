@@ -8,7 +8,7 @@ RBRAC ]
 KEYWORD integer
 PUNCTUATOR ;
 KEYWORD type
-ERROR two-dimensional-array
+IDENTIFIER two_dimensional_array
 KEYWORD is
 KEYWORD array
 LBRAC [
@@ -17,7 +17,7 @@ RBRAC ]
 IDENTIFIER arrayOfInteger
 PUNCTUATOR ;
 KEYWORD routine
-ERROR max-of-array
+IDENTIFIER max_of_array
 LPAR (
 IDENTIFIER lengthOfArray
 PUNCTUATOR :
@@ -41,7 +41,7 @@ KEYWORD for
 IDENTIFIER i
 KEYWORD in
 INT 1
-ERROR ..
+RANGE ..
 IDENTIFIER lengthOfArray
 KEYWORD loop
 KEYWORD if
@@ -79,7 +79,7 @@ KEYWORD integer
 PUNCTUATOR ,
 IDENTIFIER arr
 PUNCTUATOR :
-ERROR two-dimensional-array
+IDENTIFIER two_dimensional_array
 RPAR )
 PUNCTUATOR :
 KEYWORD integer
@@ -95,7 +95,7 @@ KEYWORD for
 IDENTIFIER i
 KEYWORD in
 INT 1
-ERROR ..
+RANGE ..
 IDENTIFIER numberOfArrays
 KEYWORD loop
 IDENTIFIER ans
@@ -103,7 +103,7 @@ PUNCTUATOR :
 OPERATOR =
 IDENTIFIER ans
 OPERATOR +
-ERROR max-of-array
+IDENTIFIER max_of_array
 LPAR (
 IDENTIFIER lengthOfArray
 PUNCTUATOR ,
@@ -121,7 +121,7 @@ KEYWORD end
 KEYWORD var
 IDENTIFIER arr
 PUNCTUATOR :
-ERROR two-dimensional-array
+IDENTIFIER two_dimensional_array
 PUNCTUATOR ;
 KEYWORD var
 IDENTIFIER result

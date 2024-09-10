@@ -21,7 +21,7 @@ routine square_root(number: integer) : real is
         var quotient : real is number / guess;
         var new_guess : real is (guess + quotient) / 2.0;
         diff := new_guess - guess;
-        if diff < epsilon and diff > -epsilon then
+        if diff < epsilon and diff > - epsilon then
             return new_guess;
         end
         guess := new_guess;

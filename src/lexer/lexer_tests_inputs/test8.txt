@@ -1,7 +1,7 @@
 type arrayOfInteger is array[100] integer;
-type two-dimensional-array is array[100] arrayOfInteger;
+type two_dimensional_array is array[100] arrayOfInteger;
 
-routine max-of-array(lengthOfArray: integer, arr: arrayOfInteger) : integer is 
+routine max_of_array(lengthOfArray: integer, arr: arrayOfInteger) : integer is 
     var ans : integer is -1000000000;
     for i in 1 .. lengthOfArray loop 
         if arr[i] > ans then 
@@ -11,15 +11,15 @@ routine max-of-array(lengthOfArray: integer, arr: arrayOfInteger) : integer is
     return ans ;
 end 
 
-routine sum(numberOfArrays: integer, lengthOfArray: integer, arr: two-dimensional-array) : integer is 
+routine sum(numberOfArrays: integer, lengthOfArray: integer, arr: two_dimensional_array) : integer is 
     var ans : integer is 0;
     for i in 1 .. numberOfArrays loop 
-        ans := ans + max-of-array(lengthOfArray, arr[i]);
+        ans := ans + max_of_array(lengthOfArray, arr[i]);
     end 
     return ans ;
 end 
 
-var arr : two-dimensional-array;
+var arr : two_dimensional_array;
 var result : integer;
 
 arr[1][1] := 3;

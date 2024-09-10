@@ -31,7 +31,7 @@ KEYWORD for
 IDENTIFIER i
 KEYWORD in
 INT 1
-ERROR ..
+RANGE ..
 INT 5
 KEYWORD loop
 IDENTIFIER total
@@ -39,14 +39,16 @@ PUNCTUATOR :
 OPERATOR =
 IDENTIFIER total
 OPERATOR +
-ERROR studentGrade.grades
+IDENTIFIER studentGrade.grades
 LBRAC [
 IDENTIFIER i
 RBRAC ]
 PUNCTUATOR ;
 KEYWORD end
 KEYWORD return
-ERROR total/5
+IDENTIFIER total
+OPERATOR /
+INT 5
 PUNCTUATOR ;
 KEYWORD end
 KEYWORD var
@@ -54,7 +56,7 @@ IDENTIFIER student
 PUNCTUATOR :
 IDENTIFIER StudentWithGrades
 PUNCTUATOR ;
-ERROR student.grades
+IDENTIFIER student.grades
 LBRAC [
 INT 1
 RBRAC ]
@@ -62,7 +64,7 @@ PUNCTUATOR :
 OPERATOR =
 INT 88
 PUNCTUATOR ;
-ERROR student.grades
+IDENTIFIER student.grades
 LBRAC [
 INT 2
 RBRAC ]
@@ -70,7 +72,7 @@ PUNCTUATOR :
 OPERATOR =
 INT 92
 PUNCTUATOR ;
-ERROR student.grades
+IDENTIFIER student.grades
 LBRAC [
 INT 3
 RBRAC ]
@@ -78,7 +80,7 @@ PUNCTUATOR :
 OPERATOR =
 INT 75
 PUNCTUATOR ;
-ERROR student.grades
+IDENTIFIER student.grades
 LBRAC [
 INT 4
 RBRAC ]
@@ -86,7 +88,7 @@ PUNCTUATOR :
 OPERATOR =
 INT 80
 PUNCTUATOR ;
-ERROR student.grades
+IDENTIFIER student.grades
 LBRAC [
 INT 5
 RBRAC ]

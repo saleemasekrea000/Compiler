@@ -40,7 +40,7 @@ string Lexer::next_token_content()
 }
 bool Lexer::is_bracket(char c)
 {
-    return (c == '(' || c == ')' || c == '[' || c == ']');
+    return (c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}');
 }
 
 bool Lexer::is_boolean(const string &s)
@@ -95,8 +95,7 @@ bool Lexer::is_keyword(const string &s)
 
 bool Lexer::is_identifier(const string &s)
 {
-
-    const regex identifier_regex("^[A-Za-z][A-Za-z0-9_]*$");
+    const regex identifier_regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)*$");
     return regex_match(s, identifier_regex);
 }
 
@@ -109,10 +108,9 @@ bool Lexer::is_pancutator(char c)
     }
     return _signed;
 }
-
 bool Lexer::is_operator(const string &s)
 {
-    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "="};
+    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%"};
     return operators.find(s) != operators.end();
 }
 
@@ -126,6 +124,10 @@ string bracket_name(char c)
         return "LBRAC";
     if (c == ']')
         return "RBRAC";
+    if (c == '{')
+        return "RELPAR";
+    if (c == '}')
+        return "RERLPR";
     return "ERR";
 }
 string Lexer::token_type(const string &s)
@@ -147,6 +149,8 @@ string Lexer::token_type(const string &s)
         return "PUNCTUATOR";
     if (is_identifier(s))
         return "IDENTIFIER";
+    if (s=="..") 
+        return "RANGE";
     return "ERROR";
 }
 

@@ -1,9 +1,9 @@
 //calculate the fibonacci of a number 
 
 routine Fibonacci (n: is integer) is 
-      if n<=0 then return 1 end 
-      var x1 : is n-1 ;
-      var x2 : is n-2 ; 
+      if n < 0 then return 1 end 
+      var x1 : is n - 1 ;
+      var x2 : is n - 2 ; 
       return Fibonacci(x1) + Fibonacci(x2);
 end 
 
