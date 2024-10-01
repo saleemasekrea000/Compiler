@@ -7,15 +7,46 @@
 
 #include "lexer.hpp"
 
-string Lexer::next_token_content()
+string Lexer::next_token_content(Token last_token)
 {
     while (ind < code.size() && (code[ind] == ' ' || code[ind] == '\n' || code[ind] == '\t'))
         ind++;
-    if (ind >= code.size())
+    if (ind >= code.size()){
         return "";
+    }
     string ret = "";
     while (code[ind] != ' ' && code[ind] != '\n' && code[ind] != '\t')
     {
+        if(code[ind]=='.'){
+          //  cout<<"KKKKKKKKKKKKKKk"<<" "<<ret<<" "<<last_token.content<<endl;
+            if(is_identifier(ret)&&isalpha(code[ind+1])){
+                return ret;
+            }
+            if(ret==""&&last_token.type=="IDENTIFIER"&&isalpha(code[ind+1])){
+                ret+=code[ind];
+                ind++;
+                return ret;
+            }
+        }
+        string cur="";
+        cur+=code[ind];
+        if(ret!="" && is_operator(cur)){
+            return ret;
+        }
+        if(ret=="" && is_operator(cur)){
+            if(code[ind]=='='){
+                ret+=code[ind];
+                ind++;
+                return ret;
+            }
+            if(code[ind+1]=='='){
+                ret+=code[ind];
+                ind++;
+                ret+=code[ind];
+                ind++;
+                return ret;
+            }
+        }
         if (is_bracket(code[ind]) || is_pancutator(code[ind]))
         {
             if (ret != "")
@@ -29,7 +60,7 @@ string Lexer::next_token_content()
             while (code[ind] != '\n' && code[ind] != EOF)
                 ind++;
             if (ret == "")
-                return next_token_content();
+                return next_token_content(last_token);
             break;
         }
         ret += code[ind];
@@ -95,7 +126,7 @@ bool Lexer::is_keyword(const string &s)
 
 bool Lexer::is_identifier(const string &s)
 {
-    const regex identifier_regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)*$");
+    const regex identifier_regex("^[A-Za-z_][A-Za-z0-9_]*$");
     return regex_match(s, identifier_regex);
 }
 
@@ -110,7 +141,7 @@ bool Lexer::is_pancutator(char c)
 }
 bool Lexer::is_operator(const string &s)
 {
-    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%"};
+    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=" ,"%="};
     return operators.find(s) != operators.end();
 }
 
@@ -132,7 +163,11 @@ string bracket_name(char c)
 }
 string Lexer::token_type(const string &s)
 {
-
+    if (s.size()==1&&is_pancutator(s[0]))
+        return "PUNCTUATOR";
+    if(s.size()==1&&s[0]=='.'){
+        return "PUNCTUATOR";
+    }
     if (is_boolean(s))
         return "BOOL";
     if (is_integer(s))
@@ -145,18 +180,17 @@ string Lexer::token_type(const string &s)
         return bracket_name(s[0]);
     if (is_operator(s))
         return "OPERATOR";
-    if (is_pancutator(s[0]))
-        return "PUNCTUATOR";
     if (is_identifier(s))
         return "IDENTIFIER";
+
     if (s=="..") 
         return "RANGE";
     return "ERROR";
 }
 
-Token Lexer::next_token()
+Token Lexer::next_token(Token last_token)
 {
-    string content = next_token_content();
+    string content = next_token_content(last_token);
     Token tok(token_type(content), content);
     return tok;
 }
@@ -171,12 +205,14 @@ string Lexer::scan_code()
 
     string tokenized_code;
     Token token;
-    token = next_token();
-
+    Token last_Token;
+    token = next_token(last_Token);
+    last_Token=token;
     while (token.content != "")
     {
         tokenized_code += token;
-        token = next_token();
+        token = next_token(last_Token);
+        last_Token=token;
     }
     return tokenized_code;
 }

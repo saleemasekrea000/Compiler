@@ -21,10 +21,8 @@ routine find_person_with_latest_arrival(numberOfPeople: integer, persons: array 
     return latest_person;
 end
 
--- Example usage
 var people : array[3] person;
 
--- Initialize the people array with some example data
 people[1].phone_number := 123456789;
 people[1].plane_time.depart_time := 10.30;
 people[1].plane_time.arrival_time := 12.45;

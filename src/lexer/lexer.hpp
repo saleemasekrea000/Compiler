@@ -58,8 +58,8 @@ private:
     bool is_pancutator(char c);
     bool is_operator(const std::string &s);
     string token_type(const string &s);
-    string next_token_content();
-    Token next_token();
+    string next_token_content(Token last_token);
+    Token next_token(Token last_token);
 
 public:
     Lexer(string filename)
