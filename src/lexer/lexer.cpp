@@ -128,26 +128,25 @@ string bracket_name(char c)
         return "RBRAC";
     return "ERR";
 }
-string Lexer::token_type(const string &s)
+TokenType Lexer::token_type(const string &s)
 {
-
     if (is_boolean(s))
-        return "BOOL";
+        return TokenType::BOOL_LITERAL;
     if (is_integer(s))
-        return "INT";
+        return TokenType::INTEGER_LITERAL;
     if (is_real(s))
-        return "REAL";
+        return TokenType::REAL_LITERAL;
     if (is_keyword(s))
-        return "KEYWORD";
+        return TokenType::KEYWORD;
     if (is_bracket(s[0]))
-        return bracket_name(s[0]);
+        return bracket_name(s[0]) == "(" ? TokenType::LPAR : TokenType::RPAR;
     if (is_operator(s))
-        return "OPERATOR";
+        return TokenType::OPERATOR;
     if (is_pancutator(s[0]))
-        return "PUNCTUATOR";
+        return TokenType::PUNCTUATOR;
     if (is_identifier(s))
-        return "IDENTIFIER";
-    return "ERROR";
+        return TokenType::IDENTIFIER;
+    return TokenType::ERROR;
 }
 
 Token Lexer::next_token()
@@ -157,22 +156,45 @@ Token Lexer::next_token()
     return tok;
 }
 
-string Lexer::scan_code()
+vector<Token> *Lexer::scan_code()
 {
     string input;
     while (getline(fin, input))
     {
         code += input + '\n';
     }
+    if (code.size() == 0)
+    {
+        error_messages->push_back("Lexer Error:Input cannot be empty\n");
+        return NULL;
+    }
 
-    string tokenized_code;
     Token token;
     token = next_token();
-
     while (token.content != "")
     {
-        tokenized_code += token;
+        if (token.type == TokenType::ERROR)
+        {
+            error_messages->push_back(token);
+        }
+        tokenized_code->push_back(token);
         token = next_token();
     }
+    if (error_messages->size() != 0)
+    {
+        tokenized_code->clear();
+        return NULL;
+    }
     return tokenized_code;
+}
+
+void Lexer::print_errors()
+{
+    if (error_messages && error_messages->size() == 0)
+        return;
+    cout << "Lexical error(s):\n";
+    for (auto err : *error_messages)
+    {
+        cout << err;
+    }
 }
