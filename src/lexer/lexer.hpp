@@ -58,7 +58,6 @@ private:
     string next_token_content();
     Token next_token();
 
-
 public:
     Lexer(string filename)
     {

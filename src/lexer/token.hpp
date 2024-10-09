@@ -46,8 +46,7 @@ public:
             {RPAR, "RPAR"},
             {LBRAC, "LBRAC"},
             {RBRAC, "RBRAC"},
-            {PUNCTUATOR, "PUNCTUATOR"}
-        };
+            {PUNCTUATOR, "PUNCTUATOR"}};
         return typeMap.at(type);
     }
 
@@ -55,7 +54,8 @@ public:
     {
         return typeToString() + " " + content + "\n";
     }
-    friend ostream& operator<<(ostream& os, const Token& token) {
+    friend ostream &operator<<(ostream &os, const Token &token)
+    {
         return os << token.typeToString() << " " << token.content;
     }
 };
