@@ -45,7 +45,6 @@ private:
         keywords["from"] = TokenType::KEYWORD;
         keywords["return"] = TokenType::KEYWORD;
         keywords["reverse"] = TokenType::KEYWORD;
-
     }
     bool is_identifier(const string &s);
     bool is_bracket(char c);

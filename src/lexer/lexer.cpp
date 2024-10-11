@@ -11,7 +11,8 @@ string Lexer::next_token_content(Token last_token)
 {
     while (ind < code.size() && (code[ind] == ' ' || code[ind] == '\n' || code[ind] == '\t'))
         ind++;
-    if (ind >= code.size()){
+    if (ind >= code.size())
+    {
         return "";
     }
     string ret = "";
@@ -25,40 +26,49 @@ string Lexer::next_token_content(Token last_token)
             ind++;
             return ret;
         }
-        if(code[ind]=='.'){
-            if (ret=="" && code[ind+1]=='.' && code[ind+2]==' '){
-                ind+=2;
+        if (code[ind] == '.')
+        {
+            if (ret == "" && code[ind + 1] == '.' && code[ind + 2] == ' ')
+            {
+                ind += 2;
                 return "..";
             }
-            if(is_identifier(ret)&&isalpha(code[ind+1])){
+            if (is_identifier(ret) && isalpha(code[ind + 1]))
+            {
                 return ret;
             }
-            if(ret==""&&last_token.type==IDENTIFIER&&isalpha(code[ind+1])){
-                ret+=code[ind];
+            if (ret == "" && last_token.type == IDENTIFIER && isalpha(code[ind + 1]))
+            {
+                ret += code[ind];
                 ind++;
                 return ret;
             }
-            if(ret==""&&last_token.type==RBRAC&&isalpha(code[ind+1])){
-                ret+=code[ind];
+            if (ret == "" && last_token.type == RBRAC && isalpha(code[ind + 1]))
+            {
+                ret += code[ind];
                 ind++;
                 return ret;
             }
         }
-        string cur="";
-        cur+=code[ind];
-        if(ret!="" && is_operator(cur)){
+        string cur = "";
+        cur += code[ind];
+        if (ret != "" && is_operator(cur))
+        {
             return ret;
         }
-        if(ret=="" && is_operator(cur)){
-            if(code[ind]=='='){
-                ret+=code[ind];
+        if (ret == "" && is_operator(cur))
+        {
+            if (code[ind] == '=')
+            {
+                ret += code[ind];
                 ind++;
                 return ret;
             }
-            if(code[ind+1]=='='){
-                ret+=code[ind];
+            if (code[ind + 1] == '=')
+            {
+                ret += code[ind];
                 ind++;
-                ret+=code[ind];
+                ret += code[ind];
                 ind++;
                 return ret;
             }
@@ -157,7 +167,7 @@ bool Lexer::is_pancutator(char c)
 }
 bool Lexer::is_operator(const string &s)
 {
-    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=" ,"%="};
+    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=", "%="};
     return operators.find(s) != operators.end();
 }
 
@@ -179,11 +189,12 @@ string bracket_name(char c)
 }
 TokenType Lexer::token_type(const string &s)
 {
-    if (s=="..") 
+    if (s == "..")
         return TokenType::RANGE;
-    if (s.size()==1&&is_pancutator(s[0]))
+    if (s.size() == 1 && is_pancutator(s[0]))
         return TokenType::PUNCTUATOR;
-    if(s.size()==1&&s[0]=='.'){
+    if (s.size() == 1 && s[0] == '.')
+    {
         return TokenType::PUNCTUATOR;
     }
     if (is_boolean(s))
@@ -194,13 +205,20 @@ TokenType Lexer::token_type(const string &s)
         return TokenType::REAL_LITERAL;
     if (is_keyword(s))
         return TokenType::KEYWORD;
-    if (s.size()==1 && is_bracket(s[0])){
-        if (s=="(")return TokenType::LPAR;
-        if (s==")")return TokenType::RPAR;
-        if (s=="[")return TokenType::LBRAC;
-        if (s=="]")return TokenType::RBRAC;
-        if (s=="{")return TokenType::RELPAR;
-        if(s=="}")return TokenType::RERLPR;
+    if (s.size() == 1 && is_bracket(s[0]))
+    {
+        if (s == "(")
+            return TokenType::LPAR;
+        if (s == ")")
+            return TokenType::RPAR;
+        if (s == "[")
+            return TokenType::LBRAC;
+        if (s == "]")
+            return TokenType::RBRAC;
+        if (s == "{")
+            return TokenType::RELPAR;
+        if (s == "}")
+            return TokenType::RERLPR;
     }
     if (is_operator(s))
         return TokenType::OPERATOR;
@@ -232,7 +250,7 @@ vector<Token> *Lexer::scan_code()
     Token token;
     Token last_Token;
     token = next_token(last_Token);
-    last_Token=token;
+    last_Token = token;
     while (token.content != "")
     {
         if (token.type == TokenType::ERROR)
@@ -241,7 +259,7 @@ vector<Token> *Lexer::scan_code()
         }
         tokenized_code->push_back(token);
         token = next_token(last_Token);
-        last_Token=token;
+        last_Token = token;
     }
     if (error_messages->size() != 0)
     {
