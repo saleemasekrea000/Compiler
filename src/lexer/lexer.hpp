@@ -2,6 +2,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #include "token.hpp"
 
@@ -10,6 +11,8 @@ using namespace std;
 class Lexer
 {
 private:
+    vector<Token> *tokenized_code;
+    vector<string> *error_messages;
     const int keywords_number = 9;
     ifstream fin;
     string code = "";
@@ -18,10 +21,6 @@ private:
 
     void initKeywords()
     {
-        keywords["integer"] = TokenType::KEYWORD;
-        keywords["real"] = TokenType::KEYWORD;
-        keywords["boolean"] = TokenType::KEYWORD;
-        keywords["var"] = TokenType::KEYWORD;
         keywords["is"] = TokenType::KEYWORD;
         keywords["type"] = TokenType::KEYWORD;
         keywords["record"] = TokenType::KEYWORD;
@@ -57,7 +56,7 @@ private:
     bool is_keyword(const string &s);
     bool is_pancutator(char c);
     bool is_operator(const std::string &s);
-    string token_type(const string &s);
+    TokenType token_type(const string &s);
     string next_token_content(Token last_token);
     Token next_token(Token last_token);
 
@@ -66,6 +65,8 @@ public:
     {
         fin.open(filename);
         initKeywords();
+        tokenized_code = new vector<Token>;
+        error_messages = new vector<string>;
     }
 
     ~Lexer()
@@ -75,5 +76,6 @@ public:
             fin.close();
         }
     }
-    string scan_code();
+    vector<Token> *scan_code();
+    void print_errors();
 };

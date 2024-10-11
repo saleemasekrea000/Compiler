@@ -17,12 +17,28 @@ string Lexer::next_token_content(Token last_token)
     string ret = "";
     while (code[ind] != ' ' && code[ind] != '\n' && code[ind] != '\t')
     {
+        if (is_bracket(code[ind]))
+        {
+            if (ret != "")
+                return ret;
+            ret = code[ind];
+            ind++;
+            return ret;
+        }
         if(code[ind]=='.'){
-          //  cout<<"KKKKKKKKKKKKKKk"<<" "<<ret<<" "<<last_token.content<<endl;
+            if (ret=="" && code[ind+1]=='.' && code[ind+2]==' '){
+                ind+=2;
+                return "..";
+            }
             if(is_identifier(ret)&&isalpha(code[ind+1])){
                 return ret;
             }
-            if(ret==""&&last_token.type=="IDENTIFIER"&&isalpha(code[ind+1])){
+            if(ret==""&&last_token.type==IDENTIFIER&&isalpha(code[ind+1])){
+                ret+=code[ind];
+                ind++;
+                return ret;
+            }
+            if(ret==""&&last_token.type==RBRAC&&isalpha(code[ind+1])){
                 ret+=code[ind];
                 ind++;
                 return ret;
@@ -47,7 +63,7 @@ string Lexer::next_token_content(Token last_token)
                 return ret;
             }
         }
-        if (is_bracket(code[ind]) || is_pancutator(code[ind]))
+        if (is_pancutator(code[ind]))
         {
             if (ret != "")
                 return ret;
@@ -159,33 +175,38 @@ string bracket_name(char c)
         return "RELPAR";
     if (c == '}')
         return "RERLPR";
-    return "ERR";
+    return "ERROR";
 }
-string Lexer::token_type(const string &s)
+TokenType Lexer::token_type(const string &s)
 {
+    if (s=="..") 
+        return TokenType::RANGE;
     if (s.size()==1&&is_pancutator(s[0]))
-        return "PUNCTUATOR";
+        return TokenType::PUNCTUATOR;
     if(s.size()==1&&s[0]=='.'){
-        return "PUNCTUATOR";
+        return TokenType::PUNCTUATOR;
     }
     if (is_boolean(s))
-        return "BOOL";
+        return TokenType::BOOL_LITERAL;
     if (is_integer(s))
-        return "INT";
+        return TokenType::INTEGER_LITERAL;
     if (is_real(s))
-        return "REAL";
+        return TokenType::REAL_LITERAL;
     if (is_keyword(s))
-        return "KEYWORD";
-    if (is_bracket(s[0]))
-        return bracket_name(s[0]);
+        return TokenType::KEYWORD;
+    if (s.size()==1 && is_bracket(s[0])){
+        if (s=="(")return TokenType::LPAR;
+        if (s==")")return TokenType::RPAR;
+        if (s=="[")return TokenType::LBRAC;
+        if (s=="]")return TokenType::RBRAC;
+        if (s=="{")return TokenType::RELPAR;
+        if(s=="}")return TokenType::RERLPR;
+    }
     if (is_operator(s))
-        return "OPERATOR";
+        return TokenType::OPERATOR;
     if (is_identifier(s))
-        return "IDENTIFIER";
-
-    if (s=="..") 
-        return "RANGE";
-    return "ERROR";
+        return TokenType::IDENTIFIER;
+    return TokenType::ERROR;
 }
 
 Token Lexer::next_token(Token last_token)
@@ -195,24 +216,48 @@ Token Lexer::next_token(Token last_token)
     return tok;
 }
 
-string Lexer::scan_code()
+vector<Token> *Lexer::scan_code()
 {
     string input;
     while (getline(fin, input))
     {
         code += input + '\n';
     }
+    if (code.size() == 0)
+    {
+        error_messages->push_back("Lexer Error:Input cannot be empty\n");
+        return NULL;
+    }
 
-    string tokenized_code;
     Token token;
     Token last_Token;
     token = next_token(last_Token);
     last_Token=token;
     while (token.content != "")
     {
-        tokenized_code += token;
+        if (token.type == TokenType::ERROR)
+        {
+            error_messages->push_back(token);
+        }
+        tokenized_code->push_back(token);
         token = next_token(last_Token);
         last_Token=token;
     }
+    if (error_messages->size() != 0)
+    {
+        tokenized_code->clear();
+        return NULL;
+    }
     return tokenized_code;
+}
+
+void Lexer::print_errors()
+{
+    if (error_messages && error_messages->size() == 0)
+        return;
+    cout << "Lexical error(s):\n";
+    for (auto err : *error_messages)
+    {
+        cout << err;
+    }
 }

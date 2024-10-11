@@ -29,7 +29,18 @@ int main(int argc, char *argv[])
     freopen(output_file_name.c_str(), "w", stdout);
 
     Lexer lexer(file_name);
-    cout << lexer.scan_code() << endl;
-
+    vector<Token> *tokens = lexer.scan_code();
+    if (tokens == NULL)
+    {
+        lexer.print_errors();
+    }
+    else
+    {
+        for (const Token &token : *tokens)
+        {
+            cout << token << endl;
+        }
+        delete tokens;
+    }
     return 0;
 }
