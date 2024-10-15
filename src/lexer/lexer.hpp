@@ -57,7 +57,6 @@ private:
     bool is_operator(const std::string &s);
     TokenType token_type(const string &s);
     string next_token_content(Token last_token);
-    Token next_token(Token last_token);
 
 public:
     Lexer(string filename)
@@ -77,4 +76,5 @@ public:
     }
     vector<Token> *scan_code();
     void print_errors();
+    Token next_token(Token last_token);
 };

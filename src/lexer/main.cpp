@@ -2,8 +2,25 @@
 #include <fstream>
 
 #include "lexer.hpp"
+#include "ast.hpp"
 
-using namespace std;
+extern int yyparse();
+extern Node *ast;
+
+Lexer *lexer;
+Token yylval;
+
+int yylex()
+{
+    yylval = lexer->next_token(yylval);
+    return yylval.type;
+}
+
+void yyerror(const char *s)
+{
+    std::cerr << "Parse error: " << s << std::endl;
+    exit(1);
+}
 
 int main(int argc, char *argv[])
 {
@@ -28,11 +45,13 @@ int main(int argc, char *argv[])
     // Redirect cout to the output file
     freopen(output_file_name.c_str(), "w", stdout);
 
-    Lexer lexer(file_name);
-    vector<Token> *tokens = lexer.scan_code();
+    lexer = new Lexer(file_name);
+    yyparse();
+
+    vector<Token> *tokens = lexer->scan_code();
     if (tokens == NULL)
     {
-        lexer.print_errors();
+        lexer->print_errors();
     }
     else
     {
