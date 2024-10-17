@@ -1,7 +1,7 @@
 // 1. Add Two Numbers
 routine add_numbers(a: integer, b: integer) : integer is
     var result: integer;
-    result:=a>=b;
+    result := a + b;
     return result;
 end
 

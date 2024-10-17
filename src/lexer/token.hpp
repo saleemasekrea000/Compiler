@@ -5,6 +5,10 @@ using namespace std;
 enum TokenType
 {
     KEYWORD,
+    IS,
+    WHILE,
+    ROUTINE,
+    END,
     IDENTIFIER,
     INTEGER_LITERAL,
     REAL_LITERAL,
@@ -37,6 +41,10 @@ public:
     {
         static unordered_map<TokenType, string> typeMap{
             {KEYWORD, "KEYWORD"},
+            {IS, "IS"},
+            {WHILE, "WHILE"},
+            {ROUTINE, "ROUTINE"},
+            {END, "END"},
             {IDENTIFIER, "IDENTIFIER"},
             {INTEGER_LITERAL, "INTEGER_LITERAL"},
             {REAL_LITERAL, "REAL_LITERAL"},

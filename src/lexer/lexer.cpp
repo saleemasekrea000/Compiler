@@ -204,7 +204,17 @@ TokenType Lexer::token_type(const string &s)
     if (is_real(s))
         return TokenType::REAL_LITERAL;
     if (is_keyword(s))
+    {
+        if (s == "is")
+            return TokenType::IS;
+        if (s == "while")
+            return TokenType::WHILE;
+        if (s == "routine")
+            return TokenType::ROUTINE;
+        if (s == "end")
+            return TokenType::END;
         return TokenType::KEYWORD;
+    }
     if (s.size() == 1 && is_bracket(s[0]))
     {
         if (s == "(")
