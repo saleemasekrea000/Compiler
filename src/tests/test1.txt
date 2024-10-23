@@ -5,6 +5,6 @@ routine add_numbers(a: integer, b: integer) : integer is
     return result;
 end
 
-var a : integer is 1
-var b : integer is 2 
-add_numbers(a,b)
+var a : integer is 1;
+var b : integer is 2;
+add_numbers(a,b);

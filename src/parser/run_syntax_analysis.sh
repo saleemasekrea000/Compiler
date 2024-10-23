@@ -1,5 +1,5 @@
 bison -d grammar.y
 
-g++ -o parser lexer_2.cpp grammar.tab.c
+g++ -Wno-write-strings -o parser lexer_2.cpp grammar.tab.c ast.c -lfl
 
-./parser
+./parser tokens_1.txt

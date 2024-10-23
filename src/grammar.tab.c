@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 1 "grammar.y"
+#line 1 "parser/grammar.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1141,7 +1141,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: routine_declarations statements  */
-#line 41 "grammar.y"
+#line 41 "parser/grammar.y"
                                   { 
     (yyval.node) = create_node("program", "", (yyvsp[-1].node), (yyvsp[0].node), NULL);
     print_ast((yyval.node), 0);
@@ -1150,7 +1150,7 @@ yyreduce:
     break;
 
   case 3: /* routine_declarations: routine_declaration  */
-#line 48 "grammar.y"
+#line 48 "parser/grammar.y"
                       { 
     (yyval.node) = create_node("routine_declarations", "", (yyvsp[0].node), NULL, NULL);
   }
@@ -1158,7 +1158,7 @@ yyreduce:
     break;
 
   case 4: /* routine_declarations: routine_declarations routine_declaration  */
-#line 51 "grammar.y"
+#line 51 "parser/grammar.y"
                                              { 
     (yyval.node) = create_node("routine_declarations", "", (yyvsp[-1].node), NULL, (yyvsp[0].node));
   }
@@ -1166,7 +1166,7 @@ yyreduce:
     break;
 
   case 5: /* routine_declaration: routine_header statements return_statement END  */
-#line 60 "grammar.y"
+#line 60 "parser/grammar.y"
       { 
     (yyval.node) = create_node("routine_declaration", "start", (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node));
   }
@@ -1174,7 +1174,7 @@ yyreduce:
     break;
 
   case 6: /* routine_header: ROUTINE IDENTIFIER LPAR parameters RPAR PUNCTUATOR IDENTIFIER IS  */
-#line 66 "grammar.y"
+#line 66 "parser/grammar.y"
                                                                    { 
     (yyval.node) = create_node("routine_header", (yyvsp[-6].id_val), (yyvsp[-4].node), NULL, NULL);
   }
@@ -1182,7 +1182,7 @@ yyreduce:
     break;
 
   case 7: /* routine_header: ROUTINE IDENTIFIER LPAR parameters RPAR IS  */
-#line 69 "grammar.y"
+#line 69 "parser/grammar.y"
                                                { 
     (yyval.node) = create_node("routine_header", (yyvsp[-4].id_val), (yyvsp[-2].node), NULL, NULL);
   }
@@ -1190,7 +1190,7 @@ yyreduce:
     break;
 
   case 8: /* parameters: parameter  */
-#line 74 "grammar.y"
+#line 74 "parser/grammar.y"
             { 
     (yyval.node) = create_node("parameters", "", (yyvsp[0].node), NULL, NULL);
   }
@@ -1198,7 +1198,7 @@ yyreduce:
     break;
 
   case 9: /* parameters: parameters PUNCTUATOR parameter  */
-#line 77 "grammar.y"
+#line 77 "parser/grammar.y"
                                     { 
     (yyval.node) = create_node("parameters", "", (yyvsp[-2].node), NULL, (yyvsp[0].node));
   }
@@ -1206,7 +1206,7 @@ yyreduce:
     break;
 
   case 10: /* parameter: IDENTIFIER PUNCTUATOR IDENTIFIER  */
-#line 83 "grammar.y"
+#line 83 "parser/grammar.y"
                                    { 
     (yyval.node) = create_node("parameter", (yyvsp[-2].id_val), NULL, NULL, NULL);
   }
@@ -1214,7 +1214,7 @@ yyreduce:
     break;
 
   case 11: /* parameter: IDENTIFIER  */
-#line 86 "grammar.y"
+#line 86 "parser/grammar.y"
                { 
     (yyval.node) = create_node("parameter", (yyvsp[0].id_val), NULL, NULL, NULL);
   }
@@ -1222,7 +1222,7 @@ yyreduce:
     break;
 
   case 12: /* statements: statement  */
-#line 92 "grammar.y"
+#line 92 "parser/grammar.y"
             { 
     (yyval.node) = create_node("statements", "", (yyvsp[0].node), NULL, NULL);
   }
@@ -1230,7 +1230,7 @@ yyreduce:
     break;
 
   case 13: /* statements: statements statement  */
-#line 95 "grammar.y"
+#line 95 "parser/grammar.y"
                          { 
     (yyval.node) = create_node("statements", "", (yyvsp[-1].node), NULL, (yyvsp[0].node));
   }
@@ -1238,7 +1238,7 @@ yyreduce:
     break;
 
   case 14: /* statement: variable_declaration  */
-#line 101 "grammar.y"
+#line 101 "parser/grammar.y"
                        { 
     (yyval.node) = create_node("statement", (yyvsp[0].node)->type, (yyvsp[0].node), NULL, NULL);
   }
@@ -1246,7 +1246,7 @@ yyreduce:
     break;
 
   case 15: /* statement: assignment  */
-#line 104 "grammar.y"
+#line 104 "parser/grammar.y"
                { 
     (yyval.node) = create_node("statement", (yyvsp[0].node)->type, (yyvsp[0].node), NULL, NULL);
   }
@@ -1254,7 +1254,7 @@ yyreduce:
     break;
 
   case 16: /* statement: function_call  */
-#line 107 "grammar.y"
+#line 107 "parser/grammar.y"
                   { 
     (yyval.node) = create_node("statement", (yyvsp[0].node)->type, (yyvsp[0].node), NULL, NULL);
   }
@@ -1262,7 +1262,7 @@ yyreduce:
     break;
 
   case 17: /* statement: while_loop  */
-#line 110 "grammar.y"
+#line 110 "parser/grammar.y"
                { 
     (yyval.node) = create_node("statement", (yyvsp[0].node)->type, (yyvsp[0].node), NULL, NULL);
   }
@@ -1270,7 +1270,7 @@ yyreduce:
     break;
 
   case 18: /* variable_declaration: IDENTIFIER IDENTIFIER PUNCTUATOR IDENTIFIER IS INTEGER_LITERAL PUNCTUATOR  */
-#line 116 "grammar.y"
+#line 116 "parser/grammar.y"
                                                                             { 
     (yyval.node) = create_node("variable_declaration", (yyvsp[-5].id_val), NULL, NULL, NULL);
   }
@@ -1278,7 +1278,7 @@ yyreduce:
     break;
 
   case 19: /* variable_declaration: IDENTIFIER IDENTIFIER PUNCTUATOR IDENTIFIER PUNCTUATOR  */
-#line 119 "grammar.y"
+#line 119 "parser/grammar.y"
                                                            { 
     (yyval.node) = create_node("variable_declaration", (yyvsp[-3].id_val), NULL, NULL, NULL);
   }
@@ -1286,7 +1286,7 @@ yyreduce:
     break;
 
   case 20: /* assignment: IDENTIFIER PUNCTUATOR OPERATOR int_expression PUNCTUATOR  */
-#line 125 "grammar.y"
+#line 125 "parser/grammar.y"
                                                            { 
     (yyval.node) = create_node("assignment", (yyvsp[-4].id_val), (yyvsp[-1].node), NULL, NULL);
   }
@@ -1294,7 +1294,7 @@ yyreduce:
     break;
 
   case 21: /* int_expression: INTEGER_LITERAL  */
-#line 131 "grammar.y"
+#line 131 "parser/grammar.y"
                   { 
     (yyval.node) = create_node("int_expression", "int", NULL, NULL, NULL);
   }
@@ -1302,7 +1302,7 @@ yyreduce:
     break;
 
   case 22: /* int_expression: IDENTIFIER OPERATOR IDENTIFIER  */
-#line 134 "grammar.y"
+#line 134 "parser/grammar.y"
                                    { 
     (yyval.node) = create_node("int_expression", "id op id", NULL, NULL, NULL);
   }
@@ -1310,7 +1310,7 @@ yyreduce:
     break;
 
   case 23: /* int_expression: IDENTIFIER OPERATOR INTEGER_LITERAL  */
-#line 137 "grammar.y"
+#line 137 "parser/grammar.y"
                                         { 
     (yyval.node) = create_node("int_expression", "id op int", NULL, NULL, NULL);
   }
@@ -1318,7 +1318,7 @@ yyreduce:
     break;
 
   case 24: /* int_expression: INTEGER_LITERAL OPERATOR IDENTIFIER  */
-#line 140 "grammar.y"
+#line 140 "parser/grammar.y"
                                         { 
     (yyval.node) = create_node("int_expression", "int op id", NULL, NULL, NULL);
   }
@@ -1326,7 +1326,7 @@ yyreduce:
     break;
 
   case 25: /* int_expression: INTEGER_LITERAL OPERATOR INTEGER_LITERAL  */
-#line 143 "grammar.y"
+#line 143 "parser/grammar.y"
                                              { 
     (yyval.node) = create_node("int_expression", "int op int", NULL, NULL, NULL);
   }
@@ -1334,7 +1334,7 @@ yyreduce:
     break;
 
   case 26: /* function_call: IDENTIFIER LPAR arguments RPAR PUNCTUATOR  */
-#line 148 "grammar.y"
+#line 148 "parser/grammar.y"
                                             { 
     (yyval.node) = create_node("function_call", (yyvsp[-4].id_val), (yyvsp[-2].node), NULL, NULL);
   }
@@ -1342,7 +1342,7 @@ yyreduce:
     break;
 
   case 27: /* arguments: argument  */
-#line 154 "grammar.y"
+#line 154 "parser/grammar.y"
            { 
     (yyval.node) = create_node("arguments", "", (yyvsp[0].node), NULL, NULL);
   }
@@ -1350,7 +1350,7 @@ yyreduce:
     break;
 
   case 28: /* arguments: arguments PUNCTUATOR argument  */
-#line 157 "grammar.y"
+#line 157 "parser/grammar.y"
                                   { 
     (yyval.node) = create_node("arguments", "", (yyvsp[-2].node), NULL, (yyvsp[0].node));
   }
@@ -1358,7 +1358,7 @@ yyreduce:
     break;
 
   case 29: /* argument: IDENTIFIER  */
-#line 163 "grammar.y"
+#line 163 "parser/grammar.y"
              { 
     (yyval.node) = create_node("argument", (yyvsp[0].id_val), NULL, NULL, NULL);
   }
@@ -1366,7 +1366,7 @@ yyreduce:
     break;
 
   case 30: /* argument: INTEGER_LITERAL  */
-#line 166 "grammar.y"
+#line 166 "parser/grammar.y"
                     { 
     (yyval.node) = create_node("argument", "int", NULL, NULL, NULL);
   }
@@ -1374,7 +1374,7 @@ yyreduce:
     break;
 
   case 31: /* while_loop: WHILE assertion KEYWORD statements END  */
-#line 174 "grammar.y"
+#line 174 "parser/grammar.y"
       { 
     (yyval.node) = create_node("while_loop", "start", (yyvsp[-1].node), NULL, NULL);
   }
@@ -1382,7 +1382,7 @@ yyreduce:
     break;
 
   case 32: /* assertion: INTEGER_LITERAL OPERATOR INTEGER_LITERAL  */
-#line 180 "grammar.y"
+#line 180 "parser/grammar.y"
                                            { 
     (yyval.node) = create_node("assertion", "int op int", NULL, NULL, NULL);
   }
@@ -1390,7 +1390,7 @@ yyreduce:
     break;
 
   case 33: /* assertion: IDENTIFIER OPERATOR INTEGER_LITERAL  */
-#line 183 "grammar.y"
+#line 183 "parser/grammar.y"
                                         { 
     (yyval.node) = create_node("assertion", "id op int", NULL, NULL, NULL);
   }
@@ -1398,7 +1398,7 @@ yyreduce:
     break;
 
   case 34: /* assertion: INTEGER_LITERAL OPERATOR IDENTIFIER  */
-#line 186 "grammar.y"
+#line 186 "parser/grammar.y"
                                         { 
     (yyval.node) = create_node("assertion", "int op id", NULL, NULL, NULL);
   }
@@ -1406,7 +1406,7 @@ yyreduce:
     break;
 
   case 35: /* assertion: IDENTIFIER OPERATOR IDENTIFIER  */
-#line 189 "grammar.y"
+#line 189 "parser/grammar.y"
                                    { 
     (yyval.node) = create_node("assertion", "id op id", NULL, NULL, NULL);
   }
@@ -1414,7 +1414,7 @@ yyreduce:
     break;
 
   case 36: /* return_statement: KEYWORD IDENTIFIER PUNCTUATOR  */
-#line 195 "grammar.y"
+#line 195 "parser/grammar.y"
                                 { 
     (yyval.node) = create_node("return_statement", (yyvsp[-1].id_val), NULL, NULL, NULL);
   }
@@ -1422,7 +1422,7 @@ yyreduce:
     break;
 
   case 37: /* return_statement: KEYWORD INTEGER_LITERAL PUNCTUATOR  */
-#line 198 "grammar.y"
+#line 198 "parser/grammar.y"
                                        { 
     (yyval.node) = create_node("return_statement", "Return integer", NULL, NULL, NULL);
   }
@@ -1623,7 +1623,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 203 "grammar.y"
+#line 203 "parser/grammar.y"
 
 
 

@@ -1,6 +1,9 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include "lexer_2.hpp"
+#include "ast.h"
+
 void yyerror(char *s);
 int counter = 1;
 int indent = 0;
@@ -14,7 +17,11 @@ void print_indent() {
   int int_val;
   char *op_val;
   char *keyword_val;
+  ASTNode *node;
 }
+
+%type <node> program routine_declarations routine_declaration routine_header parameters parameter statements statement variable_declaration assignment int_expression function_call arguments argument while_loop assertion return_statement
+
 %start program 
 
 %token <id_val> IDENTIFIER
@@ -23,109 +30,178 @@ void print_indent() {
 %token <keyword_val> KEYWORD
 %token <keyword_val> IS
 %token <keyword_val> WHILE
-%token <keyword_val> ROUTINE
 %token <keyword_val> END
+%token <keyword_val> ROUTINE
 %token LPAR RPAR LBRAC RBRAC RELPAR RERLPR
 %token PUNCTUATOR
 
 %%
 
 program:
-  routine_declarations statements { print_indent(); printf("%d: Main program\n", counter++);}
+  routine_declarations statements { 
+    $$ = create_node("program", "", $1, $2, NULL);
+    print_ast($$, 0);
+  }
   ;
 
 routine_declarations:
-  routine_declaration { print_indent(); printf("%d: List of routine declarations\n", counter++); }
-  | routine_declarations routine_declaration { print_indent(); printf("%d: List of routine declarations\n", counter++); }
+  routine_declaration { 
+    $$ = create_node("routine_declarations", "", $1, NULL, NULL);
+  }
+  | routine_declarations routine_declaration { 
+    $$ = create_node("routine_declarations", "", $1, NULL, $2);
+  }
   ;
 
 routine_declaration:
   routine_header
   statements
   return_statement
-  END { print_indent(); printf("%d: end\n", counter++); }
+  END { 
+    $$ = create_node("routine_declaration", "start", $1, $2, $3);
+  }
   ;
 
 routine_header:
-  ROUTINE IDENTIFIER LPAR parameters RPAR PUNCTUATOR IDENTIFIER IS { print_indent(); printf("%d: routine declaration for %s\n", counter++, $2);}
-  | ROUTINE IDENTIFIER LPAR parameters RPAR IS { print_indent(); printf("%d: routine declaration for %s\n", counter++, $2); }
+  ROUTINE IDENTIFIER LPAR parameters RPAR PUNCTUATOR IDENTIFIER IS { 
+    $$ = create_node("routine_header", $2, $4, NULL, NULL);
+  }
+  | ROUTINE IDENTIFIER LPAR parameters RPAR IS { 
+    $$ = create_node("routine_header", $2, $4, NULL, NULL);
+  }
 
 parameters:
-  parameter
-  | parameters PUNCTUATOR parameter
+  parameter { 
+    $$ = create_node("parameters", "", $1, NULL, NULL);
+  }
+  | parameters PUNCTUATOR parameter { 
+    $$ = create_node("parameters", "", $1, NULL, $3);
+  }
   ;
 
 parameter:
-  IDENTIFIER
-  | INTEGER_LITERAL
+  IDENTIFIER PUNCTUATOR IDENTIFIER { 
+    $$ = create_node("parameter", $1, NULL, NULL, NULL);
+  }
+  | IDENTIFIER { 
+    $$ = create_node("parameter", $1, NULL, NULL, NULL);
+  }
   ;
 
 statements:
-  statement
-  | statements statement
+  statement { 
+    $$ = create_node("statements", "", $1, NULL, NULL);
+  }
+  | statements statement { 
+    $$ = create_node("statements", "", $1, NULL, $2);
+  }
   ;
 
 statement:
-  variable_declaration 
-  | assignment
-  | function_call
-  | while_loop
+  variable_declaration { 
+    $$ = create_node("statement", $1->type, $1, NULL, NULL);
+  }
+  | assignment { 
+    $$ = create_node("statement", $1->type, $1, NULL, NULL);
+  }
+  | function_call { 
+    $$ = create_node("statement", $1->type, $1, NULL, NULL);
+  }
+  | while_loop { 
+    $$ = create_node("statement", $1->type, $1, NULL, NULL);
+  }
   ;
 
 variable_declaration:
-  IDENTIFIER IDENTIFIER PUNCTUATOR IDENTIFIER IS INTEGER_LITERAL PUNCTUATOR { print_indent(); printf("%d: variable declaration for %s\n", counter++, $2); }
-  | IDENTIFIER IDENTIFIER PUNCTUATOR IDENTIFIER PUNCTUATOR { print_indent(); printf("%d: variable declaration for %s\n", counter++, $2); }
+  IDENTIFIER IDENTIFIER PUNCTUATOR IDENTIFIER IS INTEGER_LITERAL PUNCTUATOR { 
+    $$ = create_node("variable_declaration", $2, NULL, NULL, NULL);
+  }
+  | IDENTIFIER IDENTIFIER PUNCTUATOR IDENTIFIER PUNCTUATOR { 
+    $$ = create_node("variable_declaration", $2, NULL, NULL, NULL);
+  }
   ;
 
 assignment:
-  IDENTIFIER PUNCTUATOR OPERATOR int_expression PUNCTUATOR { print_indent(); printf("%d: assignment for %s\n", counter++, $1); }
+  IDENTIFIER PUNCTUATOR OPERATOR int_expression PUNCTUATOR { 
+    $$ = create_node("assignment", $1, $4, NULL, NULL);
+  }
   ;
 
 int_expression:
-  INTEGER_LITERAL
-  | IDENTIFIER OPERATOR IDENTIFIER
-  | IDENTIFIER OPERATOR INTEGER_LITERAL
-  | INTEGER_LITERAL OPERATOR IDENTIFIER
-  | INTEGER_LITERAL OPERATOR INTEGER_LITERAL
+  INTEGER_LITERAL { 
+    $$ = create_node("int_expression", "int", NULL, NULL, NULL);
+  }
+  | IDENTIFIER OPERATOR IDENTIFIER { 
+    $$ = create_node("int_expression", "id op id", NULL, NULL, NULL);
+  }
+  | IDENTIFIER OPERATOR INTEGER_LITERAL { 
+    $$ = create_node("int_expression", "id op int", NULL, NULL, NULL);
+  }
+  | INTEGER_LITERAL OPERATOR IDENTIFIER { 
+    $$ = create_node("int_expression", "int op id", NULL, NULL, NULL);
+  }
+  | INTEGER_LITERAL OPERATOR INTEGER_LITERAL { 
+    $$ = create_node("int_expression", "int op int", NULL, NULL, NULL);
+  }
 
 function_call:
-  IDENTIFIER LPAR arguments RPAR PUNCTUATOR { print_indent(); printf("%d: function call for %s\n", counter++, $1);}
+  IDENTIFIER LPAR arguments RPAR PUNCTUATOR { 
+    $$ = create_node("function_call", $1, $3, NULL, NULL);
+  }
   ;
 
 arguments:
-  argument
-  | arguments PUNCTUATOR argument
+  argument { 
+    $$ = create_node("arguments", "", $1, NULL, NULL);
+  }
+  | arguments PUNCTUATOR argument { 
+    $$ = create_node("arguments", "", $1, NULL, $3);
+  }
   ;
 
 argument:
-  IDENTIFIER
-  | INTEGER_LITERAL
+  IDENTIFIER { 
+    $$ = create_node("argument", $1, NULL, NULL, NULL);
+  }
+  | INTEGER_LITERAL { 
+    $$ = create_node("argument", "int", NULL, NULL, NULL);
+  }
   ;
 
 while_loop: 
-  WHILE assertion KEYWORD { print_indent(); printf("%d: while loop start\n", counter++); }
+  WHILE assertion KEYWORD 
   statements
-  END { print_indent(); printf("%d: while loop end\n", counter++); }
+  END { 
+    $$ = create_node("while_loop", "start", $4, NULL, NULL);
+  }
   ;
 
 assertion:
-  INTEGER_LITERAL OPERATOR INTEGER_LITERAL
-  | IDENTIFIER OPERATOR INTEGER_LITERAL
-  | INTEGER_LITERAL OPERATOR IDENTIFIER
-  | IDENTIFIER OPERATOR IDENTIFIER
+  INTEGER_LITERAL OPERATOR INTEGER_LITERAL { 
+    $$ = create_node("assertion", "int op int", NULL, NULL, NULL);
+  }
+  | IDENTIFIER OPERATOR INTEGER_LITERAL { 
+    $$ = create_node("assertion", "id op int", NULL, NULL, NULL);
+  }
+  | INTEGER_LITERAL OPERATOR IDENTIFIER { 
+    $$ = create_node("assertion", "int op id", NULL, NULL, NULL);
+  }
+  | IDENTIFIER OPERATOR IDENTIFIER { 
+    $$ = create_node("assertion", "id op id", NULL, NULL, NULL);
+  }
   ;
 
-
 return_statement:
-  KEYWORD IDENTIFIER PUNCTUATOR { print_indent(); printf("%d: return value is %s\n", counter++, $2); }
-  | KEYWORD INTEGER_LITERAL PUNCTUATOR { print_indent(); printf("%d: return value is %d\n", counter++, $2);  }
+  KEYWORD IDENTIFIER PUNCTUATOR { 
+    $$ = create_node("return_statement", $2, NULL, NULL, NULL);
+  }
+  | KEYWORD INTEGER_LITERAL PUNCTUATOR { 
+    $$ = create_node("return_statement", "Return integer", NULL, NULL, NULL);
+  }
   ;
 
 %%
 
-int main() {
-  yyparse();
-}
 
 void yyerror(char *s) {
   fprintf(stderr, "error: %s\n", s);

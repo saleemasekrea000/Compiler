@@ -2,10 +2,11 @@
 #include <string>
 #include <sstream>
 #include <cstring>
-#include "grammar.tab.h"
 #include "lexer_2.hpp"
+#include "ast.h"
+#include "grammar.tab.h"
 
-std::ifstream tokenFile("tokens_1.txt");
+std::ifstream tokenFile;
 
 int yylex()
 {
@@ -88,4 +89,25 @@ int yylex()
   }
 
   return -1;
+}
+
+int main(int argc, char **argv)
+{
+  if (argc != 2)
+  {
+    fprintf(stderr, "Usage: %s <input file>\n", argv[0]);
+    return 1;
+  }
+
+  FILE *input_file = fopen(argv[1], "r");
+  if (!input_file)
+  {
+    perror("Error opening input file");
+    return 1;
+  }
+
+  tokenFile.open(argv[1]);
+  yyparse();
+  fclose(input_file);
+  return 0;
 }
