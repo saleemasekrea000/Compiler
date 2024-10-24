@@ -81,11 +81,13 @@ union YYSTYPE
 
   char *id_val;
   int int_val;
+  double real_val;
+  bool bool_val;
   char *op_val;
   char *keyword_val;
   ASTNode *node;
 
-#line 89 "grammar.tab.h"
+#line 91 "grammar.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

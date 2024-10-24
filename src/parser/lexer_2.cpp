@@ -21,7 +21,6 @@ int yylex()
   std::string tokenType, tokenValue;
   std::istringstream lineStream(line);
   lineStream >> tokenType >> tokenValue;
-
   // Return the appropriate token based on the token type
   if (tokenType == "KEYWORD")
   {
@@ -43,6 +42,73 @@ int yylex()
   else if (tokenType == "END")
   {
     return END;
+  }
+  else if (tokenType == "BREAK")
+  {
+    return BREAK;
+  }
+  else if (tokenType == "RETURN"){
+     return RETURN;
+  }
+  else if (tokenType == "NOT"){
+    return NOT;
+  }
+  else if (tokenType== "XOR"){
+    return XOR;
+  }
+  else if (tokenType== "OR"){
+   return OR;
+  }
+  else if (tokenType=="AND"){
+    return AND;
+  }
+  else if (tokenType == "ELSE"){
+    return ELSE;
+  }
+  else if (tokenType=="THEN"){
+    return THEN;
+  }
+  else if (tokenType=="IF"){
+    return IF;
+  }
+  else if (tokenType=="IN"){
+    return IN;
+  }
+  else if (tokenType=="THEN"){
+    return THEN;
+  }
+  else if (tokenType=="FOR"){
+    return FOR;
+  }
+  else if(tokenType=="LOOP"){
+    return LOOP;
+  }
+  else if (tokenType == "ARRAY"){
+    return ARRAY;
+  }
+  else if (tokenType=="FALSE"){
+    return FALSE;
+  }
+  else if(tokenType=="TRUE"){
+    return TRUE;
+  }
+  else if(tokenType=="RECORD"){
+    return RECORD;
+  }
+  else if(tokenType=="TYPE"){
+    return TYPE;
+  }
+  else if (tokenType=="VAR"){
+    return VAR;
+  }
+  else if (tokenType=="INTEGER_LITERAL_KEYWORD"){
+    return INTEGER_LITERAL_KEYWORD;
+  }
+  else if (tokenType=="REAL_LITERAL_KEYWORD"){
+    return REAL_LITERAL_KEYWORD;
+  }
+  else if (tokenType=="BOOL_LITERAL_KEYWORD"){
+    return BOOL_LITERAL_KEYWORD;
   }
   else if (tokenType == "IDENTIFIER")
   {
