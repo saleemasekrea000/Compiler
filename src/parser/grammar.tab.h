@@ -56,19 +56,47 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     IDENTIFIER = 258,              /* IDENTIFIER  */
     INTEGER_LITERAL = 259,         /* INTEGER_LITERAL  */
-    OPERATOR = 260,                /* OPERATOR  */
-    KEYWORD = 261,                 /* KEYWORD  */
-    IS = 262,                      /* IS  */
-    WHILE = 263,                   /* WHILE  */
-    END = 264,                     /* END  */
-    ROUTINE = 265,                 /* ROUTINE  */
-    LPAR = 266,                    /* LPAR  */
-    RPAR = 267,                    /* RPAR  */
-    LBRAC = 268,                   /* LBRAC  */
-    RBRAC = 269,                   /* RBRAC  */
-    RELPAR = 270,                  /* RELPAR  */
-    RERLPR = 271,                  /* RERLPR  */
-    PUNCTUATOR = 272               /* PUNCTUATOR  */
+    REAL_LITERAL = 260,            /* REAL_LITERAL  */
+    BOOLEAN_LITERAL = 261,         /* BOOLEAN_LITERAL  */
+    OPERATOR = 262,                /* OPERATOR  */
+    IS = 263,                      /* IS  */
+    WHILE = 264,                   /* WHILE  */
+    END = 265,                     /* END  */
+    ROUTINE = 266,                 /* ROUTINE  */
+    VAR = 267,                     /* VAR  */
+    INTEGER_LITERAL_KEYWORD = 268, /* INTEGER_LITERAL_KEYWORD  */
+    REAL_LITERAL_KEYWORD = 269,    /* REAL_LITERAL_KEYWORD  */
+    OR = 270,                      /* OR  */
+    AND = 271,                     /* AND  */
+    XOR = 272,                     /* XOR  */
+    NOT = 273,                     /* NOT  */
+    RANGE = 274,                   /* RANGE  */
+    BOOLEAN_LITERAL_KEYWORD = 275, /* BOOLEAN_LITERAL_KEYWORD  */
+    RECORD = 276,                  /* RECORD  */
+    ARRAY = 277,                   /* ARRAY  */
+    FOR = 278,                     /* FOR  */
+    RETURN = 279,                  /* RETURN  */
+    THEN = 280,                    /* THEN  */
+    TRUE = 281,                    /* TRUE  */
+    FALSE = 282,                   /* FALSE  */
+    TYPE = 283,                    /* TYPE  */
+    LOOP = 284,                    /* LOOP  */
+    IN = 285,                      /* IN  */
+    IF = 286,                      /* IF  */
+    ELSE = 287,                    /* ELSE  */
+    BREAK = 288,                   /* BREAK  */
+    CONTINUE = 289,                /* CONTINUE  */
+    LE_OP = 290,                   /* LE_OP  */
+    GE_OP = 291,                   /* GE_OP  */
+    NE_OP = 292,                   /* NE_OP  */
+    AND_OP = 293,                  /* AND_OP  */
+    OR_OP = 294,                   /* OR_OP  */
+    MUL_ASSIGN = 295,              /* MUL_ASSIGN  */
+    DIV_ASSIGN = 296,              /* DIV_ASSIGN  */
+    MOD_ASSIGN = 297,              /* MOD_ASSIGN  */
+    ADD_ASSIGN = 298,              /* ADD_ASSIGN  */
+    SUB_ASSIGN = 299,              /* SUB_ASSIGN  */
+    ASSIGN_OP = 300                /* ASSIGN_OP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -81,13 +109,13 @@ union YYSTYPE
 
   char *id_val;
   int int_val;
-  double real_val;
-  bool bool_val;
   char *op_val;
   char *keyword_val;
   ASTNode *node;
+  float real_val;
+  char* bool_val;
 
-#line 91 "grammar.tab.h"
+#line 119 "grammar.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

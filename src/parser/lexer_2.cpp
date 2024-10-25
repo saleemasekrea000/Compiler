@@ -22,94 +22,67 @@ int yylex()
   std::istringstream lineStream(line);
   lineStream >> tokenType >> tokenValue;
   // Return the appropriate token based on the token type
-  if (tokenType == "KEYWORD")
-  {
-    yylval.keyword_val = strdup(tokenValue.c_str());
-    return KEYWORD;
-  }
-  else if (tokenType == "IS")
-  {
-    return IS;
-  }
-  else if (tokenType == "WHILE")
-  {
-    return WHILE;
-  }
-  else if (tokenType == "ROUTINE")
-  {
-    return ROUTINE;
-  }
-  else if (tokenType == "END")
-  {
-    return END;
-  }
-  else if (tokenType == "BREAK")
-  {
-    return BREAK;
-  }
-  else if (tokenType == "RETURN"){
-     return RETURN;
-  }
-  else if (tokenType == "NOT"){
-    return NOT;
-  }
-  else if (tokenType== "XOR"){
-    return XOR;
-  }
-  else if (tokenType== "OR"){
-   return OR;
-  }
-  else if (tokenType=="AND"){
-    return AND;
-  }
-  else if (tokenType == "ELSE"){
-    return ELSE;
-  }
-  else if (tokenType=="THEN"){
-    return THEN;
-  }
-  else if (tokenType=="IF"){
-    return IF;
-  }
-  else if (tokenType=="IN"){
-    return IN;
-  }
-  else if (tokenType=="THEN"){
-    return THEN;
-  }
-  else if (tokenType=="FOR"){
-    return FOR;
-  }
-  else if(tokenType=="LOOP"){
-    return LOOP;
-  }
-  else if (tokenType == "ARRAY"){
-    return ARRAY;
-  }
-  else if (tokenType=="FALSE"){
-    return FALSE;
-  }
-  else if(tokenType=="TRUE"){
-    return TRUE;
-  }
-  else if(tokenType=="RECORD"){
-    return RECORD;
-  }
-  else if(tokenType=="TYPE"){
-    return TYPE;
-  }
-  else if (tokenType=="VAR"){
-    return VAR;
-  }
-  else if (tokenType=="INTEGER_LITERAL_KEYWORD"){
-    return INTEGER_LITERAL_KEYWORD;
-  }
-  else if (tokenType=="REAL_LITERAL_KEYWORD"){
-    return REAL_LITERAL_KEYWORD;
-  }
-  else if (tokenType=="BOOL_LITERAL_KEYWORD"){
-    return BOOL_LITERAL_KEYWORD;
-  }
+  
+  if (tokenValue == "+=") return ADD_ASSIGN;
+  else if (tokenValue == "-=") return SUB_ASSIGN;
+  else if (tokenValue == "*=") return MUL_ASSIGN;
+  else if (tokenValue == "/=") return DIV_ASSIGN;
+  else if (tokenValue == "%=") return MOD_ASSIGN;
+  else if (tokenValue == "&&") return AND_OP;
+  else if (tokenValue == "||") return OR_OP;
+  else if (tokenValue == "<=") return LE_OP;
+  else if (tokenValue == ">=") return GE_OP;
+  else if (tokenValue == "!=") return NE_OP;
+  else if (tokenValue == ":=") return ASSIGN_OP;
+  else if (tokenValue == ";") return ';';
+  else if (tokenValue == "{") return '{';
+  else if (tokenValue == "}") return '}';
+  else if (tokenValue == ",") return ',';
+  else if (tokenValue == ":") return ':';
+  else if (tokenValue == "=") return '=';
+  else if (tokenValue == "(") return '(';
+  else if (tokenValue == ")") return ')';
+  else if (tokenValue == "[") return '[';
+  else if (tokenValue == "]") return ']';
+  else if (tokenValue == ".") return '.';
+  else if (tokenValue == "&") return '&';
+  else if (tokenValue == "!") return '!';
+  else if (tokenValue == "~") return '~';
+  else if (tokenValue == "-") return '-';
+  else if (tokenValue == "+") return '+';
+  else if (tokenValue == "*") return '*';
+  else if (tokenValue == "/") return '/';
+  else if (tokenValue == "%") return '%';
+  else if (tokenValue == "<") return '<';
+  else if (tokenValue == ">") return '>';
+  else if (tokenValue == "^") return '^';
+  else if (tokenValue == "|") return '|';
+  else if (tokenType == "IS") return IS;
+  else if (tokenType == "WHILE") return WHILE;
+  else if (tokenType == "ROUTINE")return ROUTINE;
+  else if (tokenType == "END") return END;
+  else if (tokenType == "BREAK") return BREAK;
+  else if (tokenType == "RETURN") return RETURN;
+  else if (tokenType == "NOT") return NOT;
+  else if (tokenType== "XOR") return XOR;
+  else if (tokenType== "OR") return OR;
+  else if (tokenType=="AND") return AND;
+  else if (tokenType == "ELSE") return ELSE;
+  else if (tokenType=="THEN") return THEN;
+  else if (tokenType=="IF") return IF;
+  else if (tokenType=="IN") return IN;
+  else if (tokenType=="THEN") return THEN;
+  else if (tokenType=="FOR") return FOR;
+  else if(tokenType=="LOOP") return LOOP;
+  else if (tokenType == "ARRAY") return ARRAY;
+  else if (tokenType=="FALSE") return FALSE;
+  else if(tokenType=="TRUE") return TRUE;
+  else if(tokenType=="RECORD") return RECORD;
+  else if(tokenType=="TYPE") return TYPE;
+  else if (tokenType=="VAR") return VAR;
+  else if (tokenType=="INTEGER_LITERAL_KEYWORD") return INTEGER_LITERAL_KEYWORD;
+  else if (tokenType=="REAL_LITERAL_KEYWORD") return REAL_LITERAL_KEYWORD;
+  else if (tokenType=="BOOLEAN_LITERAL_KEYWORD") return BOOLEAN_LITERAL_KEYWORD;
   else if (tokenType == "IDENTIFIER")
   {
     yylval.id_val = strdup(tokenValue.c_str());
@@ -120,40 +93,11 @@ int yylex()
     yylval.int_val = std::stoi(tokenValue);
     return INTEGER_LITERAL;
   }
-  else if (tokenType == "OPERATOR")
+  else if (tokenType == "REAL_LITERAL")
   {
-    yylval.op_val = strdup(tokenValue.c_str());
-    return OPERATOR;
+    yylval.real_val = std::stoi(tokenValue);
+    return REAL_LITERAL;
   }
-  else if (tokenType == "LPAR")
-  {
-    return LPAR;
-  }
-  else if (tokenType == "RPAR")
-  {
-    return RPAR;
-  }
-  else if (tokenType == "LBRAC")
-  {
-    return LBRAC;
-  }
-  else if (tokenType == "RBRAC")
-  {
-    return RBRAC;
-  }
-  else if (tokenType == "RELPAR")
-  {
-    return RELPAR;
-  }
-  else if (tokenType == "RERLPR")
-  {
-    return RERLPR;
-  }
-  else if (tokenType == "PUNCTUATOR")
-  {
-    return PUNCTUATOR;
-  }
-
   return -1;
 }
 
