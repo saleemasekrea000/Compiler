@@ -72,6 +72,11 @@ string Lexer::next_token_content(Token last_token)
                 ind++;
                 return ret;
             }
+            else {
+                ret += code[ind];
+                ind++;
+                return ret;
+            }
         }
         if (is_pancutator(code[ind]))
         {
@@ -189,6 +194,37 @@ string bracket_name(char c)
 }
 TokenType Lexer::token_type(const string &s)
 {
+    if (is_keyword(s))
+    {
+        if (s == "is") return IS;
+        else if (s == "while") return WHILE;
+        else if (s == "routine")return ROUTINE;
+        else if (s == "end") return END;
+        else if (s == "break") return BREAK;
+        else if (s == "return") return RETURN;
+        else if (s == "not") return NOT;
+        else if (s== "xor") return XOR;
+        else if (s== "or") return OR;
+        else if (s=="and") return AND;
+        else if (s == "else") return ELSE;
+        else if (s=="then") return THEN;
+        else if (s=="if") return IF;
+        else if (s=="in") return IN;
+        else if (s=="then") return THEN;
+        else if (s=="for") return FOR;
+        else if(s=="loop") return LOOP;
+        else if (s == "array") return ARRAY;
+        else if (s=="false") return FALSE;
+        else if(s=="true") return TRUE;
+        else if(s=="record") return RECORD;
+        else if(s=="type") return TYPE;
+        else if (s=="var") return VAR;
+        else if (s=="integer") return INTEGER_LITERAL_KEYWORD;
+        else if (s=="real") return REAL_LITERAL_KEYWORD;
+        else if (s=="boolean") return BOOLEAN_LITERAL_KEYWORD;
+        else if (s=="continue") return CONTINUE;
+        else if (s=="var") return VAR;
+    }
     if (s == "..")
         return TokenType::RANGE;
     if (s.size() == 1 && is_pancutator(s[0]))
@@ -203,18 +239,6 @@ TokenType Lexer::token_type(const string &s)
         return TokenType::INTEGER_LITERAL;
     if (is_real(s))
         return TokenType::REAL_LITERAL;
-    if (is_keyword(s))
-    {
-        if (s == "is")
-            return TokenType::IS;
-        if (s == "while")
-            return TokenType::WHILE;
-        if (s == "routine")
-            return TokenType::ROUTINE;
-        if (s == "end")
-            return TokenType::END;
-        return TokenType::KEYWORD;
-    }
     if (s.size() == 1 && is_bracket(s[0]))
     {
         if (s == "(")
