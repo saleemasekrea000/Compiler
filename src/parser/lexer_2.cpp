@@ -80,6 +80,7 @@ int yylex()
   else if(tokenType=="RECORD") return RECORD;
   else if(tokenType=="TYPE") return TYPE;
   else if (tokenType=="VAR") return VAR;
+  else if (tokenType=="REVERSE") return REVERSE;
   else if (tokenType=="INTEGER_LITERAL_KEYWORD") return INTEGER_LITERAL_KEYWORD;
   else if (tokenType=="REAL_LITERAL_KEYWORD") return REAL_LITERAL_KEYWORD;
   else if (tokenType=="BOOLEAN_LITERAL_KEYWORD") return BOOLEAN_LITERAL_KEYWORD;

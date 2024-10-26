@@ -71,32 +71,33 @@ extern int yydebug;
     XOR = 272,                     /* XOR  */
     NOT = 273,                     /* NOT  */
     RANGE = 274,                   /* RANGE  */
-    BOOLEAN_LITERAL_KEYWORD = 275, /* BOOLEAN_LITERAL_KEYWORD  */
-    RECORD = 276,                  /* RECORD  */
-    ARRAY = 277,                   /* ARRAY  */
-    FOR = 278,                     /* FOR  */
-    RETURN = 279,                  /* RETURN  */
-    THEN = 280,                    /* THEN  */
-    TRUE = 281,                    /* TRUE  */
-    FALSE = 282,                   /* FALSE  */
-    TYPE = 283,                    /* TYPE  */
-    LOOP = 284,                    /* LOOP  */
-    IN = 285,                      /* IN  */
-    IF = 286,                      /* IF  */
-    ELSE = 287,                    /* ELSE  */
-    BREAK = 288,                   /* BREAK  */
-    CONTINUE = 289,                /* CONTINUE  */
-    LE_OP = 290,                   /* LE_OP  */
-    GE_OP = 291,                   /* GE_OP  */
-    NE_OP = 292,                   /* NE_OP  */
-    AND_OP = 293,                  /* AND_OP  */
-    OR_OP = 294,                   /* OR_OP  */
-    MUL_ASSIGN = 295,              /* MUL_ASSIGN  */
-    DIV_ASSIGN = 296,              /* DIV_ASSIGN  */
-    MOD_ASSIGN = 297,              /* MOD_ASSIGN  */
-    ADD_ASSIGN = 298,              /* ADD_ASSIGN  */
-    SUB_ASSIGN = 299,              /* SUB_ASSIGN  */
-    ASSIGN_OP = 300                /* ASSIGN_OP  */
+    REVERSE = 275,                 /* REVERSE  */
+    BOOLEAN_LITERAL_KEYWORD = 276, /* BOOLEAN_LITERAL_KEYWORD  */
+    RECORD = 277,                  /* RECORD  */
+    ARRAY = 278,                   /* ARRAY  */
+    FOR = 279,                     /* FOR  */
+    RETURN = 280,                  /* RETURN  */
+    THEN = 281,                    /* THEN  */
+    TRUE = 282,                    /* TRUE  */
+    FALSE = 283,                   /* FALSE  */
+    TYPE = 284,                    /* TYPE  */
+    LOOP = 285,                    /* LOOP  */
+    IN = 286,                      /* IN  */
+    IF = 287,                      /* IF  */
+    ELSE = 288,                    /* ELSE  */
+    BREAK = 289,                   /* BREAK  */
+    CONTINUE = 290,                /* CONTINUE  */
+    LE_OP = 291,                   /* LE_OP  */
+    GE_OP = 292,                   /* GE_OP  */
+    NE_OP = 293,                   /* NE_OP  */
+    AND_OP = 294,                  /* AND_OP  */
+    OR_OP = 295,                   /* OR_OP  */
+    MUL_ASSIGN = 296,              /* MUL_ASSIGN  */
+    DIV_ASSIGN = 297,              /* DIV_ASSIGN  */
+    MOD_ASSIGN = 298,              /* MOD_ASSIGN  */
+    ADD_ASSIGN = 299,              /* ADD_ASSIGN  */
+    SUB_ASSIGN = 300,              /* SUB_ASSIGN  */
+    ASSIGN_OP = 301                /* ASSIGN_OP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -115,7 +116,7 @@ union YYSTYPE
   float real_val;
   char* bool_val;
 
-#line 119 "grammar.tab.h"
+#line 120 "grammar.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -29,22 +29,25 @@ void print_indent() {
 %token <real_val> REAL_LITERAL
 %token <bool_val> BOOLEAN_LITERAL
 %token <op_val> OPERATOR
-%token <keyword_val> IS WHILE END ROUTINE VAR INTEGER_LITERAL_KEYWORD REAL_LITERAL_KEYWORD OR AND XOR NOT RANGE
+%token <keyword_val> IS WHILE END ROUTINE VAR INTEGER_LITERAL_KEYWORD REAL_LITERAL_KEYWORD OR AND XOR NOT RANGE REVERSE
 %token <keyword_val> BOOLEAN_LITERAL_KEYWORD RECORD ARRAY FOR RETURN THEN TRUE FALSE TYPE LOOP IN IF ELSE BREAK CONTINUE
 %token LE_OP GE_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN ASSIGN_OP;
 %%
 
 program 
-  : simpleDeclarations
+  : body
 ;
+
+/*
 simpleDeclarations 
   : simpleDeclaration
   | simpleDeclaration simpleDeclarations
-;
+;*/
 simpleDeclaration 
-  : variableDecleration
+  : variableDecleration | typeDecleration 
 ;
+ 
 variableDecleration
   : VAR IDENTIFIER IS expression ';'
   | VAR IDENTIFIER ':' type IS expression ';'
@@ -61,15 +64,17 @@ primary_expression
 ;
 primary
 	: primary_expression
-    | array_expression
+    | array_access_expression
+    | record_expession_access
 	// | primary '(' ')'
 	// | primary '(' argument_expression_list ')'
-	// | primary '.' IDENTIFIER
 ;
-array_expression  
+
+array_access_expression  
   : IDENTIFIER '[' expression ']' 
-  | array_expression '[' expression ']' 
+  | array_access_expression '[' expression ']' 
 ;
+
 // Optional Sign for positive and negative numbers
 optional_sign
   : /* empty */  // This makes it optional
@@ -116,10 +121,66 @@ simple
   | simple '/' factor
   | simple '%' factor
 ;
+
 type 
   : INTEGER_LITERAL_KEYWORD
   | REAL_LITERAL_KEYWORD 
   | BOOLEAN_LITERAL_KEYWORD
+  | recordType
+  | arrayType
+  | IDENTIFIER
+;
+
+//make saleem see it 
+record_expession_access
+  : IDENTIFIER '.' IDENTIFIER 
+  | array_access_expression '.' IDENTIFIER 
+  | record_expession_access '.'  IDENTIFIER 
+  | record_expession_access '.' array_access_expression 
+;
+
+recordType
+  : RECORD variableDeclerations END 
+;
+
+//note this should be written without a semicolon 
+
+arrayType 
+  : ARRAY '[' expression ']' type 
+;
+variableDeclerations 
+  : variableDecleration
+  | variableDecleration variableDeclerations
+;
+
+typeDecleration 
+  : TYPE IDENTIFIER IS type 
+;
+
+body :
+  statement
+  | simpleDeclaration
+  | statement body
+  | simpleDeclaration body
+;
+
+statement :
+  iteration_statement
+;
+
+iteration_statement
+	: while_expression
+  |  for_expression
+;
+while_expression :
+  WHILE expression LOOP body END
+;
+for_expression :
+  FOR IDENTIFIER range LOOP body END  
+;
+range :
+  IN expression RANGE expression 
+  | IN REVERSE expression RANGE expression
 ;
 %%
 
