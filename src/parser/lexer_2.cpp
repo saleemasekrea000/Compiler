@@ -3,7 +3,7 @@
 #include <sstream>
 #include <cstring>
 #include "lexer_2.hpp"
-#include "ast.h"
+#include "ast.hpp"
 #include "grammar.tab.h"
 
 std::ifstream tokenFile;
