@@ -46,42 +46,75 @@ simpleDeclaration
   : variableDecleration
 ;
 variableDecleration
-  : VAR IDENTIFIER IS additive_expression ';'
-  | VAR IDENTIFIER ':' type IS additive_expression ';'
+  : VAR IDENTIFIER IS expression ';'
+  | VAR IDENTIFIER ':' type IS expression ';'
 ;
-
+// normal primary_expression 
 primary_expression
-  : IDENTIFIER
-  | INTEGER_LITERAL
-  | REAL_LITERAL
-  | BOOLEAN_LITERAL
-  | '(' additive_expression ')'
-;
+	: optional_sign INTEGER_LITERAL
+    | optional_sign REAL_LITERAL
+    | TRUE
+    | FALSE
+	| NOT primary
+	| IDENTIFIER
 
-postfix_expression
+;
+primary
 	: primary_expression
-	// | postfix_expression '[' expression ']'
-	// | postfix_expression '(' ')'
-	// | postfix_expression '(' argument_expression_list ')'
-	// | postfix_expression '.' IDENTIFIER
-	;
-
-// argument_expression_list
-// 	: assignment_expression
-// 	| argument_expression_list ',' assignment_expression
-// 	;
-
-
-multiplicative_expression
-	: postfix_expression
-	| multiplicative_expression '*' postfix_expression
-	| multiplicative_expression '/' postfix_expression
-	| multiplicative_expression '%' postfix_expression
+    | array_expression
+	// | primary '(' ')'
+	// | primary '(' argument_expression_list ')'
+	// | primary '.' IDENTIFIER
 ;
-additive_expression
-	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
+array_expression  
+  : IDENTIFIER '[' expression ']' 
+  | array_expression '[' expression ']' 
+;
+// Optional Sign for positive and negative numbers
+optional_sign
+  : /* empty */  // This makes it optional
+  | '+'
+  | '-'
+;
+summand
+  : primary
+  | '(' expression ')'
+;
+factor
+  : summand
+  | factor '+' summand
+  | factor '-' summand
+;
+
+expression
+  : relation 
+  | relation AND relation
+  | relation OR relation
+  | relation XOR relation
+;
+
+relation
+  : simple
+  | simple '<' simple
+  | simple LE_OP simple
+  | simple '>' simple
+  | simple GE_OP simple
+  | simple '=' simple
+  | simple op_ass simple
+;
+op_ass
+  : ASSIGN_OP
+  | SUB_ASSIGN
+  | ADD_ASSIGN
+  | MUL_ASSIGN
+  | DIV_ASSIGN
+  | MOD_ASSIGN
+;
+simple
+  : factor
+  | simple '*' factor
+  | simple '/' factor
+  | simple '%' factor
 ;
 type 
   : INTEGER_LITERAL_KEYWORD
