@@ -16,11 +16,16 @@ void print_indent() {
   char *id_val;
   int int_val;
   double real_val;
+  bool bool_val;
   char *op_val;
   char *keyword_val;
   AST_Node* node; 
+  char * type_name;
+
 }
-%type <node> program simpleDeclaration variableDeclaration
+%type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
+%type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression
+
 %start program 
 
 %token <id_val> IDENTIFIER
@@ -35,31 +40,141 @@ void print_indent() {
 %%
 
 program 
-  : simpleDeclaration { 
-      $$ = new Program();
-      $$->children.push_back($1);
+  : declarations { 
+      $$ = new Program_Node(); 
+      $$->children.push_back($1); 
       print_ast($$, 0);
     }
-;
+  ;
+declarations
+  : declarations simpleDeclaration {
+      $$ = $1;
+      $$->children.push_back($2);
+    }
+  // | declarations statement {
+  //     $$ = $1;
+  //     $$->children.push_back($2);
+  //   }
+  // | declarations function {
+  //     $$ = $1;
+  //     $$->children.push_back($2);
+  //   }
+  | /* empty */ {
+      $$ = new Declaration_Node(); 
+    }
+  ;
 
 simpleDeclaration 
   : variableDeclaration { 
-      $$ = new SimpleDeclaration();
+      $$ = new SimpleDeclaration_Node();
       $$->children.push_back($1);
     }
 ;
 
 variableDeclaration
-  : VAR IDENTIFIER IS INTEGER_LITERAL ';' { 
-      $$ = new VariableDeclaration(std::string($2), INTEGER, $4);
+  : VAR identifier IS primary ';' { 
+      $$ = new VariableDeclaration_Node();
+      $$->children.push_back($2);
+      $$->children.push_back(new Type_Node("none"));
+      $$->children.push_back($4);
     }
-  | VAR IDENTIFIER ':' INTEGER_LITERAL_KEYWORD IS INTEGER_LITERAL ';' { 
-      $$ = new VariableDeclaration(std::string($2), INTEGER, $6);
+  | VAR identifier ':' type IS primary ';' { 
+      $$ = new VariableDeclaration_Node();
+      $$->children.push_back($2);
+      $$->children.push_back($4);
+      $$->children.push_back($6);
     }
 ;
+identifier :
+ IDENTIFIER{
+  $$ = new Identifier_Node(std::string($1));
+ }
+;
+type 
+  : INTEGER_LITERAL_KEYWORD {
+    $$ = new Type_Node("integer");
+  } 
+  | REAL_LITERAL_KEYWORD { 
+    $$ = new Type_Node("real");
+  }
+  | BOOLEAN_LITERAL_KEYWORD {
+    $$ = new Type_Node("boolean");
+  }
+  | identifier {
+      $$ = new Type_Node("identifier");
+      $$->children.push_back($1);
+  }
+  //   | recordType
+//   | arrayType
+;
 
+// normal primary_expression 
+primary_expression
+	: int_exp{
+    $$ = new Primary_Expression_Node();
+    $$->children.push_back($1);
+  }
+  | real_exp{
+    $$ = new Primary_Expression_Node();
+    $$->children.push_back($1);
+  }
+  |  boolean_exp{
+    $$ = new Primary_Expression_Node();
+    $$->children.push_back($1);
+  }
+  | unary_op primary
+	| identifier{
+    $$ = new Primary_Expression_Node();
+    $$->children.push_back($1);
+  }
+;
+unary_op:
+   NOT{
+    $$ = new Unary_OP("!");
+   }
+;
+int_exp
+  : INTEGER_LITERAL{
+    $$ = new Integer_Node($1);
+  }
+;
+real_exp
+   : REAL_LITERAL{
+    $$ = new Real_Node($1);
+  }
+;
+boolean_exp
+   : BOOLEAN_LITERAL{
+    $$ = new Boolean_Node($1);
+  }
+;
 
+primary
+ 	: primary_expression{
+    $$ = new Primary_Node();
+    $$->children.push_back($1);
+  }    
+  | array_access_expression{
+    $$ = new Primary_Node();
+    $$->children.push_back($1);
+  }
+//     | record_expession_access
+// 	// | primary '(' ')'
+// 	// | primary '(' argument_expression_list ')'
+;
+array_access_expression  
+  : identifier '[' primary ']' {
+    $$ = new Array_Access_Node();
+    $$->children.push_back($1);
+    $$->children.push_back($3);
 
+  }
+  | array_access_expression '[' primary ']' {
+    $$ = new Array_Access_Node();
+    $$->children.push_back($1);
+    $$->children.push_back($3);
+  }
+;
 /*
 simpleDeclarations 
   : simpleDeclaration
@@ -70,39 +185,10 @@ simpleDeclaration
   | typeDecleration 
 ;
 
-variableDecleration
-  : VAR IDENTIFIER IS expression ';'
-  | VAR IDENTIFIER ':' type IS expression ';'
-;*/
-// // normal primary_expression 
-// primary_expression
-// 	: optional_sign INTEGER_LITERAL
-//     | optional_sign REAL_LITERAL
-//     | TRUE
-//     | FALSE
-// 	| NOT primary
-// 	| IDENTIFIER
 
-// ;
-// primary
-// 	: primary_expression
-//     | array_access_expression
-//     | record_expession_access
-// 	// | primary '(' ')'
-// 	// | primary '(' argument_expression_list ')'
-// ;
-
-// array_access_expression  
-//   : IDENTIFIER '[' expression ']' 
-//   | array_access_expression '[' expression ']' 
-// ;
 
 // // Optional Sign for positive and negative numbers
-// optional_sign
-//   : /* empty */  // This makes it optional
-//   | '+'
-//   | '-'
-// ;
+
 // summand
 //   : primary
 //   | '(' expression ')'
@@ -144,14 +230,6 @@ variableDecleration
 //   | simple '%' factor
 // ;
 
-// type 
-//   : INTEGER_LITERAL_KEYWORD
-//   | REAL_LITERAL_KEYWORD 
-//   | BOOLEAN_LITERAL_KEYWORD
-//   | recordType
-//   | arrayType
-//   | IDENTIFIER
-// ;
 
 // //make saleem see it 
 // record_expession_access
@@ -204,6 +282,7 @@ variableDecleration
 //   IN expression RANGE expression 
 //   | IN REVERSE expression RANGE expression
 // ;
+*/
 %%
 
 void yyerror(char *s) {

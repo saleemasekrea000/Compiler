@@ -1,72 +1,82 @@
- #include <stdlib.h>
- #include <stdio.h>
- #include "ast.hpp"
-#include <cstdio>  // For printf
-#include <memory>  // For std::shared_ptr
-#include <string>  // For std::string
-
-// ASTNode *create_node(char *nodeType, char *nodeName, ASTNode *left, ASTNode *right, ASTNode *next, char *type, int intValue, float floatValue){
-//   ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
-//   node->nodeType = nodeType;
-//   node->nodeName = nodeName;
-//   node->left = left;
-//   node->right = right;
-//   node->next = next;
-//   node->type= type;
-//   node->intValue= intValue;
-//   node->floatValue= floatValue;
-//   return node;
-// }
-
-// void print_ast(ASTNode *node, int indent)
-// {
-//   if (!node)
-//     return;
-//   for (int i = 0; i < indent; i++)
-//     printf("  ");
-//   printf("%s: %s: %d\n", node->nodeType, node->nodeName, node->intValue);
-//   print_ast(node->left, indent + 1);
-//   print_ast(node->right, indent + 1);
-//   print_ast(node->next, indent);
-// }
-
-
-
-// Assume AST_Node and related classes are defined properly as discussed
+#include <stdlib.h>
+#include <stdio.h>
+#include "ast.hpp"
+#include <cstdio>
+#include <memory>
+#include <string>
 
 void print_ast(AST_Node* node, int indent) {
     if (!node) {
-        return;  // Base case: if node is null, do nothing
+        return; // Base case: if node is null, do nothing
     }
 
     // Print the current node type with indentation
     for (int i = 0; i < indent; i++) {
-        printf("  ");  // Indentation for the current level
+        printf("  "); // Indentation for the current level
     }
 
-    // Determine the node type as a string
-    const char* nodeType = "";
+    // Print node type
     switch (node->type) {
         case PROGRAM:
-            nodeType = "Program";
+            printf("Program\n");
+            break;
+        case DECLARATION:
+            printf("Declaration\n");
             break;
         case SIMPLE_DECLARATION:
-            nodeType = "Simple Declaration";
+            printf("Simple Declaration\n");
             break;
-        case VARIABLE_DECLARATION:
-            nodeType = "Variable Declaration";
+        case PRIMARY_EXPRESSION :
+           printf("PRIMARY_EXPRESSION\n");
+           break;
+        case PRIMARY_NODE:
+           printf("PRIMARY_NODE\n");
+           break;
+        case VARIABLE_DECLARATION: {
+            printf("VARIABLE_DECLARATION\n");
             break;
-        // Add other cases for additional node types
+        }
+        case ARRAY_ACCESS: {
+            printf("ARRAY_ACCESS\n");
+            break;
+        }
+        case IDENTIFIER_NODE_TYPE:{
+          Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);
+          printf("IDENTIFIER: %s\n", Identifier_node->identifier_name.c_str());
+          break;
+        }
+        case TYPE_NODE:{
+          Type_Node* type_node = static_cast<Type_Node*>(node);
+          printf("TYPE: %s\n", type_node->type_name.c_str());
+          break;
+        }
+         case BOOLEAN_NODE: {
+            Boolean_Node* boolean_node = static_cast<Boolean_Node*>(node);
+            std::cout << "Boolean : " << (boolean_node->val ? "true" : "false") << std::endl;
+            break;
+        }
+        case INTEGER_NODE: {
+            Integer_Node* integer_node = static_cast<Integer_Node*>(node);
+            std::cout << "Integer : " << integer_node->val << std::endl;
+            break;
+        }
+        case REAL_NODE: {
+            Real_Node* real_node = static_cast<Real_Node*>(node);
+            std::cout << "Real : " << real_node->val << std::endl;
+            break;
+        }
+        case UNARY_OP: {
+            Unary_OP* unary_op_node = static_cast<Unary_OP*>(node);
+            std::cout << "Unary Operation: " << unary_op_node->operation_name << std::endl;
+            break;
+        }
         default:
-            nodeType = "Unknown";
+            printf("Unknown Node Type\n");
             break;
     }
-
-    // Print the node type
-    printf("%s\n", nodeType);
-
+  
     // Recursively print each child node
     for (const auto& child : node->children) {
-        print_ast(child, indent + 1);  // Increase indentation for child nodes
+        print_ast(child, indent + 1); // Increase indentation for child nodes
     }
 }

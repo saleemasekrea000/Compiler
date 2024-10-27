@@ -99,6 +99,11 @@ int yylex()
     yylval.real_val = std::stoi(tokenValue);
     return REAL_LITERAL;
   }
+  else if (tokenType == "BOOLEAN_LITERAL")
+  {
+    yylval.bool_val = std::stoi(tokenValue);
+    return BOOLEAN_LITERAL;
+  }
   return -1;
 }
 
