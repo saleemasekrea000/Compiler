@@ -68,11 +68,6 @@ unary_expression
 	: postfix_expression
 	;
 
-// unary_operator
-// 	: NOT
-//   | '-'
-// 	;
-
 cast_expression
 	: unary_expression
 	// | '(' type_specifier ')' cast_expression

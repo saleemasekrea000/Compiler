@@ -21,93 +21,73 @@ void print_ast(AST_Node* node, int indent) {
             printf("Program\n");
             break;
         case DECLARATION:
-            printf("Declaration\n");
+            printf("Declarations\n");
             break;
         case SIMPLE_DECLARATION:
-            printf("Simple Declaration\n");
+            printf("Simple declaration\n");
             break;
         case PRIMARY_EXPRESSION :
-           printf("PRIMARY_EXPRESSION\n");
+           printf("Primary expresson\n");
            break;
         case PRIMARY_NODE:
-           printf("PRIMARY_NODE\n");
+           printf("Primary node\n");
            break;
         case VARIABLE_DECLARATION: {
-            printf("VARIABLE_DECLARATION\n");
+            printf("Variable declaration\n");
             break;
         }
         case ARRAY_ACCESS: {
-            printf("ARRAY_ACCESS\n");
+            printf("Array access\n");
             break;
         }
         case RECORD_ACCESS: {
-            printf("RECORD_ACCESS\n");
+            printf("Record access\n");
             break;
         }
         case SUMMAND: {
-            printf("SUMMAND_NODE\n");
+            printf("Summand\n");
             break;
         }
         case TYPE_DECLARATION: {
-            printf("TYPE_DECLARATION\n");
+            printf("Type declaration\n");
             break;
         }
         case ARRAY_TYPE: {
-            printf("ARRAY_TYPE\n");
+            printf("Array type\n");
             break;
         }
         case RECORD_TYPE: {
-            printf("RECORD_TYPE\n");
+            printf("Record type\n");
             break;
         }
         case FACTOR : {
-            Factor_Node* factor_node = static_cast<Factor_Node*>(node);
-            if (factor_node&& factor_node->operation!='n') {
-                printf("Factor : Operation '%c'\n", factor_node->operation);
-            }
-            else if (factor_node&& factor_node->operation=='n') {
-                printf("Factor\n");
-            }
+            printf("Factor\n");
             break;
         }
         case SIMPLE : {
-            Simple_Node* simple_node = static_cast<Simple_Node*>(node);
-            if (simple_node&& simple_node->operation!='n') {
-                printf("SIMPLE : Operation '%c'\n", simple_node->operation);
-            }
-            else if (simple_node&& simple_node->operation=='n') {
-                printf("SIMPLE\n");
-            }
+            printf("Simple\n");
             break;
         }
         case RELATION: {
-            Relation_Node* relation_node = static_cast<Relation_Node*>(node);
-            if (relation_node&& relation_node->operation.c_str()!="n") {
-                printf("Relation Node: Operation '%s'\n", relation_node->operation.c_str());
-            }
-            else if (relation_node){
-                printf("Relation Node\n");
-            }
-            break;
+           printf("Relation\n");
+           break;
         }
         case EXPRESSION: {
-            Expression_Node* expression_node = static_cast<Expression_Node*>(node);
-            if (expression_node&& expression_node->operation.c_str()!="n") {
-                printf("Expression Node: Operation '%s'\n", expression_node->operation.c_str());
-            }
-            else if (expression_node){
-                printf("Expression Node\n");
-            }
-            break;
+           printf("Expression\n");
+           break;
+        }
+        case VARIABLE_DECLARATIONS:{
+           printf("Variable Declarations\n");
+           break;
         }
         case IDENTIFIER_NODE_TYPE:{
           Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);
-          printf("IDENTIFIER: %s\n", Identifier_node->identifier_name.c_str());
+          printf("Identifier: %s\n", Identifier_node->identifier_name.c_str());
           break;
         }
         case TYPE_NODE:{
           Type_Node* type_node = static_cast<Type_Node*>(node);
-          printf("TYPE: %s\n", type_node->type_name.c_str());
+          printf("Type: %s\n", type_node->type_name.c_str());
           break;
         }
          case BOOLEAN_NODE: {
@@ -125,9 +105,9 @@ void print_ast(AST_Node* node, int indent) {
             std::cout << "Real : " << real_node->val << std::endl;
             break;
         }
-        case UNARY_OP: {
-            Unary_OP* unary_op_node = static_cast<Unary_OP*>(node);
-            std::cout << "Unary Operation: " << unary_op_node->operation_name << std::endl;
+        case OPERATOR: {
+            Operator* op_node = static_cast<Operator*>(node);
+            printf("Operator: %s\n", op_node->operation_name.c_str());
             break;
         }
         default:

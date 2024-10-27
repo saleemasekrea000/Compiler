@@ -25,7 +25,7 @@ void print_indent() {
 }
 %type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
-%type <node> factor simple relation expression typeDecleration arrayType 
+%type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType
 
 %start program 
 
@@ -33,7 +33,6 @@ void print_indent() {
 %token <int_val> INTEGER_LITERAL
 %token <real_val> REAL_LITERAL
 %token <bool_val> BOOLEAN_LITERAL
-%token <op_val> OPERATOR
 %token <keyword_val> IS WHILE END ROUTINE VAR INTEGER_LITERAL_KEYWORD REAL_LITERAL_KEYWORD OR AND XOR NOT RANGE REVERSE
 %token <keyword_val> BOOLEAN_LITERAL_KEYWORD RECORD ARRAY FOR RETURN THEN TRUE FALSE TYPE LOOP IN IF ELSE BREAK CONTINUE
 %token LE_OP GE_OP NE_OP
@@ -42,11 +41,12 @@ void print_indent() {
 
 program 
   : declarations { 
-      $$ = new Program_Node(); 
+      $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
       print_ast($$, 0);
     }
   ;
+
 declarations
   : declarations simpleDeclaration {
       $$ = $1;
@@ -61,33 +61,38 @@ declarations
   //     $$->children.push_back($2);
   //   }
   | /* empty */ {
-      $$ = new Declaration_Node(); 
+      $$ = new None_Terminal_Node("DECLARATION"); 
     }
   ;
 
 simpleDeclaration 
   : variableDeclaration { 
-      $$ = new SimpleDeclaration_Node();
+      $$ = new None_Terminal_Node("SIMPLE_DECLARATION");
       $$->children.push_back($1);
     }
   | typeDecleration{
-      $$ = new SimpleDeclaration_Node();
+      $$ = new None_Terminal_Node("SIMPLE_DECLARATION");
       $$->children.push_back($1);
   }
 ;
 
 variableDeclaration
   : VAR identifier IS expression ';' { 
-      $$ = new VariableDeclaration_Node();
+      $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back(new Type_Node("none"));
       $$->children.push_back($4);
     }
   | VAR identifier ':' type IS expression ';' { 
-      $$ = new VariableDeclaration_Node();
+      $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back($4);
       $$->children.push_back($6);
+    }
+  | VAR identifier ':' type';' { 
+      $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
+      $$->children.push_back($2);
+      $$->children.push_back($4);
     }
 ;
 identifier :
@@ -109,39 +114,43 @@ type
       $$ = new Type_Node("identifier");
       $$->children.push_back($1);
   }
-//   | recordType{
- //     $$ = new Type_Node("recordType");
-  //    $$->children.push_back($1);
-  // }
-   | arrayType{
+  | recordType{
+      $$ = new Type_Node("recordType");
+      $$->children.push_back($1);
+  }
+  | arrayType{
       $$ = new Type_Node("arrayType");
       $$->children.push_back($1);
-   }
+  }
 ;
 
 // normal primary_expression 
 primary_expression
 	: int_exp{
-    $$ = new Primary_Expression_Node();
+    $$ = new None_Terminal_Node("PRIMARY_EXPRESSION");
     $$->children.push_back($1);
   }
   | real_exp{
-    $$ = new Primary_Expression_Node();
+    $$ = new None_Terminal_Node("PRIMARY_EXPRESSION");
     $$->children.push_back($1);
   }
-  |  boolean_exp{
-    $$ = new Primary_Expression_Node();
+  | boolean_exp{
+    $$ = new None_Terminal_Node("PRIMARY_EXPRESSION");
     $$->children.push_back($1);
   }
-  | unary_op primary
+  | unary_op primary{
+    $$ = new None_Terminal_Node("PRIMARY_EXPRESSION");
+    $$->children.push_back($1);
+    $$->children.push_back($2);
+  }
 	| identifier{
-    $$ = new Primary_Expression_Node();
+    $$ = new None_Terminal_Node("PRIMARY_EXPRESSION");
     $$->children.push_back($1);
   }
 ;
 unary_op:
    NOT{
-    $$ = new Unary_OP("!");
+    $$ = new Operator("!");
    }
 ;
 int_exp
@@ -162,15 +171,15 @@ boolean_exp
 
 primary
  	: primary_expression{
-    $$ = new Primary_Node();
+    $$ = new None_Terminal_Node("PRIMARY_NODE");
     $$->children.push_back($1);
   }    
   | array_access_expression{
-    $$ = new Primary_Node();
+    $$ = new None_Terminal_Node("PRIMARY_NODE");
     $$->children.push_back($1);
   }     
   | record_expession_access{
-    $$ = new Primary_Node();
+    $$ = new None_Terminal_Node("PRIMARY_NODE");
     $$->children.push_back($1);
   }
 // 	// | primary '(' ')'
@@ -178,35 +187,35 @@ primary
 ;
 array_access_expression  
   : identifier '[' primary ']' {
-    $$ = new Array_Access_Node();
+    $$ = new None_Terminal_Node("ARRAY_ACCESS");
     $$->children.push_back($1);
     $$->children.push_back($3);
 
   }
   | array_access_expression '[' primary ']' {
-    $$ = new Array_Access_Node();
+    $$ = new None_Terminal_Node("ARRAY_ACCESS");
     $$->children.push_back($1);
     $$->children.push_back($3);
   }
 ;
  record_expession_access
    : identifier '.' identifier {
-     $$ = new Record_Access_Node();
+     $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
    | array_access_expression '.' identifier {
-     $$ = new Record_Access_Node();
+     $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
    | record_expession_access '.'  identifier {
-     $$ = new Record_Access_Node();
+     $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
    | record_expession_access '.' array_access_expression {
-     $$ = new Record_Access_Node();
+     $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
@@ -214,11 +223,11 @@ array_access_expression
 
 summand
    : primary{
-      $$ = new Summand_Node();
+      $$ = new None_Terminal_Node("SUMMAND");
       $$->children.push_back($1);
    }
    | '(' expression ')'{
-      $$ = new Summand_Node();
+      $$ = new None_Terminal_Node("SUMMAND");
       $$->children.push_back($2);
    }
 ;
@@ -226,124 +235,137 @@ summand
 
 factor
    : summand{
-      $$ = new Factor_Node('n');
+      $$ = new None_Terminal_Node("FACTOR");
       $$->children.push_back($1);
    }
    | factor '+' summand{
-      $$ = new Factor_Node('+');
+      $$ = new None_Terminal_Node("FACTOR");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("+"));
       $$->children.push_back($3);
    }
    | factor '-' summand{
-      $$ = new Factor_Node('-');
+      $$ = new None_Terminal_Node("FACTOR");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("-"));
       $$->children.push_back($3);
    }
 ;
 
 simple
    : factor{
-      $$ = new Simple_Node('n');
+      $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
    }
    | simple '*' factor{
-      $$ = new Simple_Node('*');
+      $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("*"));
       $$->children.push_back($3);
    }
    | simple '/' factor{
-      $$ = new Simple_Node('/');
+      $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("/"));
       $$->children.push_back($3);
    }
    | simple '%' factor{
-      $$ = new Simple_Node('%');
+      $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("%"));
       $$->children.push_back($3);
    }
  ;
 
 relation
    : simple{
-      $$ = new Relation_Node("n");
+      $$ = new None_Terminal_Node("RELATION");
       $$->children.push_back($1);
    }
    | simple '<' simple{
-     $$ = new Relation_Node("<");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("<"));
+      $$->children.push_back($3);
    }
    | simple LE_OP simple{
-     $$ = new Relation_Node("<=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("<="));
+      $$->children.push_back($3);
    }
    | simple '>' simple{
-     $$ = new Relation_Node(">");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator(">"));
+      $$->children.push_back($3);
    }
    | simple GE_OP simple{
-     $$ = new Relation_Node(">=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator(">="));
+      $$->children.push_back($3);
    }
    | simple '=' simple{
-     $$ = new Relation_Node("=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
-   }
-   | simple ASSIGN_OP simple{
-     $$ = new Relation_Node(":=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("="));
+      $$->children.push_back($3);
    }
    | simple SUB_ASSIGN simple{
-     $$ = new Relation_Node("-=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("-="));
+      $$->children.push_back($3);
    }
    | simple ADD_ASSIGN simple{
-     $$ = new Relation_Node("+=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("+="));
+      $$->children.push_back($3);
    }
    | simple MUL_ASSIGN simple{
-     $$ = new Relation_Node("*=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("*="));
+      $$->children.push_back($3);
    }
    | simple DIV_ASSIGN simple{
-     $$ = new Relation_Node("/=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("/="));
+      $$->children.push_back($3);
    }
    | simple MOD_ASSIGN simple{
-     $$ = new Relation_Node("%=");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
+      $$ = new None_Terminal_Node("RELATION");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("%="));
+      $$->children.push_back($3);
    }
 ;
 
 
  expression
    : relation {
-      $$ = new Expression_Node("n");
+      $$ = new None_Terminal_Node("EXPRESSION");
       $$->children.push_back($1);
    }
    | relation AND relation{
-      $$ = new Expression_Node("AND");
+      $$ = new None_Terminal_Node("EXPRESSION");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("and"));
       $$->children.push_back($3);
    }
    | relation OR relation{
-      $$ = new Expression_Node("OR");
+      $$ = new None_Terminal_Node("EXPRESSION");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("or"));
       $$->children.push_back($3);
    }
    | relation XOR relation{
-      $$ = new Expression_Node("XOR");
+      $$ = new None_Terminal_Node("EXPRESSION");
       $$->children.push_back($1);
+      $$->children.push_back(new Operator("xor"));
       $$->children.push_back($3);
    }
  ;
@@ -351,24 +373,34 @@ relation
 
 typeDecleration 
    : TYPE identifier IS type {
-    $$ = new Type_Decleration_Node();
+    $$ = new None_Terminal_Node("TYPE_DECLARATION");
     $$->children.push_back($2);
     $$->children.push_back($4);
    }
 ;
-/*
+
 recordType
-   : RECORD variableDeclerations END {
-      $$ = new Record_Type_Node();
-      $$->children.push_back($2);
+   : RECORD '{' variableDeclerations '}' END {
+      $$ = new None_Terminal_Node("RECORD_TYPE");
+      $$->children.push_back($3);
    }
 ;
 
-*/
+variableDeclerations
+  : variableDeclerations variableDeclaration {
+      $$ = $1;
+      $$->children.push_back($2);
+    }
+    | /* empty */ {
+      $$ = new None_Terminal_Node("VARIABLE_DECLARATIONS");
+    }
+;
+
 arrayType 
    : ARRAY '[' expression ']' type {
-      $$ = new Array_Type_Node();
+      $$ = new None_Terminal_Node("ARRAY_TYPE");
       $$->children.push_back($3);
+      $$->children.push_back($5);
    }
 ;
 
