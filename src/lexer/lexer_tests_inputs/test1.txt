@@ -1,9 +1,2 @@
-routine add_numbers(a: integer, b: integer) : integer is
-    var result: integer;
-    result := a+b;
-    return result;
-end
-
 var a :integer is 1;
 var b : integer is 2;
-add_numbers(a,b);
