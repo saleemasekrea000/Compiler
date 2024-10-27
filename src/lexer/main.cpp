@@ -42,9 +42,5 @@ int main(int argc, char *argv[])
         }
         delete tokens;
     }
-
-    // Copy the output file to ../parser/tokens.txt
-    string command = "cp " + output_file_name + " parser/tokens.txt";
-    system(command.c_str());
     return 0;
 }
