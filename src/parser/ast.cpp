@@ -40,6 +40,66 @@ void print_ast(AST_Node* node, int indent) {
             printf("ARRAY_ACCESS\n");
             break;
         }
+        case RECORD_ACCESS: {
+            printf("RECORD_ACCESS\n");
+            break;
+        }
+        case SUMMAND: {
+            printf("SUMMAND_NODE\n");
+            break;
+        }
+        case TYPE_DECLARATION: {
+            printf("TYPE_DECLARATION\n");
+            break;
+        }
+        case ARRAY_TYPE: {
+            printf("ARRAY_TYPE\n");
+            break;
+        }
+        case RECORD_TYPE: {
+            printf("RECORD_TYPE\n");
+            break;
+        }
+        case FACTOR : {
+            Factor_Node* factor_node = static_cast<Factor_Node*>(node);
+            if (factor_node&& factor_node->operation!='n') {
+                printf("Factor : Operation '%c'\n", factor_node->operation);
+            }
+            else if (factor_node&& factor_node->operation=='n') {
+                printf("Factor\n");
+            }
+            break;
+        }
+        case SIMPLE : {
+            Simple_Node* simple_node = static_cast<Simple_Node*>(node);
+            if (simple_node&& simple_node->operation!='n') {
+                printf("SIMPLE : Operation '%c'\n", simple_node->operation);
+            }
+            else if (simple_node&& simple_node->operation=='n') {
+                printf("SIMPLE\n");
+            }
+            break;
+        }
+        case RELATION: {
+            Relation_Node* relation_node = static_cast<Relation_Node*>(node);
+            if (relation_node&& relation_node->operation.c_str()!="n") {
+                printf("Relation Node: Operation '%s'\n", relation_node->operation.c_str());
+            }
+            else if (relation_node){
+                printf("Relation Node\n");
+            }
+            break;
+        }
+        case EXPRESSION: {
+            Expression_Node* expression_node = static_cast<Expression_Node*>(node);
+            if (expression_node&& expression_node->operation.c_str()!="n") {
+                printf("Expression Node: Operation '%s'\n", expression_node->operation.c_str());
+            }
+            else if (expression_node){
+                printf("Expression Node\n");
+            }
+            break;
+        }
         case IDENTIFIER_NODE_TYPE:{
           Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);
           printf("IDENTIFIER: %s\n", Identifier_node->identifier_name.c_str());

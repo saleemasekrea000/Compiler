@@ -32,8 +32,6 @@ typedef enum Node_Type
 	IDENTIFIER_NODE_TYPE,
 	VARIABLE_DECLARATION,
 	TYPE_DECLARATION,
-	ARRAY_ACCESS_EXPRESSION,
-	RECORD_EXPRESSION_ACCESS,
 	EXPRESSION,
 	STATEMENT,
 	ITERATION_STATEMENT,
@@ -47,6 +45,13 @@ typedef enum Node_Type
 	PRIMARY_EXPRESSION,
 	PRIMARY_NODE,
 	ARRAY_ACCESS,
+    RECORD_ACCESS,
+	SUMMAND,
+	FACTOR,
+	SIMPLE,
+	RELATION,
+	RECORD_TYPE,
+	ARRAY_TYPE,
 } Node_Type;
 
 class AST_Node
@@ -144,6 +149,58 @@ class Primary_Node : public AST_Node
 {
 public:
 	Primary_Node() : AST_Node(PRIMARY_NODE) {}
+};
+class Record_Access_Node : public AST_Node
+{
+public:
+	Record_Access_Node() : AST_Node(RECORD_ACCESS) {}
+};
+
+class Record_Type_Node : public AST_Node
+{
+public:
+	Record_Type_Node() : AST_Node(RECORD_TYPE) {}
+};
+class Array_Type_Node : public AST_Node
+{
+public:
+	Array_Type_Node() : AST_Node(ARRAY_TYPE) {}
+};
+
+
+class Summand_Node : public AST_Node {
+public:
+    Summand_Node()
+        : AST_Node(SUMMAND){}
+};
+class Type_Decleration_Node : public AST_Node {
+public:
+    Type_Decleration_Node()
+        : AST_Node(TYPE_DECLARATION){}
+};
+class Factor_Node : public AST_Node {
+public:
+    char operation;
+    Factor_Node(char op)
+        : AST_Node(FACTOR), operation(op) {}
+};
+class Simple_Node : public AST_Node {
+public:
+    char operation;
+    Simple_Node(char op)
+        : AST_Node(SIMPLE), operation(op) {}
+};
+class Relation_Node : public AST_Node {
+public:
+    std::string operation;
+    Relation_Node(const std::string & op)
+        : AST_Node(RELATION), operation(op) {}
+};
+class Expression_Node : public AST_Node {
+public:
+    std::string operation;
+    Expression_Node(const std::string & op)
+        : AST_Node(EXPRESSION), operation(op) {}
 };
 void print_ast(AST_Node *node, int indent);
 #endif // AST_H
