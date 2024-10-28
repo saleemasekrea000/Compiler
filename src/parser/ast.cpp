@@ -92,6 +92,14 @@ void print_ast(AST_Node* node, int indent) {
             printf("For statement\n");
             break;
         }
+        case IF_STATEMENT_ELSE:{
+            printf("if and else statement\n");
+            break;
+        } 
+        case IF_STATEMENT:{
+            printf("if statement\n");
+            break;
+        }
         case ASSIGN_STATEMENT:{
             printf("Assignment statement\n");
             break;

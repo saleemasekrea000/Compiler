@@ -62,6 +62,8 @@ typedef enum Node_Type
     RANGE_REVERSE,
     RANGE_EX,
     ASSIGN_STATEMENT,
+    IF_STATEMENT,
+    IF_STATEMENT_ELSE,
 } Node_Type;
 
 class AST_Node
@@ -101,9 +103,11 @@ private:
             {"WHILE_STATEMENT", WHILE_STATEMENT},
             {"BODY", BODY},
             {"FOR_STATEMENT",FOR_STATEMENT},
-            {"RANGE", RANGE_EX},
+            {"RANGE_EX", RANGE_EX},
             {"RANGE_REVERSE",RANGE_REVERSE},
             {"ASSIGN_STATEMENT", ASSIGN_STATEMENT},
+            {"IF_STATEMENT",IF_STATEMENT},
+            {"IF_STATEMENT_ELSE", IF_STATEMENT_ELSE}
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())

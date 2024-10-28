@@ -26,7 +26,7 @@ void print_indent() {
 %type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
 %type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType
-%type <node> body while_expression iteration_statement statement range for_expression assign_expression
+%type <node> body while_expression iteration_statement statement range for_expression assign_expression IfStatement
 
 
 %start program 
@@ -414,9 +414,26 @@ statement :
    | assign_expression{
     $$ = new None_Terminal_Node("STATEMENT");
     $$->children.push_back($1);
-  }
+   }
+   | IfStatement{
+    $$ = new None_Terminal_Node("STATEMENT");
+    $$->children.push_back($1);
+   }
 ;
 
+IfStatement
+  : IF expression THEN body END {
+    $$ = new None_Terminal_Node("IF_STATEMENT");
+    $$->children.push_back($2);
+    $$->children.push_back($4);
+  }
+  | IF expression THEN body ELSE body END {
+    $$ = new None_Terminal_Node("IF_STATEMENT_ELSE");
+    $$->children.push_back($2);
+    $$->children.push_back($4);
+    $$->children.push_back($6);
+  }
+;
 assign_expression 
   : primary ASSIGN_OP expression ';'{
     $$ = new None_Terminal_Node("ASSIGN_STATEMENT");

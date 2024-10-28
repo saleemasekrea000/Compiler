@@ -1,1 +1,5 @@
-real := 1
+if 3 > 5 then 
+     ans := arr[i][j] ;
+else 
+   ans := arr[i][j] ;
+end
