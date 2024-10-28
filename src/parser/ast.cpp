@@ -128,12 +128,32 @@ void print_ast(AST_Node* node, int indent) {
             printf("Jump Statement\n");
             break;
         }
+        case Argument_Expression_List: {
+            printf("Arguments Expression List\n");
+            break;
+        }
         case VARIABLE_DECLARATIONS:{
            printf("Variable Declarations\n");
            break;
         }
+        case Routine_Call:{
+            printf("Routine_Call\n");
+            break;
+        }
         case BREAK_EX:{
             printf("BREAK\n");
+            break;
+        }
+        case PARAMETER_DECLERATION:{
+            printf("PARAMETER_DECLERATION\n");
+            break;
+        }
+        case PARAMETERS_EXPRESSION_LIST:{
+            printf("PARAMETERS_EXPRESSION_LIST\n");
+            break;
+        }
+        case ROUTINE_DECLERATION:{
+            printf("ROUTINE_DECLERATION\n");
             break;
         }
         case IDENTIFIER_NODE_TYPE:{

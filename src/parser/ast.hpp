@@ -7,24 +7,6 @@
 #include <memory>
 #include <unordered_map>
 
-// // Define the structure for AST nodes
-// typedef struct ASTNode
-// {
-//   char *nodeType;
-//   char *nodeName;
-//   struct ASTNode *left;
-//   struct ASTNode *right;
-//   struct ASTNode *next;
-//   char *type;
-//   int intValue;
-//   float floatValue;
-// } ASTNode;
-
-// // Function to create a new AST node
-// ASTNode *create_node(char *nodeType, char *nodeName, ASTNode *left, ASTNode *right, ASTNode *next, char *type, int intValue, float floatValue);
-
-// // Function to print the AST
-// void print_ast(ASTNode *node, int indent);
 
 typedef enum Node_Type
 {
@@ -68,6 +50,11 @@ typedef enum Node_Type
     RETURN_EX,
     CONTINUE_EX,
     BREAK_EX,
+    Routine_Call,
+    Argument_Expression_List,
+    PARAMETER_DECLERATION,
+    PARAMETERS_EXPRESSION_LIST,
+    ROUTINE_DECLERATION,
 } Node_Type;
 
 class AST_Node
@@ -116,6 +103,11 @@ private:
             {"RETURN_EX", RETURN_EX},
             {"CONTINUE_EX", CONTINUE_EX},
             {"BREAK_EX",BREAK_EX},
+            {"Routine_Call",Routine_Call},
+            {"Argument_Expression_List", Argument_Expression_List},
+            {"PARAMETER_DECLERATION", PARAMETER_DECLERATION},
+            {"PARAMETERS_EXPRESSION_LIST",PARAMETERS_EXPRESSION_LIST},
+            {"ROUTINE_DECLERATION",ROUTINE_DECLERATION}
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())

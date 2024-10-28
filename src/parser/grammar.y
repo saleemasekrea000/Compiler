@@ -27,7 +27,7 @@ void print_indent() {
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
 %type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType jumpStatement
 %type <node> body while_expression iteration_statement statement range for_expression assign_expression IfStatement
-%type <node>return_exp break_exp continue_exp
+%type <node>return_exp break_exp continue_exp routine_call argument_expression_list parameter_decleration parameters_list routine_deceration
 
 %start program 
 
@@ -58,15 +58,51 @@ declarations
       $$ = $1;
       $$->children.push_back($2);
     }
-  // | declarations function {
-  //     $$ = $1;
-  //     $$->children.push_back($2);
-  //   }
+  | declarations routine_deceration {
+       $$ = $1;
+       $$->children.push_back($2);
+     }
+
   | /* empty */ {
       $$ = new None_Terminal_Node("DECLARATION"); 
     }
   ;
 
+routine_deceration 
+   : ROUTINE identifier '(' parameters_list ')' IS body END{
+      $$ = new None_Terminal_Node("ROUTINE_DECLERATION");
+      $$->children.push_back($2);
+      $$->children.push_back($4);
+      $$->children.push_back($7);
+   }
+   | ROUTINE identifier '(' parameters_list ')' ':' type IS body END{
+      $$ = new None_Terminal_Node("ROUTINE_DECLERATION");
+      $$->children.push_back($2);
+      $$->children.push_back($4);
+      $$->children.push_back($7);
+      $$->children.push_back($9);
+   } 
+;
+parameters_list 
+  : parameter_decleration {
+      $$ = new None_Terminal_Node("PARAMETERS_EXPRESSION_LIST");
+      $$->children.push_back($1);
+    }
+  | parameters_list',' parameter_decleration {
+      $$ = $1;
+      $$->children.push_back($3);
+    }
+  | /* empty */ {
+      $$ = new None_Terminal_Node("PARAMETERS_EXPRESSION_LIST");
+    }
+;
+parameter_decleration 
+    : identifier ':' type  { 
+      $$ = new None_Terminal_Node("PARAMETER_DECLERATION");
+      $$->children.push_back($1);
+      $$->children.push_back($3);
+    } 
+;
 simpleDeclaration 
   : variableDeclaration { 
       $$ = new None_Terminal_Node("SIMPLE_DECLARATION");
@@ -184,8 +220,32 @@ primary
     $$ = new None_Terminal_Node("PRIMARY_NODE");
     $$->children.push_back($1);
   }
-// 	// | primary '(' ')'
-// 	// | primary '(' argument_expression_list ')'
+  | routine_call{
+    $$ = new None_Terminal_Node("PRIMARY_NODE");
+    $$->children.push_back($1);
+  }
+;
+
+routine_call
+  : identifier '(' argument_expression_list ')' {
+      $$ = new None_Terminal_Node("Routine_Call");
+      $$->children.push_back($1);
+      $$->children.push_back($3);
+    }
+;
+
+argument_expression_list
+  : expression {
+      $$ = new None_Terminal_Node("Argument_Expression_List");
+      $$->children.push_back($1);
+    }
+  | argument_expression_list ',' expression {
+      $$ = $1;
+      $$->children.push_back($3);
+    }
+  | /* empty */ {
+      $$ = new None_Terminal_Node("Argument_Expression_List");
+    }
 ;
 array_access_expression  
   : identifier '[' primary ']' {
@@ -420,6 +480,10 @@ statement :
     $$->children.push_back($1);
    }
    | jumpStatement{
+    $$ = new None_Terminal_Node("STATEMENT");
+    $$->children.push_back($1);
+   }
+   | routine_call ';' {
     $$ = new None_Terminal_Node("STATEMENT");
     $$->children.push_back($1);
    }
