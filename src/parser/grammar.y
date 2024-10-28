@@ -25,9 +25,9 @@ void print_indent() {
 }
 %type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
-%type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType
+%type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType jumpStatement
 %type <node> body while_expression iteration_statement statement range for_expression assign_expression IfStatement
-
+%type <node>return_exp break_exp continue_exp
 
 %start program 
 
@@ -419,6 +419,43 @@ statement :
     $$ = new None_Terminal_Node("STATEMENT");
     $$->children.push_back($1);
    }
+   | jumpStatement{
+    $$ = new None_Terminal_Node("STATEMENT");
+    $$->children.push_back($1);
+   }
+;
+jumpStatement 
+  : return_exp {
+    $$ = new None_Terminal_Node("JUMP_STATEMENT");
+    $$->children.push_back($1);
+  }
+  | continue_exp {
+    $$ = new None_Terminal_Node("JUMP_STATEMENT");
+    $$->children.push_back($1);
+  }
+  | break_exp {
+    $$ = new None_Terminal_Node("JUMP_STATEMENT");
+    $$->children.push_back($1);
+  }
+;
+return_exp
+ : RETURN ';'{
+   $$ = new None_Terminal_Node("RETURN_EX");
+ }
+ | RETURN expression ';' {
+     $$ = new None_Terminal_Node("RETURN_EX");
+     $$->children.push_back($2);
+ }
+;
+continue_exp 
+ : CONTINUE ';'{
+     $$ = new None_Terminal_Node("CONTINUE_EX");
+ }
+;
+break_exp 
+ : BREAK ';'{
+     $$ = new None_Terminal_Node("BREAK_EX");
+ }
 ;
 
 IfStatement

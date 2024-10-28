@@ -1,5 +1,3 @@
-if 3 > 5 then 
-     ans := arr[i][j] ;
-else 
-   ans := arr[i][j] ;
+for i in reverse 1 .. n loop
+    break;
 end

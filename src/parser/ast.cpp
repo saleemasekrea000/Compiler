@@ -113,12 +113,28 @@ void print_ast(AST_Node* node, int indent) {
             break;
         }
         case BODY:{
-            printf("body\n");
+            printf("Body\n");
+            break;
+        }
+        case CONTINUE_EX:{
+            printf("CONTINUE\n");
+            break;
+        }
+        case RETURN_EX:{
+            printf("Return\n");
+            break;
+        }
+        case JUMP_STATEMENT:{
+            printf("Jump Statement\n");
             break;
         }
         case VARIABLE_DECLARATIONS:{
            printf("Variable Declarations\n");
            break;
+        }
+        case BREAK_EX:{
+            printf("BREAK\n");
+            break;
         }
         case IDENTIFIER_NODE_TYPE:{
           Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);

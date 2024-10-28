@@ -64,6 +64,10 @@ typedef enum Node_Type
     ASSIGN_STATEMENT,
     IF_STATEMENT,
     IF_STATEMENT_ELSE,
+    JUMP_STATEMENT,
+    RETURN_EX,
+    CONTINUE_EX,
+    BREAK_EX,
 } Node_Type;
 
 class AST_Node
@@ -107,7 +111,11 @@ private:
             {"RANGE_REVERSE",RANGE_REVERSE},
             {"ASSIGN_STATEMENT", ASSIGN_STATEMENT},
             {"IF_STATEMENT",IF_STATEMENT},
-            {"IF_STATEMENT_ELSE", IF_STATEMENT_ELSE}
+            {"IF_STATEMENT_ELSE", IF_STATEMENT_ELSE},
+            {"JUMP_STATEMENT", JUMP_STATEMENT},
+            {"RETURN_EX", RETURN_EX},
+            {"CONTINUE_EX", CONTINUE_EX},
+            {"BREAK_EX",BREAK_EX},
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())

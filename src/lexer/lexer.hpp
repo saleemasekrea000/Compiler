@@ -50,6 +50,7 @@ private:
         keywords["real"] = TokenType::KEYWORD;
         keywords["boolean"] = TokenType::KEYWORD;
         keywords["var"] = TokenType::KEYWORD;
+        keywords["break"] = TokenType::KEYWORD;
     }
     bool is_identifier(const string &s);
     bool is_bracket(char c);
