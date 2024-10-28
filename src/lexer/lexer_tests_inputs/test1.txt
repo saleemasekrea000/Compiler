@@ -5,3 +5,5 @@ routine Fibonacci (n:integer) : integer is
      end 
       var x1 : integer is n - 1 ;
 end 
+
+Fibonacci(1);

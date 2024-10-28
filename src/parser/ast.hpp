@@ -180,4 +180,5 @@ bool check_return(AST_Node* node, bool inside_function);
 bool check_continue(AST_Node* node, bool inside_loop);
 bool check_break(AST_Node* node, bool inside_loop);
 void optimize(AST_Node* node);
+void remove_unused(AST_Node* root);
 #endif // AST_H

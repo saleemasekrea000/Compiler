@@ -1,53 +1,64 @@
-Program
-  Declarations
-    Routine Decleration
-      Identifier: Fibonacci
-      Parameters Expression List
-        Parameter Decleration
-          Identifier: n
-          Type: integer
-      Type: integer
-      Body
-        Statement
-          Iteration statement
-            For statement
-              Identifier: i
-              Range
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Integer : 1
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Identifier: n
-              Body
-                Statement
-                  Jump Statement
-                    Continue
-        Simple declaration
-          Variable declaration
-            Identifier: x1
-            Type: integer
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Factor
-                      Summand
-                        Primary node
-                          Primary expresson
-                            Identifier: n
-                    Operator: -
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Integer : 1
+OPERATOR /
+OPERATOR /
+IDENTIFIER calculate
+IDENTIFIER the
+IDENTIFIER fibonacci
+IDENTIFIER of
+IDENTIFIER a
+IDENTIFIER number
+ROUTINE routine
+IDENTIFIER Fibonacci
+LPAR (
+IDENTIFIER n
+PUNCTUATOR :
+IS is
+INTEGER_LITERAL_KEYWORD integer
+RPAR )
+IS is
+IF if
+IDENTIFIER n
+OPERATOR <
+INTEGER_LITERAL 0
+THEN then
+RETURN return
+INTEGER_LITERAL 1
+END end
+VAR var
+IDENTIFIER x1
+PUNCTUATOR :
+IS is
+IDENTIFIER n
+OPERATOR -
+INTEGER_LITERAL 1
+PUNCTUATOR ;
+VAR var
+IDENTIFIER x2
+PUNCTUATOR :
+IS is
+IDENTIFIER n
+OPERATOR -
+INTEGER_LITERAL 2
+PUNCTUATOR ;
+RETURN return
+IDENTIFIER Fibonacci
+LPAR (
+IDENTIFIER x1
+RPAR )
+OPERATOR +
+IDENTIFIER Fibonacci
+LPAR (
+IDENTIFIER x2
+RPAR )
+PUNCTUATOR ;
+END end
+VAR var
+IDENTIFIER x
+PUNCTUATOR :
+IS is
+INTEGER_LITERAL 6
+PUNCTUATOR ;
+IDENTIFIER Fibonacci
+LPAR (
+INTEGER_LITERAL 6
+RPAR )
+PUNCTUATOR ;

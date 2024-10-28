@@ -163,7 +163,9 @@ void remove_unreachable_code(AST_Node* node){
     }   
     int cnt=1e9;
     for(int i=0; i<(node->children).size();i++){
-        if((node->children)[i]->type==STATEMENT&&(node->children)[i]->children.size()>0&&(node->children)[i]->children[i]->type==JUMP_STATEMENT){
+        if((node->children)[i]->type==STATEMENT&& 
+           ((node->children)[i]->children).size()>0 &&
+            (node->children)[i]->children[0]->type==JUMP_STATEMENT){
             cnt=i;
             break;
         }
@@ -176,7 +178,42 @@ void remove_unreachable_code(AST_Node* node){
         remove_unreachable_code(child);
     }
 }  
+std::string get_function_name(AST_Node* node){
+    return static_cast<Identifier_Node*>(node->children[0])->identifier_name;
+}
+bool check_routine_usage(AST_Node* node , std::string function_name){
+    if(node->type==Routine_Call&&function_name==get_function_name(node))return 1;
+    int ans=0;
+    for (const auto& child : node->children) {
+        ans|=check_routine_usage(child,function_name);
+    }
+    return ans;
+}
+void remove_unused_routines(AST_Node* node){
+    if (!node) {
+        return; 
+    }
+    int numberOfChildren=node->children.size();
+    for(int i=0;i<numberOfChildren;i++){
+        AST_Node* child=node->children[i];
+        if(child->type!=ROUTINE_DECLERATION)continue;
+        bool add=false;
+        for(int j=i+1;j<numberOfChildren;j++){
+            add|=check_routine_usage(node->children[j],get_function_name(node->children[i]));
+        }
+        if(!add){
+           node->children.erase(node->children.begin()+i);
+        }
+    }
+    for (const auto& child : node->children) {
+        remove_unused_routines(child);
+    }
+}
+void remove_unused(AST_Node* root){
+    remove_unused_routines(root);
+    print_ast(root,0);
+}
 void optimize(AST_Node* root){
     remove_unreachable_code(root);
-    print_ast(root,0);
+    remove_unused(root);
 }
