@@ -26,7 +26,7 @@ void print_indent() {
 %type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
 %type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType
-%type <node> body while_expression iteration_statement statement
+%type <node> body while_expression iteration_statement statement range for_expression
 
 
 %start program 
@@ -406,8 +406,6 @@ arrayType
    }
 ;
 
-
-
 statement :
    iteration_statement{
     $$ = new None_Terminal_Node("STATEMENT");
@@ -420,7 +418,10 @@ iteration_statement
     $$ = new None_Terminal_Node("ITERATION_STATEMENT");
     $$->children.push_back($1);
   }
-//   |  for_expression
+  | for_expression{
+    $$ = new None_Terminal_Node("ITERATION_STATEMENT");
+    $$->children.push_back($1);
+  }
 ;
 while_expression :
    WHILE expression LOOP body END{
@@ -443,13 +444,26 @@ body
     }
   ;
 
-// for_expression :
-//   FOR IDENTIFIER range LOOP body END  
-// ;
-// range :
-//   IN expression RANGE expression 
-//   | IN REVERSE expression RANGE expression
-// ;
+for_expression :
+   FOR identifier range LOOP body END{
+      $$ = new None_Terminal_Node("FOR_STATEMENT");
+      $$->children.push_back($2);
+      $$->children.push_back($3);
+      $$->children.push_back($5);
+   }  
+;
+range :
+   IN expression RANGE expression {
+     $$ = new None_Terminal_Node("RANGE_EX");
+     $$->children.push_back($2);
+     $$->children.push_back($4);
+   } 
+   | IN REVERSE expression RANGE expression{
+     $$ = new None_Terminal_Node("RANGE_REVERSE");
+     $$->children.push_back($3);
+     $$->children.push_back($5);
+   }
+;
 
 %%
 

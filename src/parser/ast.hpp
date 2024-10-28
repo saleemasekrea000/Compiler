@@ -58,6 +58,9 @@ typedef enum Node_Type
     INVALID,
     OPERATOR,
     BODY,
+    FOR_STATEMENT,
+    RANGE_REVERSE,
+    RANGE_EX,
 } Node_Type;
 
 class AST_Node
@@ -96,6 +99,9 @@ private:
             {"ITERATION_STATEMENT", ITERATION_STATEMENT},
             {"WHILE_STATEMENT", WHILE_STATEMENT},
             {"BODY", BODY},
+            {"FOR_STATEMENT",FOR_STATEMENT},
+            {"RANGE", RANGE_EX},
+            {"RANGE_REVERSE",RANGE_REVERSE},
 
         };
         auto it = type_map.find(type_name);

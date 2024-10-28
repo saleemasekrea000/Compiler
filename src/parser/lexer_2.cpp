@@ -58,6 +58,7 @@ int yylex()
   else if (tokenValue == "^") return '^';
   else if (tokenValue == "|") return '|';
   else if (tokenType == "IS") return IS;
+  else if (tokenType == "REVERSE") return REVERSE;
   else if (tokenType == "WHILE") return WHILE;
   else if (tokenType == "ROUTINE")return ROUTINE;
   else if (tokenType == "END") return END;
@@ -80,10 +81,10 @@ int yylex()
   else if(tokenType=="RECORD") return RECORD;
   else if(tokenType=="TYPE") return TYPE;
   else if (tokenType=="VAR") return VAR;
-  else if (tokenType=="REVERSE") return REVERSE;
   else if (tokenType=="INTEGER_LITERAL_KEYWORD") return INTEGER_LITERAL_KEYWORD;
   else if (tokenType=="REAL_LITERAL_KEYWORD") return REAL_LITERAL_KEYWORD;
   else if (tokenType=="BOOLEAN_LITERAL_KEYWORD") return BOOLEAN_LITERAL_KEYWORD;
+  else if (tokenType=="RANGE")return RANGE;
   else if (tokenType == "IDENTIFIER")
   {
     yylval.id_val = strdup(tokenValue.c_str());
@@ -101,7 +102,10 @@ int yylex()
   }
   else if (tokenType == "BOOLEAN_LITERAL")
   {
-    yylval.bool_val = std::stoi(tokenValue);
+    if (tokenValue == "true") 
+        yylval.bool_val = true;
+    else if (tokenValue == "false") 
+        yylval.bool_val = false;
     return BOOLEAN_LITERAL;
   }
   return -1;

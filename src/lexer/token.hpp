@@ -34,7 +34,7 @@ enum TokenType
     IDENTIFIER,
     INTEGER_LITERAL,
     REAL_LITERAL,
-    BOOL_LITERAL,
+    BOOLEAN_LITERAL,
     VAR_LITERAL,
     OPERATOR,
     ERROR,
@@ -46,6 +46,7 @@ enum TokenType
     RERLPR,
     RANGE,
     PUNCTUATOR,
+    REVERSE,
 };
 
 class Token
@@ -68,6 +69,7 @@ public:
             {ROUTINE, "ROUTINE"},
             {END, "END"},
             {BREAK, "BREAK"},
+            {REVERSE, "REVERSE"},
             {RETURN, "RETURN"},
             {NOT, "NOT"},
             {XOR, "XOR"},
@@ -92,7 +94,7 @@ public:
             {IDENTIFIER, "IDENTIFIER"},
             {INTEGER_LITERAL, "INTEGER_LITERAL"},
             {REAL_LITERAL, "REAL_LITERAL"},
-            {BOOL_LITERAL, "BOOL_LITERAL"},
+            {BOOLEAN_LITERAL, "BOOLEAN_LITERAL"},
             {VAR_LITERAL, "VAR_LITERAL"},
             {OPERATOR, "OPERATOR"},
             {ERROR, "ERROR"},

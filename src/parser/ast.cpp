@@ -88,6 +88,18 @@ void print_ast(AST_Node* node, int indent) {
             printf("While statement\n");
             break;
         }
+        case FOR_STATEMENT:{
+            printf("For statement\n");
+            break;
+        }
+        case RANGE_EX:{
+            printf("Range\n");
+            break;
+        }
+        case RANGE_REVERSE:{
+            printf("Range reverse\n");
+            break;
+        }
         case BODY:{
             printf("body\n");
             break;

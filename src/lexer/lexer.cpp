@@ -214,8 +214,8 @@ TokenType Lexer::token_type(const string &s)
         else if (s=="for") return FOR;
         else if(s=="loop") return LOOP;
         else if (s == "array") return ARRAY;
-        else if (s=="false") return FALSE;
-        else if(s=="true") return TRUE;
+        else if (s=="false") return BOOLEAN_LITERAL;
+        else if(s=="true") return BOOLEAN_LITERAL;
         else if(s=="record") return RECORD;
         else if(s=="type") return TYPE;
         else if (s=="var") return VAR;
@@ -224,6 +224,7 @@ TokenType Lexer::token_type(const string &s)
         else if (s=="boolean") return BOOLEAN_LITERAL_KEYWORD;
         else if (s=="continue") return CONTINUE;
         else if (s=="var") return VAR;
+        else if (s=="reverse") return REVERSE;
     }
     if (s == "..")
         return TokenType::RANGE;
@@ -234,7 +235,7 @@ TokenType Lexer::token_type(const string &s)
         return TokenType::PUNCTUATOR;
     }
     if (is_boolean(s))
-        return TokenType::BOOL_LITERAL;
+        return TokenType::BOOLEAN_LITERAL;
     if (is_integer(s))
         return TokenType::INTEGER_LITERAL;
     if (is_real(s))
