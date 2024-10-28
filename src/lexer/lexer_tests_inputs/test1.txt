@@ -1,12 +1,7 @@
 routine Fibonacci (n:integer) : integer is 
-      if n < 0 then   
-        return 1; 
-      end 
+      for i in 1 .. n loop 
+         real_vl := real_va + arr[i];
+         continue;
+     end 
       var x1 : integer is n - 1 ;
-      var x2 : integer is n - 2 ; 
-      return Fibonacci(x1);   
 end 
-
-var x : integer is 6;
-
-Fibonacci(6);

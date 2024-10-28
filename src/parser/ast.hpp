@@ -175,4 +175,8 @@ public:
 
 
 void print_ast(AST_Node *node, int indent);
+void check_correct_keywords_usage(AST_Node *node);
+bool check_return(AST_Node* node, bool inside_function);
+bool check_continue(AST_Node* node, bool inside_loop);
+bool check_break(AST_Node* node, bool inside_loop);
 #endif // AST_H

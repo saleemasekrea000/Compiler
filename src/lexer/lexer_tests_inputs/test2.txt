@@ -1,4 +1,3 @@
-// 2. calculate the factorial of a number
 routine Factorial(n: integer) is 
    var ans : integer is 1;
    while n > 0 loop 

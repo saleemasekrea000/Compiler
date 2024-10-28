@@ -196,3 +196,60 @@ void print_ast(AST_Node* node, int indent) {
         print_ast(child, indent + 1); // Increase indentation for child nodes
     }
 }
+bool check_return (AST_Node* node, bool inside_function){
+   if(node->type==RETURN_EX && !inside_function){
+     return 0;
+   }
+   bool cur_inside=inside_function;
+   if(node->type==ROUTINE_DECLERATION){
+     cur_inside=1;
+   }
+   bool ans=1;
+   for (const auto& child : node->children) {
+        ans&=check_return(child, cur_inside);
+   }
+   return ans;
+}
+bool check_continue (AST_Node* node, bool inside_loop){
+   if(node->type==CONTINUE_EX && !inside_loop){
+     return 0;
+   }
+   bool cur_inside=inside_loop;
+   if(node->type==ITERATION_STATEMENT){
+     cur_inside=1;
+   }
+   bool ans=1;
+   for (const auto& child : node->children) {
+        ans&=check_continue(child, cur_inside);
+   }
+   return ans;
+}
+bool check_break (AST_Node* node, bool inside_loop){
+   if(node->type==BREAK_EX && !inside_loop){
+     return 0;
+   }
+   bool cur_inside=inside_loop;
+   if(node->type==ITERATION_STATEMENT){
+     cur_inside=1;
+   }
+   bool ans=1;
+   for (const auto& child : node->children) {
+        ans&=check_break(child, cur_inside);
+   }
+   return ans;
+}
+void check_correct_keywords_usage(AST_Node* root){
+    
+    if (!check_return(root,0)){
+        printf("Return statement exist outside of a function\n");
+        return ;
+    }
+    if (!check_continue(root,0)){
+        printf("Continue statement exist outside of a loop\n");
+        return ;
+    }
+    if (!check_break(root,0)){
+        printf("Break statement exist outside of a loop\n");
+        return ;
+    }
+}
