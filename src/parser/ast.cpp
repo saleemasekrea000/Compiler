@@ -156,3 +156,27 @@ void check_correct_keywords_usage(AST_Node* root){
         return ;
     }
 }
+
+void remove_unreachable_code(AST_Node* node){
+    if (!node) {
+        return; 
+    }   
+    int cnt=1e9;
+    for(int i=0; i<(node->children).size();i++){
+        if((node->children)[i]->type==STATEMENT&&(node->children)[i]->children.size()>0&&(node->children)[i]->children[i]->type==JUMP_STATEMENT){
+            cnt=i;
+            break;
+        }
+    }
+    cnt++;
+    while((node->children).size()>cnt){
+        (node->children).pop_back();
+    }
+    for (const auto& child : node->children) {
+        remove_unreachable_code(child);
+    }
+}  
+void optimize(AST_Node* root){
+    remove_unreachable_code(root);
+    print_ast(root,0);
+}

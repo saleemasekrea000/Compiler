@@ -47,6 +47,7 @@ program
       $$->children.push_back($1); 
       print_ast($$, 0);
       check_correct_keywords_usage($$);
+      optimize($$);
     }
   ;
 

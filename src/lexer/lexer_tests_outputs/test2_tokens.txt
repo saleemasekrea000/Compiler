@@ -1,42 +1,75 @@
-ROUTINE routine
-IDENTIFIER Factorial
-LPAR (
-IDENTIFIER n
-PUNCTUATOR :
-INTEGER_LITERAL_KEYWORD integer
-RPAR )
-IS is
-VAR var
-IDENTIFIER ans
-PUNCTUATOR :
-INTEGER_LITERAL_KEYWORD integer
-IS is
-INTEGER_LITERAL 1
-PUNCTUATOR ;
-WHILE while
-IDENTIFIER n
-OPERATOR >
-INTEGER_LITERAL 0
-LOOP loop
-IDENTIFIER ans
-OPERATOR :=
-IDENTIFIER ans
-OPERATOR *
-IDENTIFIER n
-PUNCTUATOR ;
-IDENTIFIER n
-OPERATOR :=
-IDENTIFIER n
-OPERATOR -
-INTEGER_LITERAL 1
-PUNCTUATOR ;
-END end
-RETURN return
-IDENTIFIER ans
-PUNCTUATOR ;
-END end
-IDENTIFIER Factorial
-LPAR (
-INTEGER_LITERAL 5
-RPAR )
-PUNCTUATOR ;
+Program
+  Declarations
+    Routine Decleration
+      Identifier: Fibonacci
+      Parameters Expression List
+        Parameter Decleration
+          Identifier: n
+          Type: integer
+      Type: integer
+      Body
+        Statement
+          Iteration statement
+            For statement
+              Identifier: i
+              Range
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Integer : 1
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Identifier: n
+              Body
+                Statement
+                  Jump Statement
+                    Continue
+                Statement
+                  Assignment statement
+                    Primary node
+                      Primary expresson
+                        Identifier: real_vl
+                    Expression
+                      Relation
+                        Simple
+                          Factor
+                            Factor
+                              Summand
+                                Primary node
+                                  Primary expresson
+                                    Identifier: real_va
+                            Operator: +
+                            Summand
+                              Primary node
+                                Array access
+                                  Identifier: arr
+                                  Primary node
+                                    Primary expresson
+                                      Identifier: i
+        Simple declaration
+          Variable declaration
+            Identifier: x1
+            Type: integer
+            Expression
+              Relation
+                Simple
+                  Factor
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Identifier: n
+                    Operator: -
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer : 1
