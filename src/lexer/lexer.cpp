@@ -26,6 +26,7 @@ string Lexer::next_token_content(Token last_token)
             ind++;
             return ret;
         }
+        
         if (code[ind] == '.')
         {
             if (ret == "" && code[ind + 1] == '.' && code[ind + 2] == ' ')
@@ -52,11 +53,11 @@ string Lexer::next_token_content(Token last_token)
         }
         string cur = "";
         cur += code[ind];
-        if (ret != "" && is_operator(cur))
+        if (ret != "" && ( is_operator(cur)))
         {
             return ret;
         }
-        if (ret == "" && is_operator(cur))
+        if (ret == "" && (is_operator(cur)))
         {
             if (code[ind] == '=')
             {
@@ -84,6 +85,11 @@ string Lexer::next_token_content(Token last_token)
                 return ret;
             ret = code[ind];
             ind++;
+            if(ret==":" && code[ind]=='='){
+             // std::cout<<ret<<'\n'<<endl;
+              ret+=code[ind];
+              ind++;
+            }
             return ret;
         }
         if (code[ind] == '/' && code[ind + 1] == '/')
@@ -172,7 +178,7 @@ bool Lexer::is_pancutator(char c)
 }
 bool Lexer::is_operator(const string &s)
 {
-    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=", "%="};
+    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=", "%=", ":="};
     return operators.find(s) != operators.end();
 }
 

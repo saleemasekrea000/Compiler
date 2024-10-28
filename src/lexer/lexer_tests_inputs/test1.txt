@@ -1,3 +1,1 @@
-for i in reverse 1 .. n loop
-    var x : integer is 5;
-end
+real := 1

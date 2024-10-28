@@ -92,6 +92,10 @@ void print_ast(AST_Node* node, int indent) {
             printf("For statement\n");
             break;
         }
+        case ASSIGN_STATEMENT:{
+            printf("Assignment statement\n");
+            break;
+        }
         case RANGE_EX:{
             printf("Range\n");
             break;

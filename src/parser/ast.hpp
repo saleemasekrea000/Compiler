@@ -61,6 +61,7 @@ typedef enum Node_Type
     FOR_STATEMENT,
     RANGE_REVERSE,
     RANGE_EX,
+    ASSIGN_STATEMENT,
 } Node_Type;
 
 class AST_Node
@@ -102,7 +103,7 @@ private:
             {"FOR_STATEMENT",FOR_STATEMENT},
             {"RANGE", RANGE_EX},
             {"RANGE_REVERSE",RANGE_REVERSE},
-
+            {"ASSIGN_STATEMENT", ASSIGN_STATEMENT},
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())
