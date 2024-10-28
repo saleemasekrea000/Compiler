@@ -76,6 +76,22 @@ void print_ast(AST_Node* node, int indent) {
            printf("Expression\n");
            break;
         }
+        case STATEMENT: {
+            printf("Statement\n");
+            break;
+        }
+        case ITERATION_STATEMENT:{
+            printf("Iteration statement\n");
+            break;
+        }
+        case WHILE_STATEMENT:{
+            printf("While statement\n");
+            break;
+        }
+        case BODY:{
+            printf("body\n");
+            break;
+        }
         case VARIABLE_DECLARATIONS:{
            printf("Variable Declarations\n");
            break;

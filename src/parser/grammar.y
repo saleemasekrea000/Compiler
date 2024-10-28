@@ -26,6 +26,8 @@ void print_indent() {
 %type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
 %type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType
+%type <node> body while_expression iteration_statement statement
+
 
 %start program 
 
@@ -52,10 +54,10 @@ declarations
       $$ = $1;
       $$->children.push_back($2);
     }
-  // | declarations statement {
-  //     $$ = $1;
-  //     $$->children.push_back($2);
-  //   }
+  | declarations statement {
+      $$ = $1;
+      $$->children.push_back($2);
+    }
   // | declarations function {
   //     $$ = $1;
   //     $$->children.push_back($2);
@@ -404,24 +406,43 @@ arrayType
    }
 ;
 
-// body :
-//   statement
-//   | simpleDeclaration
-//   | statement body
-//   | simpleDeclaration body
-// ;
 
-// statement :
-//   iteration_statement
-// ;
 
-// iteration_statement
-// 	: while_expression
+statement :
+   iteration_statement{
+    $$ = new None_Terminal_Node("STATEMENT");
+    $$->children.push_back($1);
+   }
+;
+
+iteration_statement
+ 	: while_expression{
+    $$ = new None_Terminal_Node("ITERATION_STATEMENT");
+    $$->children.push_back($1);
+  }
 //   |  for_expression
-// ;
-// while_expression :
-//   WHILE expression LOOP body END
-// ;
+;
+while_expression :
+   WHILE expression LOOP body END{
+    $$ = new None_Terminal_Node("WHILE_STATEMENT");
+    $$->children.push_back($2);
+    $$->children.push_back($4);
+   }
+;
+body 
+  : body simpleDeclaration {
+      $$ = $1;
+      $$->children.push_back($2);
+    }
+  | body statement {
+       $$ = $1;
+       $$->children.push_back($2);
+    }
+  | /* empty */ {
+      $$ = new None_Terminal_Node("BODY"); 
+    }
+  ;
+
 // for_expression :
 //   FOR IDENTIFIER range LOOP body END  
 // ;

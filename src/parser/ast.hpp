@@ -38,7 +38,7 @@ typedef enum Node_Type
     EXPRESSION,
     STATEMENT,
     ITERATION_STATEMENT,
-    WHILE_EXPRESSION,
+    WHILE_STATEMENT,
     FOR_EXPRESSION,
     TYPE_NODE,
     BOOLEAN_NODE,
@@ -56,7 +56,8 @@ typedef enum Node_Type
     RECORD_TYPE,
     ARRAY_TYPE,
     INVALID,
-    OPERATOR
+    OPERATOR,
+    BODY,
 } Node_Type;
 
 class AST_Node
@@ -91,6 +92,11 @@ private:
             {"ARRAY_TYPE", ARRAY_TYPE},
             {"RECORD_TYPE", RECORD_TYPE},
             {"VARIABLE_DECLARATIONS",VARIABLE_DECLARATIONS},
+            {"STATEMENT", STATEMENT},
+            {"ITERATION_STATEMENT", ITERATION_STATEMENT},
+            {"WHILE_STATEMENT", WHILE_STATEMENT},
+            {"BODY", BODY},
+
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())
