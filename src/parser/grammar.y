@@ -47,7 +47,6 @@ program
       $$->children.push_back($1); 
       print_ast($$, 0,"output.txt");
       Semantic_Analysis_Checks($$);
-      print_ast($$, 0,"Semantic_Analysis_Checks.txt");
       optimize($$);
       print_ast($$, 0,"optimize.txt");
 
@@ -84,8 +83,8 @@ routine_deceration
       $$ = new None_Terminal_Node("ROUTINE_DECLERATION");
       $$->children.push_back($2);
       $$->children.push_back($4);
-      $$->children.push_back($7);
       $$->children.push_back($9);
+      $$->children.push_back($7);
    } 
 ;
 parameters_list 

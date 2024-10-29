@@ -1,35 +1,14 @@
 Program
   Declarations
     Simple declaration
-      Type declaration
-        Identifier: arrayOfInteger
-        Type: arrayType
-          Array type
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Integer: 100
-            Type: integer
-    Simple declaration
       Variable declaration
         Identifier: x
-        Type: identifier
-          Identifier: arrayOfInteger
-    Statement
-      Jump Statement
-        Return
-          Expression
-            Relation
-              Simple
-                Factor
-                  Summand
-                    Primary node
-                      Array access
-                        Identifier: x
-                        Primary node
-                          Primary expresson
-                            Integer: 5
+        Type: integer
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 6

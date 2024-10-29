@@ -45,7 +45,9 @@ static const std::unordered_map<Node_Type, std::string> type_map = {
     {Argument_Expression_List, "Arguments Expression List"},
     {PARAMETER_DECLERATION, "Parameter Decleration"},
     {PARAMETERS_EXPRESSION_LIST, "Parameters Expression List"},
-    {ROUTINE_DECLERATION, "Routine Decleration"}};
+    {ROUTINE_DECLERATION, "Routine Decleration"},
+    {IDENTIFIER_NODE_TYPE,"IDENTIFIER_NODE_TYPE"},
+    };
 
 
 
@@ -121,7 +123,129 @@ void print_ast(AST_Node* node, int indent, const std::string& file_name) {
     fclose(file);
 }
 
+Identifier_Node *getIdentifierNode(AST_Node *node)
+{
+    if (!node)
+        return nullptr;
 
+    if (!node->children.empty() && node->children[0]->type == IDENTIFIER_NODE_TYPE)
+    {
+        return static_cast<Identifier_Node *>(node->children[0]);
+    }
+    return nullptr;
+}
+
+std::string get_name(AST_Node* node){
+  AST_Node* child= node->children[0];
+  Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(child);
+  return Identifier_node->identifier_name.c_str();
+}
+std::string get_name_id(AST_Node* node){
+  if (node->type!=IDENTIFIER_NODE_TYPE)return "";
+  Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);
+  return Identifier_node->identifier_name.c_str();
+}
+bool checkRoutineDeclarations(AST_Node *node, std::unordered_set<std::string> &declaredRoutineNames)
+{
+    if (node->type == ROUTINE_DECLERATION)
+    {
+        Identifier_Node *identifierNode = getIdentifierNode(node);
+        if (identifierNode)
+        {
+            declaredRoutineNames.insert(identifierNode->identifier_name);
+        }
+    }
+    else if (node->type == Routine_Call)
+    {
+        if (!node->children.empty() && node->children[0]->type == IDENTIFIER_NODE_TYPE)
+        {
+            Identifier_Node *identifierNode = static_cast<Identifier_Node *>(node->children[0]);
+            return declaredRoutineNames.count(identifierNode->identifier_name) > 0;
+        }
+    }
+
+    for (AST_Node *child : node->children)
+    {
+        if (!checkRoutineDeclarations(child, declaredRoutineNames))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> declaredVariableNames)
+{
+    if (!node)return true;
+    if (node->type==IDENTIFIER_NODE_TYPE){
+        if (declaredVariableNames.size()==0){
+            return 0;
+        }
+        if (declaredVariableNames.find(get_name_id(node))==declaredVariableNames.end()){
+            return false;
+        }
+    }    
+    bool ans = true ;
+    for (int i=0;i<node->children.size();i++){
+        AST_Node* child=node->children[i];
+        if(child->type==SIMPLE_DECLARATION&&child->children[0]->type==VARIABLE_DECLARATION){
+            AST_Node* grand =child->children[0];
+            ans &= checkVariableDeclarations(grand->children[2],declaredVariableNames);
+            declaredVariableNames.insert(get_name(grand));
+            continue;
+        }
+       if(child->type==SIMPLE_DECLARATION&&child->children[0]->type==TYPE_DECLARATION){
+            AST_Node* grand =child->children[0];
+            ans &= checkVariableDeclarations(grand->children[2],declaredVariableNames);
+           continue;
+       }
+        if (child->type==ROUTINE_DECLERATION){
+            AST_Node* grand = child->children[1];
+            //printf("%s\n", type_map.at(child->type).c_str());
+             for (int j=0;j<grand->children.size();j++){
+                 declaredVariableNames.insert(get_name(grand->children[j]));
+             }
+            ans&=checkVariableDeclarations(child->children[2],declaredVariableNames);
+            continue;
+        }
+        if(child->type==Routine_Call){
+            ans&=checkVariableDeclarations(child->children[1],declaredVariableNames);
+            continue;
+        }
+        if (child->type==FOR_STATEMENT){
+            declaredVariableNames.insert(get_name_id(child->children[0]));
+            ans&=checkVariableDeclarations(child->children[1],declaredVariableNames);
+            ans&=checkVariableDeclarations(child->children[2],declaredVariableNames);
+            continue;
+        }
+        ans&= checkVariableDeclarations(child,declaredVariableNames);
+    }
+    return ans;
+}
+
+bool checkTypeDeclarations(AST_Node* node, std::unordered_set<std::string> declaredTypeNames){
+    if (!node)return true;
+    if (node->type==TYPE_NODE && node->children[0]->type==IDENTIFIER_NODE_TYPE){
+        if (declaredTypeNames.size()==0){
+            return 0;
+        }
+        if (declaredTypeNames.find(get_name_id(node->children[0]))==declaredTypeNames.end()){
+            return false;
+        }
+    }
+    bool ans=true;
+    for(int i=0;i<node->children.size();i++){
+        AST_Node* child = node->children[i];
+        if(child->type==SIMPLE_DECLARATION && child->children[0]->type==TYPE_DECLARATION){
+            AST_Node* grand=child->children[0];
+            declaredTypeNames.insert(get_name_id(grand->children[0]));
+            continue;
+        }
+        ans&=checkTypeDeclarations(child,declaredTypeNames);
+    }
+    return ans;
+}
 bool check_return(AST_Node *node, bool inside_function)
 {
     if (node->type == RETURN_EX && !inside_function)
@@ -176,10 +300,13 @@ bool check_break(AST_Node *node, bool inside_loop)
     }
     return ans;
 }
+
+
 void Semantic_Analysis_Checks(AST_Node *root)
 {
     std::unordered_set<std::string> declaredVariableNames;
     std::unordered_set<std::string> declaredRoutineNames;
+    std::unordered_set<std::string> declaredTypesNames;
     if (!check_return(root, 0))
     {
         printf("Return statement exist outside of a function\n");
@@ -204,7 +331,10 @@ void Semantic_Analysis_Checks(AST_Node *root)
     {
         printf("function is not deaclerd \n");
         return;
-    }
+    }/* 
+    if (!checkTypeDeclarations(root,declaredTypesNames)){
+        printf("A type is not deaclerd\n");
+    } */
 }
 
 void remove_unreachable_code(AST_Node *node)
@@ -235,65 +365,6 @@ void remove_unreachable_code(AST_Node *node)
     }
 }
 
-
-Identifier_Node *getIdentifierNode(AST_Node *node)
-{
-    if (!node)
-        return nullptr;
-
-    if (!node->children.empty() && node->children[0]->type == IDENTIFIER_NODE_TYPE)
-    {
-        return static_cast<Identifier_Node *>(node->children[0]);
-    }
-    return nullptr;
-}
-
-bool checkRoutineDeclarations(AST_Node *node, std::unordered_set<std::string> &declaredRoutineNames)
-{
-    if (node->type == ROUTINE_DECLERATION)
-    {
-        Identifier_Node *identifierNode = getIdentifierNode(node);
-        if (identifierNode)
-        {
-            declaredRoutineNames.insert(identifierNode->identifier_name);
-        }
-    }
-    else if (node->type == Routine_Call)
-    {
-        if (!node->children.empty() && node->children[0]->type == IDENTIFIER_NODE_TYPE)
-        {
-            Identifier_Node *identifierNode = static_cast<Identifier_Node *>(node->children[0]);
-            return declaredRoutineNames.count(identifierNode->identifier_name) > 0;
-        }
-    }
-
-    for (AST_Node *child : node->children)
-    {
-        if (!checkRoutineDeclarations(child, declaredRoutineNames))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> &declaredVariableNames)
-{
-    // todo ....
-    return true;
-}
-
-
-std::string get_name(AST_Node* node){
-  AST_Node* child= node->children[0];
-  Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(child);
-  return Identifier_node->identifier_name.c_str();
-}
-std::string get_name_id(AST_Node* node){
-  Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);
-  return Identifier_node->identifier_name.c_str();
-}
 bool used_routine(AST_Node* node, std::string function_name){
     if(node&&node->type==Routine_Call&&get_name(node)==function_name)return 1;
     bool ans=false;
@@ -354,6 +425,45 @@ bool used_var(AST_Node* node, std::string var_name, bool inside_expression){
     }
     return ans;
 }
+std::string get_name_assign(AST_Node* node){
+    if (node->type!=ASSIGN_STATEMENT)return "";
+    AST_Node* primary_node=node->children[0];
+    if (primary_node->type!=PRIMARY_NODE)return "";
+    AST_Node* primary_exp_node =primary_node->children[0];
+    if (primary_exp_node->type!=PRIMARY_EXPRESSION)return "";
+    AST_Node* id_node=primary_exp_node->children[0];
+    if (id_node->type!=IDENTIFIER_NODE_TYPE)return"";
+    return get_name_id(id_node);
+}
+void remove_assignment(AST_Node* node, std::string var_name){
+    if (!node)return ;
+    if (node->type==VARIABLE_DECLARATION&&get_name(node)==var_name)return ;
+    int childrenNumber=node->children.size();
+    std::vector<AST_Node*> curChildren;
+    for(int i=0;i<childrenNumber;i++){
+        AST_Node* child = node->children[i];
+        if(child->type!=STATEMENT){
+            curChildren.push_back(child);
+            continue;
+        }
+        AST_Node* grand = child->children[0];
+        if(grand->type!=ASSIGN_STATEMENT){
+            curChildren.push_back(child);
+            continue;
+        }
+        if (get_name_assign(grand)!=var_name){
+            curChildren.push_back(child);
+        }
+    }
+    node->children.clear();
+    if(curChildren.size()>0){
+       node->children=curChildren;
+    }
+    for (const auto &child : node->children)
+    {
+        remove_assignment(child,var_name);
+    }
+}
 void remove_unused_varible(AST_Node* node){
     if (!node)return ;
     int childrenNumber=node->children.size();
@@ -375,6 +485,11 @@ void remove_unused_varible(AST_Node* node){
             add |= used_var(node->children[j],var_name,false);
         }
         if(add)curChildren.push_back(child);
+        else {
+            for(int j=i+1;j<childrenNumber;j++){
+               /// remove_assignment(node->children[j],var_name);
+            }   
+        }
     }
     node->children.clear();
     if(curChildren.size()>0){
@@ -385,7 +500,6 @@ void remove_unused_varible(AST_Node* node){
         remove_unused_varible(child);
     }
 }
-
 std::string get_type_name(AST_Node* node){
     Type_Node *type_node = static_cast<Type_Node *>(node);
     return type_node->type_name.c_str();

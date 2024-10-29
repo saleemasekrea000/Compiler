@@ -1,10 +1,16 @@
 Program
   Declarations
-    Simple declaration
-      Type declaration
-        Identifier: arrayOfInteger
-        Type: arrayType
-          Array type
+    Routine Decleration
+      IDENTIFIER_NODE_TYPE
+      Parameters Expression List
+        Parameter Decleration
+          IDENTIFIER_NODE_TYPE
+          Type: integer
+      Body
+        Simple declaration
+          Variable declaration
+            IDENTIFIER_NODE_TYPE
+            Type: integer
             Expression
               Relation
                 Simple
@@ -12,24 +18,77 @@ Program
                     Summand
                       Primary node
                         Primary expresson
-                          Integer: 100
-            Type: integer
-    Simple declaration
-      Variable declaration
-        Identifier: x
-        Type: identifier
-          Identifier: arrayOfInteger
+                          Integer: 1
+        Statement
+          Iteration statement
+            While statement
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            IDENTIFIER_NODE_TYPE
+                  Operator: >
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 0
+              Body
+                Statement
+                  Jump Statement
+                    Continue
+                Statement
+                  Assignment statement
+                    Primary node
+                      Primary expresson
+                        IDENTIFIER_NODE_TYPE
+                    Expression
+                      Relation
+                        Simple
+                          Simple
+                            Factor
+                              Summand
+                                Primary node
+                                  Primary expresson
+                                    IDENTIFIER_NODE_TYPE
+                          Operator: *
+                          Factor
+                            Summand
+                              Primary node
+                                Primary expresson
+                                  IDENTIFIER_NODE_TYPE
+                Statement
+                  Assignment statement
+                    Primary node
+                      Primary expresson
+                        IDENTIFIER_NODE_TYPE
+                    Expression
+                      Relation
+                        Simple
+                          Factor
+                            Factor
+                              Summand
+                                Primary node
+                                  Primary expresson
+                                    IDENTIFIER_NODE_TYPE
+                            Operator: -
+                            Summand
+                              Primary node
+                                Primary expresson
+                                  Integer: 1
     Statement
-      Jump Statement
-        Return
+      Routine Call
+        IDENTIFIER_NODE_TYPE
+        Arguments Expression List
           Expression
             Relation
               Simple
                 Factor
                   Summand
                     Primary node
-                      Array access
-                        Identifier: x
-                        Primary node
-                          Primary expresson
-                            Integer: 5
+                      Primary expresson
+                        Integer: 5

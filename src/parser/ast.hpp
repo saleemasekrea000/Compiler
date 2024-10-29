@@ -22,7 +22,7 @@ typedef enum Node_Type
     STATEMENT,
     ITERATION_STATEMENT,
     WHILE_STATEMENT,
-    FOR_EXPRESSION,
+   // FOR_EXPRESSION,
     TYPE_NODE,
     BOOLEAN_NODE,
     INTEGER_NODE,
@@ -181,10 +181,7 @@ void Semantic_Analysis_Checks(AST_Node *node);
 bool check_return(AST_Node* node, bool inside_function);
 bool check_continue(AST_Node* node, bool inside_loop);
 bool check_break(AST_Node* node, bool inside_loop);
-bool checkVariableDeclarations(AST_Node* node,std::unordered_set<std::string> &declaredVariableNames);
-bool checkRoutineDeclarations(AST_Node* node,std::unordered_set<std::string> &declaredRoutineNames);
 void optimize(AST_Node* node);
 void remove_unused(AST_Node* root);
-Identifier_Node* getIdentifierNode(AST_Node* node);
 
 #endif // AST_H
