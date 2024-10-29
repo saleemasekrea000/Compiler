@@ -191,14 +191,14 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
         AST_Node* child=node->children[i];
         if(child->type==SIMPLE_DECLARATION&&child->children[0]->type==VARIABLE_DECLARATION){
             AST_Node* grand =child->children[0];
-            ans &= checkVariableDeclarations(grand->children[2],declaredVariableNames);
+           if (grand->children.size()>=3)ans &= checkVariableDeclarations(grand->children[2],declaredVariableNames);
             declaredVariableNames.insert(get_name(grand));
             continue;
         }
        if(child->type==SIMPLE_DECLARATION&&child->children[0]->type==TYPE_DECLARATION){
             AST_Node* grand =child->children[0];
-            ans &= checkVariableDeclarations(grand->children[2],declaredVariableNames);
-           continue;
+             if (grand->children.size()>=3) ans &= checkVariableDeclarations(grand->children[2],declaredVariableNames);
+             continue;
        }
         if (child->type==ROUTINE_DECLERATION){
             AST_Node* grand = child->children[1];
@@ -226,9 +226,9 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
 
 bool checkTypeDeclarations(AST_Node* node, std::unordered_set<std::string> declaredTypeNames){
     if (!node)return true;
-    if (node->type==TYPE_NODE && node->children[0]->type==IDENTIFIER_NODE_TYPE){
+    if (node->type==TYPE_NODE && node->children.size()>0 && node->children[0]->type==IDENTIFIER_NODE_TYPE){
         if (declaredTypeNames.size()==0){
-            return 0;
+            return false;
         }
         if (declaredTypeNames.find(get_name_id(node->children[0]))==declaredTypeNames.end()){
             return false;
@@ -322,6 +322,7 @@ void Semantic_Analysis_Checks(AST_Node *root)
         printf( "Break statement exist outside of a loop\n");
         return;
     }
+
     if (!checkVariableDeclarations(root, declaredVariableNames))
     {
         printf("varible is not deaclerd \n");
@@ -331,10 +332,10 @@ void Semantic_Analysis_Checks(AST_Node *root)
     {
         printf("function is not deaclerd \n");
         return;
-    }/* 
+    } 
     if (!checkTypeDeclarations(root,declaredTypesNames)){
         printf("A type is not deaclerd\n");
-    } */
+    } 
 }
 
 void remove_unreachable_code(AST_Node *node)

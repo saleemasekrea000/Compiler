@@ -1,16 +1,10 @@
 Program
   Declarations
-    Routine Decleration
-      IDENTIFIER_NODE_TYPE
-      Parameters Expression List
-        Parameter Decleration
-          IDENTIFIER_NODE_TYPE
-          Type: integer
-      Body
-        Simple declaration
-          Variable declaration
-            IDENTIFIER_NODE_TYPE
-            Type: integer
+    Simple declaration
+      Type declaration
+        IDENTIFIER_NODE_TYPE
+        Type: arrayType
+          Array type
             Expression
               Relation
                 Simple
@@ -18,77 +12,18 @@ Program
                     Summand
                       Primary node
                         Primary expresson
-                          Integer: 1
-        Statement
-          Iteration statement
-            While statement
-              Expression
-                Relation
-                  Simple
-                    Factor
-                      Summand
-                        Primary node
-                          Primary expresson
-                            IDENTIFIER_NODE_TYPE
-                  Operator: >
-                  Simple
-                    Factor
-                      Summand
-                        Primary node
-                          Primary expresson
-                            Integer: 0
-              Body
-                Statement
-                  Jump Statement
-                    Continue
-                Statement
-                  Assignment statement
-                    Primary node
-                      Primary expresson
-                        IDENTIFIER_NODE_TYPE
-                    Expression
-                      Relation
-                        Simple
-                          Simple
-                            Factor
-                              Summand
-                                Primary node
-                                  Primary expresson
-                                    IDENTIFIER_NODE_TYPE
-                          Operator: *
-                          Factor
-                            Summand
-                              Primary node
-                                Primary expresson
-                                  IDENTIFIER_NODE_TYPE
-                Statement
-                  Assignment statement
-                    Primary node
-                      Primary expresson
-                        IDENTIFIER_NODE_TYPE
-                    Expression
-                      Relation
-                        Simple
-                          Factor
-                            Factor
-                              Summand
-                                Primary node
-                                  Primary expresson
-                                    IDENTIFIER_NODE_TYPE
-                            Operator: -
-                            Summand
-                              Primary node
-                                Primary expresson
-                                  Integer: 1
-    Statement
-      Routine Call
+                          Integer: 100
+            Type: integer
+    Simple declaration
+      Variable declaration
         IDENTIFIER_NODE_TYPE
-        Arguments Expression List
-          Expression
-            Relation
-              Simple
-                Factor
-                  Summand
-                    Primary node
-                      Primary expresson
-                        Integer: 5
+        Type: identifier
+          IDENTIFIER_NODE_TYPE
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 5

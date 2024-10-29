@@ -1,9 +1,1 @@
-routine Factorial(n: integer) is 
-   var ans : integer is 1;
-   while n > 0 loop 
-      continue;
-      ans := ans * n ;
-      n := n - 1;
-   end 
-end
-Factorial(5);
+type arrayOfInteger is array[100] integer;
