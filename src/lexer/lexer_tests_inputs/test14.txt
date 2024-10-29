@@ -1,0 +1,61 @@
+type point : record {
+    var x : integer;
+    var y : integer;
+}
+end
+
+type sqaure : record {
+    var point1 : point; 
+    var point2 : point; 
+    var point3 : point; 
+    var point4 : point; 
+}
+end
+
+routine square_root(number: integer) : real is
+    var guess : real is 1.0;
+    var epsilon : real is 0.00001;
+    var diff : real;
+
+    while true loop
+        var quotient : real is number / guess;
+        var new_guess : real is (guess + quotient) / 2.0;
+        diff := new_guess - guess;
+        if diff < epsilon and diff > - epsilon then
+            return new_guess;
+        end
+        guess := new_guess;
+    end
+end
+
+routine distance(point1: point, point2: point) : real is
+    var ans : real is 0.0 ;
+    ans := (point1.x - point2.x) * (point1.x - point2.x) + (point1.y - point2.y) * (point1.y - point2.y);
+    ans := square_root(ans) ;
+    return ans;
+end 
+
+routine area_of_square(sq: sqaure) : real is
+    var side_length : real;
+    var area : real;
+    side_length := distance(sq.point1, sq.point2);
+    area := side_length * side_length;
+    return area;
+end
+
+var sq : sqaure;
+
+sq.point1.x := 1;
+sq.point1.y := 1;
+
+sq.point2.x := 1;
+sq.point2.y := 4;
+
+sq.point3.x := 4;
+sq.point3.y := 4;
+
+sq.point4.x := 4;
+sq.point4.y := 1;
+
+var area : real is area_of_square(sq);
+
