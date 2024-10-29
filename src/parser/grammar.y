@@ -464,7 +464,7 @@ variableDeclerations
 ;
 
 arrayType 
-   : ARRAY '[' expression ']' type {
+   : ARRAY '[' expression ']' type ';' {
       $$ = new None_Terminal_Node("ARRAY_TYPE");
       $$->children.push_back($3);
       $$->children.push_back($5);

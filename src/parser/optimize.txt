@@ -1,0 +1,21 @@
+Program
+  Declarations
+    Simple declaration
+      Variable declaration
+        Identifier: x
+        Type: identifier
+          Identifier: arrayOfInteger
+    Statement
+      Jump Statement
+        Return
+          Expression
+            Relation
+              Simple
+                Factor
+                  Summand
+                    Primary node
+                      Array access
+                        Identifier: x
+                        Primary node
+                          Primary expresson
+                            Integer: 5

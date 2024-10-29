@@ -234,10 +234,7 @@ void remove_unreachable_code(AST_Node *node)
         remove_unreachable_code(child);
     }
 }
-std::string get_function_name(AST_Node *node)
-{
-    return static_cast<Identifier_Node *>(node->children[0])->identifier_name;
-}
+
 
 Identifier_Node *getIdentifierNode(AST_Node *node)
 {
@@ -287,47 +284,159 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> &
     return true;
 }
 
-bool check_routine_usage(AST_Node *node, std::string function_name)
-{
-    if (node->type == Routine_Call && function_name == get_function_name(node))
-        return 1;
-    int ans = 0;
-    for (const auto &child : node->children)
-    {
-        ans |= check_routine_usage(child, function_name);
+
+std::string get_name(AST_Node* node){
+  AST_Node* child= node->children[0];
+  Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(child);
+  return Identifier_node->identifier_name.c_str();
+}
+std::string get_name_id(AST_Node* node){
+  Identifier_Node* Identifier_node = static_cast<Identifier_Node*>(node);
+  return Identifier_node->identifier_name.c_str();
+}
+bool used_routine(AST_Node* node, std::string function_name){
+    if(node&&node->type==Routine_Call&&get_name(node)==function_name)return 1;
+    bool ans=false;
+    for (const auto& child : node->children) {
+        ans|=used_routine(child,function_name);
     }
     return ans;
 }
-void remove_unused_routines(AST_Node *node)
-{
-    if (!node)
-    {
-        return;
+void remove_unused_routines(AST_Node* node){
+   if (!node)return ;
+   int childrenNumber=node->children.size();
+   std::vector<AST_Node*> curChildren ;
+   for(int i=0;i<childrenNumber;i++){
+      AST_Node* child = node->children[i];
+      if (child->type!=ROUTINE_DECLERATION){
+        curChildren.push_back(child);
+        continue;
+      }
+      bool add=false; 
+      std::string routine_name=get_name(child);
+      for(int j=i+1;j<childrenNumber;j++){
+        if(used_routine(node->children[j],routine_name))add=true;
+      }
+      if(add){
+        curChildren.push_back(child);
+      }
+   }
+   node->children.clear();
+   if(curChildren.size()>0){
+      node->children=curChildren;
+   }
+   for (const auto& child : node->children) {
+        remove_unused_routines(child);
     }
-    int numberOfChildren = node->children.size();
-    for (int i = 0; i < numberOfChildren; i++)
-    {
-        AST_Node *child = node->children[i];
-        if (child->type != ROUTINE_DECLERATION)
+}
+bool used_var(AST_Node* node, std::string var_name, bool inside_expression){
+    if(!node)return false;
+    if (node->type==IDENTIFIER_NODE_TYPE){
+       return (get_name_id(node)==var_name&&inside_expression);
+    }
+    if (node->type==SIMPLE_DECLARATION){
+        AST_Node* child=node->children[0];
+        if(child->type==VARIABLE_DECLARATION&&get_name(child)==var_name)
+            return used_var(child->children[2],var_name,true);
+    }
+    if (node->type==ROUTINE_DECLERATION){
+      if (get_name(node)==var_name)return 0;
+      AST_Node* params_node=node->children[1];
+      for (const auto& param: params_node->children){
+         if(get_name(param)==var_name)return 0;
+      }
+    }
+    if (node->type==FOR_STATEMENT&&get_name(node)==var_name)return 0; 
+    bool ans=false;
+    if (node->type==EXPRESSION)inside_expression=true;
+    for (const auto& child : node->children) {
+        ans |= used_var(child,var_name,inside_expression);
+    }
+    return ans;
+}
+void remove_unused_varible(AST_Node* node){
+    if (!node)return ;
+    int childrenNumber=node->children.size();
+    std::vector<AST_Node*> curChildren ;
+    for(int i=0;i<childrenNumber;i++){
+        AST_Node* child=node->children[i];
+        if(child->type!=SIMPLE_DECLARATION){
+            curChildren.push_back(child);
             continue;
-        bool add = false;
-        for (int j = i + 1; j < numberOfChildren; j++)
-        {
-            add |= check_routine_usage(node->children[j], get_function_name(node->children[i]));
         }
-        if (!add)
-        {
-            node->children.erase(node->children.begin() + i);
+        AST_Node* grand= child->children[0];
+        if(grand->type!=VARIABLE_DECLARATION){
+            curChildren.push_back(child);
+            continue;
         }
+        bool add =false ;
+        std::string var_name=get_name(grand);
+        for(int j=i+1;j<childrenNumber;j++){
+            add |= used_var(node->children[j],var_name,false);
+        }
+        if(add)curChildren.push_back(child);
+    }
+    node->children.clear();
+    if(curChildren.size()>0){
+       node->children=curChildren;
     }
     for (const auto &child : node->children)
     {
-        remove_unused_routines(child);
+        remove_unused_varible(child);
+    }
+}
+
+std::string get_type_name(AST_Node* node){
+    Type_Node *type_node = static_cast<Type_Node *>(node);
+    return type_node->type_name.c_str();
+}
+bool used_type(AST_Node* node, std::string type_name){
+   if (!node)return false;
+   if (node->type==TYPE_NODE){
+      return (get_type_name(node)==type_name);
+   }
+   bool ans=false;
+   for (const auto& child : node->children) {
+      ans |= used_type(child,type_name);
+   }
+   return ans;
+}
+void remove_unused_types(AST_Node* node){
+    if (!node)return ;
+    int childrenNumber=node->children.size();
+    std::vector<AST_Node*> curChildren ;
+    for(int i=0;i<childrenNumber;i++){
+        AST_Node* child=node->children[i];  
+        if(child->type!=SIMPLE_DECLARATION){
+            curChildren.push_back(child);
+            continue;
+        }
+        AST_Node* grand= child->children[0];
+        if(grand->type!=TYPE_DECLARATION){
+            curChildren.push_back(child);
+            continue;
+        }      
+        bool add =false ;
+        std::string type_name=get_name(grand);
+        for(int j=i+1;j<childrenNumber;j++){
+            add |= used_type(node->children[j],type_name);
+        }
+        if(add)curChildren.push_back(child);
+    }
+    node->children.clear();
+    if(curChildren.size()>0){
+       node->children=curChildren;
+    }
+    for (const auto &child : node->children)
+    {
+        remove_unused_types(child);
     }
 }
 void remove_unused(AST_Node *root)
 {
     remove_unused_routines(root);
+    remove_unused_varible(root);
+    remove_unused_types(root);
 }
 void optimize(AST_Node *root)
 {
