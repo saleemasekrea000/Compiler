@@ -45,9 +45,12 @@ program
   : declarations { 
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
-      print_ast($$, 0);
-      check_correct_keywords_usage($$);
+      print_ast($$, 0,"output.txt");
+      Semantic_Analysis_Checks($$);
+      print_ast($$, 0,"Semantic_Analysis_Checks.txt");
       optimize($$);
+      print_ast($$, 0,"optimize.txt");
+
     }
   ;
 

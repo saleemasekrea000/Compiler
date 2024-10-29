@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <unordered_set>
 
 
 typedef enum Node_Type
@@ -174,11 +175,16 @@ public:
 
 
 
-void print_ast(AST_Node *node, int indent);
-void check_correct_keywords_usage(AST_Node *node);
+void print_ast(AST_Node *node, int indent, const std::string& file_name);
+void print_ast_helper(AST_Node *node, int indent,FILE * file);
+void Semantic_Analysis_Checks(AST_Node *node);
 bool check_return(AST_Node* node, bool inside_function);
 bool check_continue(AST_Node* node, bool inside_loop);
 bool check_break(AST_Node* node, bool inside_loop);
+bool checkVariableDeclarations(AST_Node* node,std::unordered_set<std::string> &declaredVariableNames);
+bool checkRoutineDeclarations(AST_Node* node,std::unordered_set<std::string> &declaredRoutineNames);
 void optimize(AST_Node* node);
 void remove_unused(AST_Node* root);
+Identifier_Node* getIdentifierNode(AST_Node* node);
+
 #endif // AST_H

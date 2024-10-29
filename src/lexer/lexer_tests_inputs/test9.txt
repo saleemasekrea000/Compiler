@@ -1,9 +1,0 @@
-routine power(a:integer, b:integer) : integer is 
-    if b = 0 then return 1; end 
-    var ans : integer is power(a, b / 2);
-    ans := ans * ans ;
-    if b % 2 then ans = ans * a; end 
-    return ans ;
-end 
-
-var result : integer is power(4,6);
