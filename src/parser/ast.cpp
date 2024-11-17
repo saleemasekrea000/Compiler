@@ -591,7 +591,7 @@ llvm::Value* Boolean_Node::codegen() {
 
 // Implement the codegen function for Integer_Node
 llvm::Value* Integer_Node::codegen() {
-    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 6);
+    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), this->val);
 }
 // Implement the codegen function for Real_Node
 llvm::Value* Real_Node::codegen() {  //TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
@@ -606,49 +606,33 @@ llvm::Value* Operator::codegen() {
     return nullptr;
 }
 
+void Varible_Decleration_code_Gen(AST_Node* node){
+   std::cout << "Creating Var declaration\n";
+   std::string name = get_name(node);
+   llvm::Value* v = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
+   llvm::Value* initial_value = static_cast<Integer_Node*>(node->children[2])->codegen();
+   Builder->CreateStore(initial_value, v);
+   NamedValues[name]=v;       
+}
 void code_generation(AST_Node* node) {
     if (!node) return;
     if(node->type==VARIABLE_DECLARATION){
-        std::cout << "Creating Var declaration\n";
-        std::string name = get_name(node);
-        llvm::BasicBlock *currentBlock = Builder->GetInsertBlock();
-        if (!currentBlock) {
-            std::cerr << "No valid insertion block in IRBuilder!" << std::endl;
-            // Handle error appropriately
-        } else {
-            std::cout << "IRBuilder has a valid insertion block!" << std::endl;
-        }
-        llvm::Value* v = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
-        llvm::Value* initial_value = static_cast<Integer_Node*>(node->children[2])->codegen();
-        Builder->CreateStore(initial_value, v);
-        NamedValues[name]=v;
+        Varible_Decleration_code_Gen(node);
     }
     for (const auto &child : node->children) {
         code_generation(child);  
     }
 }
 
-#include <memory>  // For std::make_unique
 
 static void InitializeModule() {
-    // Initialize the LLVM Context, Module, and Builder using std::make_unique
     TheContext = std::make_unique<llvm::LLVMContext>();
     TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
     Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
-
-    // Now, create a function and a basic block to associate with the IRBuilder
-    // Define a function prototype (e.g., void myFunction())
     llvm::FunctionType* funcType = llvm::FunctionType::get(llvm::Type::getVoidTy(*TheContext), false);
     llvm::Function* function = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "myFunction", *TheModule);
-
-    // Create a basic block and insert it at the start of the function
     llvm::BasicBlock* entry = llvm::BasicBlock::Create(*TheContext, "entry", function);
-    
-    // Set the IRBuilder's insertion point to the basic block
     Builder->SetInsertPoint(entry);
-
-    // Now, Builder can create instructions inside the entry basic block
-    std::cout << "LLVM IRBuilder has a valid insertion block!" << std::endl;
 }
 
 
