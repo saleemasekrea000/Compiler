@@ -5,8 +5,19 @@
 #include "lexer_2.hpp"
 #include "ast.hpp"
 #include "grammar.tab.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/FileSystem.h"
 
 std::ifstream tokenFile;
+
+static void InitializeModule() {
+  // Open a new context and module.
+  TheContext = std::make_unique<llvm::LLVMContext>();
+  TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
+  // Create a new builder for the module.
+  Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
+}
+
 
 int yylex()
 {
@@ -126,9 +137,22 @@ int main(int argc, char **argv)
     perror("Error opening input file");
     return 1;
   }
+  InitializeModule();
 
   tokenFile.open(argv[1]);
   yyparse();
+  tokenFile.close();
   fclose(input_file);
+
+  // Write the IR to a file using llvm::raw_fd_ostream
+  std::error_code EC;
+  llvm::raw_fd_ostream outputFile("output.ll", EC, llvm::sys::fs::OF_None);
+
+  if (EC) {
+    llvm::errs() << "Error opening file: " << EC.message() << "\n";
+    return 1;
+  }
+
+  TheModule->print(outputFile, nullptr); // Use the correct LLVM stream
   return 0;
 }

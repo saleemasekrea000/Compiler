@@ -49,7 +49,7 @@ program
       Semantic_Analysis_Checks($$);
       optimize($$);
       print_ast($$, 0,"optimize.txt");
-
+      code_generation($$);
     }
   ;
 

@@ -1364,7 +1364,7 @@ yyreduce:
       Semantic_Analysis_Checks((yyval.node));
       optimize((yyval.node));
       print_ast((yyval.node), 0,"optimize.txt");
-
+      code_generation((yyval.node));
     }
 #line 1370 "grammar.tab.c"
     break;

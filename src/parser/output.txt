@@ -14,16 +14,3 @@ Program
                         Primary expresson
                           Integer: 100
             Type: integer
-    Simple declaration
-      Variable declaration
-        IDENTIFIER_NODE_TYPE
-        Type: identifier
-          IDENTIFIER_NODE_TYPE
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Integer: 5

@@ -558,3 +558,54 @@ void optimize(AST_Node *root)
     remove_unreachable_code(root);
     remove_unused(root);
 }
+
+// Implement the codegen function for None_Terminal_Node
+llvm::Value* None_Terminal_Node::codegen() {
+    // Placeholder implementation
+    return nullptr;
+}
+
+// Implement the codegen function for Identifier_Node
+llvm::Value* Identifier_Node::codegen() {
+    // Placeholder implementation
+    return nullptr;
+}
+
+// Implement the codegen function for Type_Node
+llvm::Value* Type_Node::codegen() {
+    // Placeholder implementation
+    return nullptr;
+}
+
+// Implement the codegen function for Boolean_Node
+llvm::Value* Boolean_Node::codegen() {
+    // Placeholder implementation
+    return nullptr;
+}
+
+// Implement the codegen function for Integer_Node
+llvm::Value* Integer_Node::codegen() {
+    // Placeholder implementation
+    return nullptr;
+}
+
+// Implement the codegen function for Real_Node
+llvm::Value* Real_Node::codegen() {  //TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
+
+    // Placeholder implementation
+    return nullptr;
+}
+
+// Implement the codegen function for Operator
+llvm::Value* Operator::codegen() {
+    // Placeholder implementation
+    return nullptr;
+}
+
+void code_generation(AST_Node* node){
+   Identifier_Node *Identifier_node = static_cast<Identifier_Node *>(node);
+   Identifier_node->codegen();
+   for (const auto &child : node->children){  //TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
+
+   }
+}
