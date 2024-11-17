@@ -1,16 +1,7 @@
 Program
   Declarations
     Simple declaration
-      Type declaration
-        IDENTIFIER_NODE_TYPE
-        Type: arrayType
-          Array type
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Integer: 100
-            Type: integer
+      Variable declaration
+        Identifier: ans
+        Type: none
+        Integer: 1

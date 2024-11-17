@@ -1,13 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ast.hpp"
+#include "lexer_2.hpp"
 #include <cstdio>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/FileSystem.h"
 
 
+static std::unique_ptr<llvm::LLVMContext> TheContext;
+static std::unique_ptr<llvm::IRBuilder<>> Builder;
+static std::unique_ptr<llvm::Module> TheModule;
+static std::map<std::string, llvm::Value *> NamedValues;
 
 static const std::unordered_map<Node_Type, std::string> type_map = {
     {PROGRAM, "Program"},
@@ -46,7 +53,6 @@ static const std::unordered_map<Node_Type, std::string> type_map = {
     {PARAMETER_DECLERATION, "Parameter Decleration"},
     {PARAMETERS_EXPRESSION_LIST, "Parameters Expression List"},
     {ROUTINE_DECLERATION, "Routine Decleration"},
-    {IDENTIFIER_NODE_TYPE,"IDENTIFIER_NODE_TYPE"},
     };
 
 
@@ -585,10 +591,8 @@ llvm::Value* Boolean_Node::codegen() {
 
 // Implement the codegen function for Integer_Node
 llvm::Value* Integer_Node::codegen() {
-    // Placeholder implementation
-    return nullptr;
+    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 6);
 }
-
 // Implement the codegen function for Real_Node
 llvm::Value* Real_Node::codegen() {  //TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
 
@@ -602,10 +606,63 @@ llvm::Value* Operator::codegen() {
     return nullptr;
 }
 
-void code_generation(AST_Node* node){
-   Identifier_Node *Identifier_node = static_cast<Identifier_Node *>(node);
-   Identifier_node->codegen();
-   for (const auto &child : node->children){  //TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
+void code_generation(AST_Node* node) {
+    if (!node) return;
+    if(node->type==VARIABLE_DECLARATION){
+        std::cout << "Creating Var declaration\n";
+        std::string name = get_name(node);
+        llvm::BasicBlock *currentBlock = Builder->GetInsertBlock();
+        if (!currentBlock) {
+            std::cerr << "No valid insertion block in IRBuilder!" << std::endl;
+            // Handle error appropriately
+        } else {
+            std::cout << "IRBuilder has a valid insertion block!" << std::endl;
+        }
+        llvm::Value* v = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
+        llvm::Value* initial_value = static_cast<Integer_Node*>(node->children[2])->codegen();
+        Builder->CreateStore(initial_value, v);
+        NamedValues[name]=v;
+    }
+    for (const auto &child : node->children) {
+        code_generation(child);  
+    }
+}
 
-   }
+#include <memory>  // For std::make_unique
+
+static void InitializeModule() {
+    // Initialize the LLVM Context, Module, and Builder using std::make_unique
+    TheContext = std::make_unique<llvm::LLVMContext>();
+    TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
+    Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
+
+    // Now, create a function and a basic block to associate with the IRBuilder
+    // Define a function prototype (e.g., void myFunction())
+    llvm::FunctionType* funcType = llvm::FunctionType::get(llvm::Type::getVoidTy(*TheContext), false);
+    llvm::Function* function = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "myFunction", *TheModule);
+
+    // Create a basic block and insert it at the start of the function
+    llvm::BasicBlock* entry = llvm::BasicBlock::Create(*TheContext, "entry", function);
+    
+    // Set the IRBuilder's insertion point to the basic block
+    Builder->SetInsertPoint(entry);
+
+    // Now, Builder can create instructions inside the entry basic block
+    std::cout << "LLVM IRBuilder has a valid insertion block!" << std::endl;
+}
+
+
+void start_llvm(AST_Node* root){
+    InitializeModule();
+    code_generation(root); 
+    
+    std::error_code EC;
+
+    if (EC) {
+        llvm::errs() << "Error opening file: " << EC.message() << "\n";
+        return ;
+    }
+    llvm::raw_fd_ostream outputFile("output.ll", EC, llvm::sys::fs::OF_None);
+    TheModule->print(outputFile, nullptr); 
+    return ;
 }

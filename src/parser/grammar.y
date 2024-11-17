@@ -46,10 +46,10 @@ program
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
       print_ast($$, 0,"output.txt");
-      Semantic_Analysis_Checks($$);
-      optimize($$);
-      print_ast($$, 0,"optimize.txt");
-      code_generation($$);
+     // Semantic_Analysis_Checks($$);
+     // optimize($$);
+     // print_ast($$, 0,"optimize.txt");
+      start_llvm($$);
     }
   ;
 
@@ -119,7 +119,7 @@ simpleDeclaration
 ;
 
 variableDeclaration
-  : VAR identifier IS expression ';' { 
+  : VAR identifier IS int_exp ';' { 
       $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back(new Type_Node("none"));

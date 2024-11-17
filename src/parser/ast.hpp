@@ -25,10 +25,6 @@
 #include <cstdlib>
 #include <map>
 
-static std::unique_ptr<llvm::LLVMContext> TheContext;
-static std::unique_ptr<llvm::IRBuilder<>> Builder;
-static std::unique_ptr<llvm::Module> TheModule;
-static std::map<std::string, llvm::Value *> NamedValues;
 
 typedef enum Node_Type
 {
@@ -205,10 +201,6 @@ public:
 void print_ast(AST_Node *node, int indent, const std::string& file_name);
 void print_ast_helper(AST_Node *node, int indent,FILE * file);
 void Semantic_Analysis_Checks(AST_Node *node);
-bool check_return(AST_Node* node, bool inside_function);
-bool check_continue(AST_Node* node, bool inside_loop);
-bool check_break(AST_Node* node, bool inside_loop);
 void optimize(AST_Node* node);
-void remove_unused(AST_Node* root);
-void code_generation(AST_Node* root);
+void start_llvm(AST_Node* root); 
 #endif // AST_H
