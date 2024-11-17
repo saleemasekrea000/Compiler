@@ -119,13 +119,13 @@ simpleDeclaration
 ;
 
 variableDeclaration
-  : VAR identifier IS int_exp ';' { 
+  : VAR identifier IS factor ';' { 
       $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back(new Type_Node("none"));
       $$->children.push_back($4);
     }
-  | VAR identifier ':' type IS expression ';' { 
+  | VAR identifier ':' type IS factor ';' { 
       $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back($4);

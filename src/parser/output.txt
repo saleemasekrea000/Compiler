@@ -2,6 +2,16 @@ Program
   Declarations
     Simple declaration
       Variable declaration
-        Identifier: ans
-        Type: none
-        Integer: 1
+        Identifier: ans1
+        Type: integer
+        Factor
+          Factor
+            Summand
+              Primary node
+                Primary expresson
+                  Integer: 3
+          Operator: +
+          Summand
+            Primary node
+              Primary expresson
+                Integer: 6

@@ -80,7 +80,7 @@ public:
     enum Node_Type type;
     std::vector<AST_Node*> children;
     AST_Node(Node_Type t) : type(t) {}
-    virtual llvm::Value* codegen() = 0;
+    llvm::Value* codegen() ;
 };
 
 class None_Terminal_Node : public AST_Node
@@ -139,7 +139,6 @@ private:
 
 public:
     None_Terminal_Node(std::string node_type) : AST_Node(str_to_type(node_type)) {}
-    llvm::Value* codegen() override;
 };
 
 class Identifier_Node : public AST_Node
@@ -148,7 +147,6 @@ public:
     std::string identifier_name;
     Identifier_Node(const std::string &name)
         : AST_Node(IDENTIFIER_NODE_TYPE), identifier_name(name) {}
-    llvm::Value* codegen() override;
 };
 
 class Type_Node : public AST_Node
@@ -157,7 +155,6 @@ public:
     std::string type_name;
     Type_Node(const std::string &name)
         : AST_Node(TYPE_NODE), type_name(name) {}
-    llvm::Value* codegen() override;
 };
 
 
@@ -167,7 +164,6 @@ public:
     bool val;
     Boolean_Node(const bool &val)
         : AST_Node(BOOLEAN_NODE), val(val) {}
-    llvm::Value* codegen() override;
 };
 class Integer_Node : public AST_Node
 {
@@ -175,7 +171,6 @@ public:
     int val;
     Integer_Node(const int &val)
         : AST_Node(INTEGER_NODE), val(val) {}
-    llvm::Value* codegen() override;
 };
 
 class Real_Node : public AST_Node
@@ -184,7 +179,6 @@ public:
     double val;
     Real_Node(const double &val)
         : AST_Node(REAL_NODE), val(val) {}
-    llvm::Value* codegen() override;
 };
 
 class Operator : public AST_Node
@@ -193,7 +187,6 @@ public:
     std::string operation_name;
     Operator(const std::string &operation_name)
         : AST_Node(OPERATOR), operation_name(operation_name) {}
-    llvm::Value* codegen() override;
 };
 
 

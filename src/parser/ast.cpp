@@ -645,55 +645,98 @@ void optimize(AST_Node *root)
     remove_unreachable_code(root);
     remove_unused(root);
 }
-
-llvm::Value *None_Terminal_Node::codegen()
+std::string get_op(AST_Node* node){
+    Operator *op_node = static_cast<Operator *>(node);
+    return op_node->operation_name.c_str();
+ 
+}
+llvm::Value *AST_Node::codegen()
 {
+    switch (this->type)
+    {
+    case INTEGER_NODE:{
+        return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node*>(this)->val);
+    }
+    case REAL_NODE:{
+        return llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), static_cast<Real_Node*>(this)->val);   
+    }
+    case BOOLEAN_NODE: {
+        return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), static_cast<Boolean_Node*>(this)->val ? 1 : 0);
+    }
+    case PRIMARY_EXPRESSION:{
+        if (this->children.size()==2){
+            llvm::Value* x = this->children[1]->codegen();
+            llvm::Value* notX = llvm::BinaryOperator::CreateNot(x, "not");
+            return notX;
+        }
+        return this->children[0]->codegen();
+    }
+    case PRIMARY_NODE:{
+        return this->children[0]->codegen();
+    }
+    case SUMMAND:{
+        return this->children[0]->codegen();
+    } 
+    case FACTOR:{
+        if (this->children.size()==1){
+            return this->children[0]->codegen();
+        }
+        llvm::Value* leftChild = this->children[0]->codegen();
+        llvm::Value* rightChild = this->children[2]->codegen();
+        std::string op = get_op(this->children[1]);
+        if(op=="+"){
+           llvm::Value* sum = Builder->CreateAdd(leftChild, rightChild, "sum");
+           return sum;
+        }
+        else{
+          llvm::Value* difference = Builder->CreateSub(leftChild, rightChild, "diff");
+          return difference;
+        }
+    }
+    default:
+        break;
+    }
     return nullptr;
 }
-
-llvm::Value *Identifier_Node::codegen()
-{
-    return nullptr;
+llvm::Type* get_type(AST_Node* node){
+    Type_Node *type_node = static_cast<Type_Node *>(node);
+    std::string name = get_type_name(type_node);
+    if(name=="integer"){
+        return llvm::Type::getInt32Ty(*TheContext);
+    }
+    else if (name=="real"){
+        return llvm::Type::getDoubleTy(*TheContext);
+    }
+    else if (name=="boolean"){
+        return llvm::Type::getInt1Ty(*TheContext);
+    }
+    else {
+       return llvm::Type::getDoubleTy(*TheContext);   
+    }
 }
-
-llvm::Value *Type_Node::codegen()
-{
-    return nullptr;
-}
-
-llvm::Value *Boolean_Node::codegen()
-{
-    return nullptr;
-}
-
-// Implement the codegen function for Integer_Node
-llvm::Value* Integer_Node::codegen() {
-    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), this->val);
-}
-llvm::Value *Real_Node::codegen()
-{ // TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
-
-    return nullptr;
-}
-
-llvm::Value *Operator::codegen()
-{
-    return nullptr;
-}
-
-
 void Varible_Decleration_code_Gen(AST_Node* node){
    std::cout << "Creating Var declaration\n";
    std::string name = get_name(node);
-   llvm::Value* v = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
-   llvm::Value* initial_value = static_cast<Integer_Node*>(node->children[2])->codegen();
+   llvm::Value* v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
+   llvm:: Value* initial_value = node->children[2]->codegen();
    Builder->CreateStore(initial_value, v);
-   NamedValues[name]=v;       
+   NamedValues[name]=v;    
+    
+}
+void Factor_Expression_code_Gen(AST_Node* node){
+    std::cout<<"FACTOR EXPRESSION CREATE\n";
+    
 }
 void code_generation(AST_Node* node) {
     if (!node) return;
-    if(node->type==VARIABLE_DECLARATION){
-        Varible_Decleration_code_Gen(node);
+    switch (node->type)
+    {
+       case VARIABLE_DECLARATION:{
+          Varible_Decleration_code_Gen(node);
+            break;
+       }
+       default:
+          break;
     }
     for (const auto &child : node->children) {
         code_generation(child);  
@@ -713,8 +756,6 @@ static void InitializeModule() {
     llvm::BasicBlock *entry = llvm::BasicBlock::Create(*TheContext, "entry", function);
 
     Builder->SetInsertPoint(entry);
-
-    std::cout << "LLVM IRBuilder has a valid insertion block!" << std::endl;
 }
 
 void start_llvm(AST_Node *root)
