@@ -1,7 +1,7 @@
-; ModuleID = 'my cool jit'
-source_filename = "my cool jit"
+; ModuleID = 'KSS'
+source_filename = "KSS"
 
-define void @myFunction() {
+define void @main() {
 entry:
   %ans = alloca i32, align 4
   store i32 6, i32* %ans, align 4
