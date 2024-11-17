@@ -666,9 +666,9 @@ llvm::Value *Boolean_Node::codegen()
     return nullptr;
 }
 
-llvm::Value *Integer_Node::codegen()
-{
-    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 6);
+// Implement the codegen function for Integer_Node
+llvm::Value* Integer_Node::codegen() {
+    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), this->val);
 }
 llvm::Value *Real_Node::codegen()
 { // TheModule->print(llvm::outs(), nullptr); // Optional: also print to console
@@ -681,40 +681,27 @@ llvm::Value *Operator::codegen()
     return nullptr;
 }
 
-void generate_variable(AST_Node *node)
-{
-    std::cout << "Creating Var declaration\n";
-    std::string name = get_name(node);
-    llvm::BasicBlock *currentBlock = Builder->GetInsertBlock();
-    if (!currentBlock)
-    {
-        std::cerr << "No valid insertion block in IRBuilder!" << std::endl;
-    }
-    else
-    {
-        std::cout << "IRBuilder has a valid insertion block!" << std::endl;
-    }
-    llvm::Value *v = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
-    llvm::Value *initial_value = static_cast<Integer_Node *>(node->children[2])->codegen();
-    Builder->CreateStore(initial_value, v);
-    NamedValues[name] = v;
+
+void Varible_Decleration_code_Gen(AST_Node* node){
+   std::cout << "Creating Var declaration\n";
+   std::string name = get_name(node);
+   llvm::Value* v = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
+   llvm::Value* initial_value = static_cast<Integer_Node*>(node->children[2])->codegen();
+   Builder->CreateStore(initial_value, v);
+   NamedValues[name]=v;       
 }
-void code_generation(AST_Node *node)
-{
-    if (!node)
-        return;
-    if (node->type == VARIABLE_DECLARATION)
-    {
-        generate_variable(node);
+void code_generation(AST_Node* node) {
+    if (!node) return;
+    if(node->type==VARIABLE_DECLARATION){
+        Varible_Decleration_code_Gen(node);
     }
-    for (const auto &child : node->children)
-    {
-        code_generation(child);
+    for (const auto &child : node->children) {
+        code_generation(child);  
     }
 }
 
-static void InitializeModule()
-{
+
+static void InitializeModule() {
     TheContext = std::make_unique<llvm::LLVMContext>();
     TheModule = std::make_unique<llvm::Module>("KSS", *TheContext);
     Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
