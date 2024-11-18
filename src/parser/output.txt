@@ -2,33 +2,32 @@ Program
   Declarations
     Simple declaration
       Variable declaration
+        Identifier: x
+        Type: integer
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 5
+    Simple declaration
+      Variable declaration
         Identifier: ans1
         Type: integer
         Expression
           Relation
             Simple
-              Simple
-                Simple
-                  Factor
-                    Factor
-                      Summand
-                        Primary node
-                          Primary expresson
-                            Integer: 3
-                    Operator: *
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Integer: 7
-                Operator: +
-                Factor
-                  Summand
-                    Primary node
-                      Primary expresson
-                        Integer: 9
-              Operator: -
               Factor
                 Summand
                   Primary node
                     Primary expresson
-                      Integer: 2
+                      Identifier: x
+            Operator: +=
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 5

@@ -645,216 +645,222 @@ void optimize(AST_Node *root)
     remove_unreachable_code(root);
     remove_unused(root);
 }
-std::string get_op(AST_Node* node){
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string get_op(AST_Node *node)
+{
     Operator *op_node = static_cast<Operator *>(node);
     return op_node->operation_name.c_str();
- 
 }
+
+llvm::Value *createBinaryOp(const std::string &op, llvm::Value *left, llvm::Value *right)
+{
+    if (op == "+")
+        return Builder->CreateAdd(left, right, "sum");
+    else if (op == "-")
+        return Builder->CreateSub(left, right, "diff");
+    else if (op == "*")
+        return Builder->CreateMul(left, right, "mul");
+    else if (op == "/")
+        return Builder->CreateSDiv(left, right, "sdiv");
+    else if (op == "%")
+        return Builder->CreateSRem(left, right, "srem");
+    else if (op == "<")
+        return Builder->CreateICmpSLT(left, right, "lt");
+    else if (op == "<=")
+        return Builder->CreateICmpSLE(left, right, "le");
+    else if (op == ">")
+        return Builder->CreateICmpSGT(left, right, "gt");
+    else if (op == ">=")
+        return Builder->CreateICmpSGE(left, right, "ge");
+    else if (op == "=")
+        return Builder->CreateICmpEQ(left, right, "eq");
+    else if (op == "and")
+        return Builder->CreateAnd(left, right, "and");
+    else if (op == "or")
+        return Builder->CreateOr(left, right, "or");
+    else if (op == "xor")
+        return Builder->CreateXor(left, right, "xor");
+    return nullptr;
+}
+
+llvm::Value *createCompoundAssignment(const std::string &op, llvm::Value *left, llvm::Value *right)
+{
+    llvm::Value *result = createBinaryOp(op.substr(0, 1), left, right);
+    Builder->CreateStore(result, left);
+    return result;
+}
+
 llvm::Value *AST_Node::codegen()
 {
     switch (this->type)
     {
-    case INTEGER_NODE:{
-        return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node*>(this)->val);
+    case INTEGER_NODE:
+    {
+        return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val);
     }
-    case REAL_NODE:{
-        return llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), static_cast<Real_Node*>(this)->val);   
+    case REAL_NODE:
+    {
+        return llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), static_cast<Real_Node *>(this)->val);
     }
-    case BOOLEAN_NODE: {
-        return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), static_cast<Boolean_Node*>(this)->val ? 1 : 0);
+    case BOOLEAN_NODE:
+    {
+        return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), static_cast<Boolean_Node *>(this)->val ? 1 : 0);
     }
-    case PRIMARY_EXPRESSION:{
-        if (this->children.size()==2){
-            llvm::Value* x = this->children[1]->codegen();
-            llvm::Value* notX = llvm::BinaryOperator::CreateNot(x, "not");
-            return notX;
+    case PRIMARY_EXPRESSION:
+    {
+        if (this->children.size() == 2)
+        {
+            llvm::Value *x = this->children[1]->codegen();
+            return llvm::BinaryOperator::CreateNot(x, "not");
         }
         return this->children[0]->codegen();
     }
-    case PRIMARY_NODE:{
+    case PRIMARY_NODE:
+    case SUMMAND:
+    {
         return this->children[0]->codegen();
     }
-    case SUMMAND:{
-        return this->children[0]->codegen();
-    } 
+    case IDENTIFIER_NODE_TYPE:
+    {
+        std::string name = get_name_id(this);
+        llvm::Value *ptr = NamedValues[name];
+        llvm::Type *varType = llvm::Type::getInt32Ty(*TheContext);
+        return Builder->CreateLoad(varType, ptr, name);
+    }
     case SIMPLE:
     case FACTOR:
     case RELATION:
-    case EXPRESSION:{
-        if (this->children.size()==1){
+    case EXPRESSION:
+    {
+        if (this->children.size() == 1)
+        {
             return this->children[0]->codegen();
         }
-        llvm::Value* leftChild = this->children[0]->codegen();
-        llvm::Value* rightChild = this->children[2]->codegen();
+
+        llvm::Value *leftChild = this->children[0]->codegen();
+        llvm::Value *rightChild = this->children[2]->codegen();
         std::string op = get_op(this->children[1]);
-        if(op=="+"){
-           llvm::Value* sum = Builder->CreateAdd(leftChild, rightChild, "sum");
-           return sum;
+
+        llvm::Value *result = createBinaryOp(op, leftChild, rightChild);
+        if (result)
+            return result;
+        if (op == "+=" || op == "-=" || op == "*=" || op == "/=" || op == "%=")
+        {
+            return createCompoundAssignment(op, leftChild, rightChild);
         }
-        else if (op=="-"){
-          llvm::Value* difference = Builder->CreateSub(leftChild, rightChild, "diff");
-          return difference;
-        }
-        else if(op=="*"){
-           llvm::Value* product = Builder->CreateMul(leftChild, rightChild, "mul");
-           return product;
-        }
-        else if (op=="/"){
-          llvm::Value* quotient = Builder->CreateSDiv(leftChild, rightChild, "sdiv");
-          return quotient;
-        }
-        else if (op=="%"){
-          llvm::Value* remainder = Builder->CreateSRem(leftChild, rightChild, "srem");
-          return remainder;
-        }
-        else if (op=="<"){
-            llvm::Value* lessThan = Builder->CreateICmpSLT(leftChild, rightChild, "lt");  
-            return lessThan;
-        }
-        else if (op=="<="){
-            llvm::Value* lessEqual = Builder->CreateICmpSLE(leftChild, rightChild, "le");
-            return lessEqual;
-        }
-        else if (op==">"){
-            llvm::Value* greaterThan = Builder->CreateICmpSGT(leftChild, rightChild, "gt");  
-            return greaterThan;
-        }
-        else if (op==">="){
-            llvm::Value* greaterEqual = Builder->CreateICmpSGE(leftChild, rightChild, "ge");  
-            return greaterEqual;
-        }
-        else if (op=="="){
-            llvm::Value* equalTo = Builder->CreateICmpEQ(leftChild, rightChild, "eq");  
-            return equalTo;
-        }
-        else if (op=="and"){
-            llvm::Value* andOp = Builder->CreateAnd(leftChild, rightChild, "and");
-            return andOp;
-        }
-        else if (op=="or"){
-            llvm::Value* orOp = Builder->CreateOr(leftChild, rightChild, "or");
-            return orOp;
-        }
-        else if (op=="xor"){
-            llvm::Value* xorOp = Builder->CreateXor(leftChild, rightChild, "xor");
-            return xorOp;
-        }
-        if (op == "+=") {
-            llvm::Value* sum = Builder->CreateAdd(leftChild, rightChild, "sum");
-            llvm::Value* assign = Builder->CreateStore(sum, leftChild); 
-        return sum;
-        }   
-        else if (op == "-=") {
-            llvm::Value* difference = Builder->CreateSub(leftChild, rightChild, "diff");
-            llvm::Value* assign = Builder->CreateStore(difference, leftChild); 
-            return difference;
-        } 
-        else if (op == "*=") {
-            llvm::Value* product = Builder->CreateMul(leftChild, rightChild, "mul");
-            llvm::Value* assign = Builder->CreateStore(product, leftChild); 
-         return product;
-        } 
-        else if (op == "/=") {
-            llvm::Value* quotient = Builder->CreateSDiv(leftChild, rightChild, "sdiv");
-            llvm::Value* assign = Builder->CreateStore(quotient, leftChild);
-         return quotient;
-        } 
-        else if (op == "%=") {
-            llvm::Value* remainder = Builder->CreateSRem(leftChild, rightChild, "srem");
-            llvm::Value* assign = Builder->CreateStore(remainder, leftChild); 
-        return remainder;
-        }   
+        break;
     }
     default:
         break;
     }
     return nullptr;
 }
-llvm::Type* get_type(AST_Node* node){
+
+llvm::Type *get_type(AST_Node *node)
+{
     Type_Node *type_node = static_cast<Type_Node *>(node);
     std::string name = get_type_name(type_node);
-    if(name=="integer"){
+    if (name == "integer")
+    {
         return llvm::Type::getInt32Ty(*TheContext);
     }
-    else if (name=="real"){
+    else if (name == "real")
+    {
         return llvm::Type::getDoubleTy(*TheContext);
     }
-    else if (name=="boolean"){
+    else if (name == "boolean")
+    {
         return llvm::Type::getInt1Ty(*TheContext);
     }
-    else {
-       return llvm::Type::getDoubleTy(*TheContext);   
+    else
+    {
+        return llvm::Type::getDoubleTy(*TheContext);
     }
 }
-void Varible_Decleration_code_Gen(AST_Node* node){
-   std::cout << "Creating Var declaration\n";
-   std::string name = get_name(node);
-   llvm::Value* v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
-   llvm:: Value* initial_value = node->children[2]->codegen();
-   Builder->CreateStore(initial_value, v);
-   NamedValues[name]=v;    
-    
-}
-void Factor_Expression_code_Gen(AST_Node* node){
-    std::cout<<"FACTOR EXPRESSION CREATE\n";
-    
-}
-void Assign_code_gen(AST_Node* node) {
+void Varible_Decleration_code_Gen(AST_Node *node)
+{
+    std::cout << "Creating Var declaration\n";
     std::string name = get_name(node);
-    llvm::Value* rightChild = node->children[2]->codegen(); 
-    std::string op = get_op(node->children[1]); 
-    llvm::Value* leftChild = NamedValues[name];
-    llvm::Type* leftType = get_type(node->children[0]); 
-    if (op == ":=") {
+    llvm::Value *v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
+    llvm::Value *initial_value = node->children[2]->codegen();
+    Builder->CreateStore(initial_value, v);
+    NamedValues[name] = v;
+}
+void Factor_Expression_code_Gen(AST_Node *node)
+{
+    std::cout << "FACTOR EXPRESSION CREATE\n";
+}
+void Assign_code_gen(AST_Node *node)
+{
+    std::string name = get_name(node);
+    llvm::Value *rightChild = node->children[2]->codegen();
+    std::string op = get_op(node->children[1]);
+    llvm::Value *leftChild = NamedValues[name];
+    llvm::Type *leftType = get_type(node->children[0]);
+    if (op == ":=")
+    {
         Builder->CreateStore(rightChild, leftChild);
     }
-    else if (op == "+=") {
-        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
-        llvm::Value* sum = Builder->CreateAdd(leftValue, rightChild, "sum");
+    else if (op == "+=")
+    {
+        llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value *sum = Builder->CreateAdd(leftValue, rightChild, "sum");
         Builder->CreateStore(sum, leftChild);
     }
-    else if (op == "-=") {
-        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
-        llvm::Value* diff = Builder->CreateSub(leftValue, rightChild, "diff");
+    else if (op == "-=")
+    {
+        llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value *diff = Builder->CreateSub(leftValue, rightChild, "diff");
         Builder->CreateStore(diff, leftChild);
     }
-    else if (op == "*=") {
-        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
-        llvm::Value* product = Builder->CreateMul(leftValue, rightChild, "product");
+    else if (op == "*=")
+    {
+        llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value *product = Builder->CreateMul(leftValue, rightChild, "product");
         Builder->CreateStore(product, leftChild);
     }
-    else if (op == "/=") {
-        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
-        llvm::Value* quotient = Builder->CreateSDiv(leftValue, rightChild, "quotient");
+    else if (op == "/=")
+    {
+        llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value *quotient = Builder->CreateSDiv(leftValue, rightChild, "quotient");
         Builder->CreateStore(quotient, leftChild);
     }
-    else if (op == "%=") {
-        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
-        llvm::Value* remainder = Builder->CreateSRem(leftValue, rightChild, "remainder");
+    else if (op == "%=")
+    {
+        llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value *remainder = Builder->CreateSRem(leftValue, rightChild, "remainder");
         Builder->CreateStore(remainder, leftChild);
     }
 }
-void code_generation(AST_Node* node) {
-    if (!node) return;
+void code_generation(AST_Node *node)
+{
+    if (!node)
+        return;
     switch (node->type)
     {
-       case VARIABLE_DECLARATION:{
-          Varible_Decleration_code_Gen(node);
-            break;
-       }
-       case ASSIGN_STATEMENT:{
-           Assign_code_gen(node);
-           break;
-       }
-       default:
-          break;
+    case VARIABLE_DECLARATION:
+    {
+        Varible_Decleration_code_Gen(node);
+        break;
     }
-    for (const auto &child : node->children) {
-        code_generation(child);  
+    case ASSIGN_STATEMENT:
+    {
+        Assign_code_gen(node);
+        break;
+    }
+    default:
+        break;
+    }
+    for (const auto &child : node->children)
+    {
+        code_generation(child);
     }
 }
 
-static void InitializeModule() {
+static void InitializeModule()
+{
     TheContext = std::make_unique<llvm::LLVMContext>();
     TheModule = std::make_unique<llvm::Module>("KSS", *TheContext);
     Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
@@ -872,7 +878,7 @@ void start_llvm(AST_Node *root)
 {
     InitializeModule();
     code_generation(root);
-
+    Builder->CreateRetVoid();
     std::error_code EC;
 
     if (EC)

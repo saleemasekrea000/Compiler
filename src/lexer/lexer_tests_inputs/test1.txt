@@ -1,1 +1,2 @@
-var ans1 : integer is 3*7+9-2;
+var x : integer is 5;
+var ans1 : integer is x+=5;
