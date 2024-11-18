@@ -1,1 +1,1 @@
-var ans1 : integer is 3+6;
+var ans1 : integer is 3*6+7;

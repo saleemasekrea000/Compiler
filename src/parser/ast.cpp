@@ -677,7 +677,10 @@ llvm::Value *AST_Node::codegen()
     case SUMMAND:{
         return this->children[0]->codegen();
     } 
-    case FACTOR:{
+    case SIMPLE:
+    case FACTOR:
+    case RELATION:
+    case EXPRESSION:{
         if (this->children.size()==1){
             return this->children[0]->codegen();
         }
@@ -688,11 +691,56 @@ llvm::Value *AST_Node::codegen()
            llvm::Value* sum = Builder->CreateAdd(leftChild, rightChild, "sum");
            return sum;
         }
-        else{
+        else if (op=="-"){
           llvm::Value* difference = Builder->CreateSub(leftChild, rightChild, "diff");
           return difference;
         }
+        else if(op=="*"){
+           llvm::Value* product = Builder->CreateMul(leftChild, rightChild, "mul");
+           return product;
+        }
+        else if (op=="/"){
+          llvm::Value* quotient = Builder->CreateSDiv(leftChild, rightChild, "sdiv");
+          return quotient;
+        }
+        else if (op=="%"){
+          llvm::Value* remainder = Builder->CreateSRem(leftChild, rightChild, "srem");
+          return remainder;
+        }
+        else if (op=="<"){
+            llvm::Value* lessThan = Builder->CreateICmpSLT(leftChild, rightChild, "lt");  
+            return lessThan;
+        }
+        else if (op=="<="){
+            llvm::Value* lessEqual = Builder->CreateICmpSLE(leftChild, rightChild, "le");
+            return lessEqual;
+        }
+        else if (op==">"){
+            llvm::Value* greaterThan = Builder->CreateICmpSGT(leftChild, rightChild, "gt");  
+            return greaterThan;
+        }
+        else if (op==">="){
+            llvm::Value* greaterEqual = Builder->CreateICmpSGE(leftChild, rightChild, "ge");  
+            return greaterEqual;
+        }
+        else if (op=="="){
+            llvm::Value* equalTo = Builder->CreateICmpEQ(leftChild, rightChild, "eq");  
+            return equalTo;
+        }
+        else if (op=="and"){
+            llvm::Value* andOp = Builder->CreateAnd(leftChild, rightChild, "and");
+            return andOp;
+        }
+        else if (op=="or"){
+            llvm::Value* orOp = Builder->CreateOr(leftChild, rightChild, "or");
+            return orOp;
+        }
+        else if (op=="xor"){
+            llvm::Value* xorOp = Builder->CreateXor(leftChild, rightChild, "xor");
+            return xorOp;
+        }
     }
+
     default:
         break;
     }

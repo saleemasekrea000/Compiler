@@ -4,14 +4,24 @@ Program
       Variable declaration
         Identifier: ans1
         Type: integer
-        Factor
-          Factor
-            Summand
-              Primary node
-                Primary expresson
-                  Integer: 3
-          Operator: +
-          Summand
-            Primary node
-              Primary expresson
-                Integer: 6
+        Expression
+          Relation
+            Simple
+              Simple
+                Factor
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer: 3
+                  Operator: *
+                  Summand
+                    Primary node
+                      Primary expresson
+                        Integer: 6
+              Operator: +
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 7

@@ -119,13 +119,13 @@ simpleDeclaration
 ;
 
 variableDeclaration
-  : VAR identifier IS factor ';' { 
+  : VAR identifier IS expression ';' { 
       $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back(new Type_Node("none"));
       $$->children.push_back($4);
     }
-  | VAR identifier ':' type IS factor ';' { 
+  | VAR identifier ':' type IS expression ';' { 
       $$ = new None_Terminal_Node("VARIABLE_DECLARATION");
       $$->children.push_back($2);
       $$->children.push_back($4);
@@ -304,16 +304,22 @@ factor
       $$ = new None_Terminal_Node("FACTOR");
       $$->children.push_back($1);
    }
-   | factor '+' summand{
+   | factor '*' summand{
       $$ = new None_Terminal_Node("FACTOR");
       $$->children.push_back($1);
-      $$->children.push_back(new Operator("+"));
+      $$->children.push_back(new Operator("*"));
       $$->children.push_back($3);
    }
-   | factor '-' summand{
+   | factor '/' summand{
       $$ = new None_Terminal_Node("FACTOR");
       $$->children.push_back($1);
-      $$->children.push_back(new Operator("-"));
+      $$->children.push_back(new Operator("/"));
+      $$->children.push_back($3);
+   }
+   | factor '%' summand{
+      $$ = new None_Terminal_Node("FACTOR");
+      $$->children.push_back($1);
+      $$->children.push_back(new Operator("%"));
       $$->children.push_back($3);
    }
 ;
@@ -323,22 +329,16 @@ simple
       $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
    }
-   | simple '*' factor{
+   | simple '+' factor{
       $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
-      $$->children.push_back(new Operator("*"));
+      $$->children.push_back(new Operator("+"));
       $$->children.push_back($3);
    }
-   | simple '/' factor{
+   | simple '-' factor{
       $$ = new None_Terminal_Node("SIMPLE");
       $$->children.push_back($1);
-      $$->children.push_back(new Operator("/"));
-      $$->children.push_back($3);
-   }
-   | simple '%' factor{
-      $$ = new None_Terminal_Node("SIMPLE");
-      $$->children.push_back($1);
-      $$->children.push_back(new Operator("%"));
+      $$->children.push_back(new Operator("-"));
       $$->children.push_back($3);
    }
  ;
