@@ -739,8 +739,32 @@ llvm::Value *AST_Node::codegen()
             llvm::Value* xorOp = Builder->CreateXor(leftChild, rightChild, "xor");
             return xorOp;
         }
+        if (op == "+=") {
+            llvm::Value* sum = Builder->CreateAdd(leftChild, rightChild, "sum");
+            llvm::Value* assign = Builder->CreateStore(sum, leftChild); 
+        return sum;
+        }   
+        else if (op == "-=") {
+            llvm::Value* difference = Builder->CreateSub(leftChild, rightChild, "diff");
+            llvm::Value* assign = Builder->CreateStore(difference, leftChild); 
+            return difference;
+        } 
+        else if (op == "*=") {
+            llvm::Value* product = Builder->CreateMul(leftChild, rightChild, "mul");
+            llvm::Value* assign = Builder->CreateStore(product, leftChild); 
+         return product;
+        } 
+        else if (op == "/=") {
+            llvm::Value* quotient = Builder->CreateSDiv(leftChild, rightChild, "sdiv");
+            llvm::Value* assign = Builder->CreateStore(quotient, leftChild);
+         return quotient;
+        } 
+        else if (op == "%=") {
+            llvm::Value* remainder = Builder->CreateSRem(leftChild, rightChild, "srem");
+            llvm::Value* assign = Builder->CreateStore(remainder, leftChild); 
+        return remainder;
+        }   
     }
-
     default:
         break;
     }

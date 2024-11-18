@@ -8,20 +8,27 @@ Program
           Relation
             Simple
               Simple
-                Factor
+                Simple
                   Factor
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 3
+                    Operator: *
                     Summand
                       Primary node
                         Primary expresson
-                          Integer: 3
-                  Operator: *
+                          Integer: 7
+                Operator: +
+                Factor
                   Summand
                     Primary node
                       Primary expresson
-                        Integer: 6
-              Operator: +
+                        Integer: 9
+              Operator: -
               Factor
                 Summand
                   Primary node
                     Primary expresson
-                      Integer: 7
+                      Integer: 2
