@@ -12,10 +12,8 @@ Program
                   Primary node
                     Primary expresson
                       Integer: 5
-    Simple declaration
-      Variable declaration
-        Identifier: ans1
-        Type: integer
+    Statement
+      if and else statement
         Expression
           Relation
             Simple
@@ -23,11 +21,37 @@ Program
                 Summand
                   Primary node
                     Primary expresson
-                      Identifier: x
-            Operator: +=
+                      Integer: 3
+            Operator: <
             Simple
               Factor
                 Summand
                   Primary node
                     Primary expresson
-                      Integer: 5
+                      Integer: 2
+        Body
+          Statement
+            Assignment statement
+              Identifier: x
+              Operator: :=
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 1
+        Body
+          Statement
+            Assignment statement
+              Identifier: x
+              Operator: :=
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 2

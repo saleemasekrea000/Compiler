@@ -696,9 +696,14 @@ llvm::Value *AST_Node::codegen()
 {
     switch (this->type)
     {
-    case INTEGER_NODE:
-    {
-        return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val);
+    case IDENTIFIER_NODE_TYPE: {
+        std::string name = get_name_id(this);
+        llvm::Value* ptr = NamedValues[name];
+        llvm::Type* varType = llvm::Type::getInt32Ty(*TheContext); 
+        return Builder->CreateLoad(varType, ptr, name);
+    }
+    case INTEGER_NODE:{
+        return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node*>(this)->val);
     }
     case REAL_NODE:
     {
@@ -721,13 +726,6 @@ llvm::Value *AST_Node::codegen()
     case SUMMAND:
     {
         return this->children[0]->codegen();
-    }
-    case IDENTIFIER_NODE_TYPE:
-    {
-        std::string name = get_name_id(this);
-        llvm::Value *ptr = NamedValues[name];
-        llvm::Type *varType = llvm::Type::getInt32Ty(*TheContext);
-        return Builder->CreateLoad(varType, ptr, name);
     }
     case SIMPLE:
     case FACTOR:
@@ -788,12 +786,7 @@ void Varible_Decleration_code_Gen(AST_Node *node)
     Builder->CreateStore(initial_value, v);
     NamedValues[name] = v;
 }
-void Factor_Expression_code_Gen(AST_Node *node)
-{
-    std::cout << "FACTOR EXPRESSION CREATE\n";
-}
-void Assign_code_gen(AST_Node *node)
-{
+void Assign_code_gen(AST_Node* node) {
     std::string name = get_name(node);
     llvm::Value *rightChild = node->children[2]->codegen();
     std::string op = get_op(node->children[1]);
@@ -834,28 +827,103 @@ void Assign_code_gen(AST_Node *node)
         Builder->CreateStore(remainder, leftChild);
     }
 }
-void code_generation(AST_Node *node)
-{
-    if (!node)
-        return;
+void If_statement_code_gen(AST_Node* node) {
+    llvm::Value* CondV = node->children[0]->codegen();  
+
+    // Create basic blocks
+    llvm::BasicBlock* ifTrue = llvm::BasicBlock::Create(*TheContext, "if_true");
+    llvm::BasicBlock* endIf = llvm::BasicBlock::Create(*TheContext, "end_if");
+
+    // Compare the condition with `false` (i1 0)
+    CondV = Builder->CreateICmpEQ(
+        CondV, 
+        llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), 0), 
+        "is_false"
+    );
+
+    llvm::Function* TheFunction = Builder->GetInsertBlock()->getParent();
+
+    // Insert basic blocks into the function
+    TheFunction->getBasicBlockList().push_back(ifTrue);
+    Builder->SetInsertPoint(ifTrue);
+
+    // Generate code for the body of the `if` statement
+    code_generation(node->children[1]);
+    Builder->CreateBr(endIf);
+
+    // Insert the `endIf` block
+    TheFunction->getBasicBlockList().push_back(endIf);
+    Builder->SetInsertPoint(endIf);
+}
+void If_else_statement_code_gen(AST_Node* node) {
+    // Generate the condition
+    llvm::Value* CondV = node->children[0]->codegen();  
+
+    // Create basic blocks for 'if_true', 'if_false', and 'end_if'
+    llvm::BasicBlock* ifTrue = llvm::BasicBlock::Create(*TheContext, "if_true");
+    llvm::BasicBlock* ifFalse = llvm::BasicBlock::Create(*TheContext, "if_false");
+    llvm::BasicBlock* endIf = llvm::BasicBlock::Create(*TheContext, "end_if");
+
+    // Compare the condition with `false` (i1 0)
+    CondV = Builder->CreateICmpEQ(
+        CondV, 
+        llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), 0), 
+        "is_false"
+    );
+
+    // Insert the conditional branch
+    llvm::Function* TheFunction = Builder->GetInsertBlock()->getParent();
+    Builder->CreateCondBr(CondV, ifFalse, ifTrue);
+
+    // Handle the 'if' (true) block
+    TheFunction->getBasicBlockList().push_back(ifTrue);
+    Builder->SetInsertPoint(ifTrue);
+    code_generation(node->children[1]);  // Generate code for the 'if' body
+    Builder->CreateBr(endIf);
+
+    // Handle the 'else' (false) block
+    TheFunction->getBasicBlockList().push_back(ifFalse);
+    Builder->SetInsertPoint(ifFalse);
+    code_generation(node->children[2]);  // Generate code for the 'else' body
+    Builder->CreateBr(endIf);
+
+    // Finalize with the 'end_if' block
+    TheFunction->getBasicBlockList().push_back(endIf);
+    Builder->SetInsertPoint(endIf);
+}
+
+void code_generation(AST_Node* node) {
+    if (!node) return;
     switch (node->type)
     {
-    case VARIABLE_DECLARATION:
-    {
-        Varible_Decleration_code_Gen(node);
+       case VARIABLE_DECLARATION:{
+          Varible_Decleration_code_Gen(node);
+            break;
+       }
+       case ASSIGN_STATEMENT:{
+           Assign_code_gen(node);
+           break;
+       }
+       case IF_STATEMENT: {
+          If_statement_code_gen(node);
+          break;
+       }  
+       case IF_STATEMENT_ELSE:{
+          If_else_statement_code_gen(node);
+          break;
+       }
+       case PROGRAM:
+       case DECLARATION:
+       case SIMPLE_DECLARATION:
+       case BODY:
+       case STATEMENT:{
+        for (const auto &child : node->children) {
+                 code_generation(child);  
+        }
         break;
-    }
-    case ASSIGN_STATEMENT:
-    {
-        Assign_code_gen(node);
-        break;
-    }
-    default:
-        break;
-    }
-    for (const auto &child : node->children)
-    {
-        code_generation(child);
+       }
+       default:
+          break;
     }
 }
 

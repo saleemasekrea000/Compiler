@@ -196,4 +196,5 @@ void print_ast_helper(AST_Node *node, int indent,FILE * file);
 void Semantic_Analysis_Checks(AST_Node *node);
 void optimize(AST_Node* node);
 void start_llvm(AST_Node* root); 
+void code_generation(AST_Node* node);
 #endif // AST_H
