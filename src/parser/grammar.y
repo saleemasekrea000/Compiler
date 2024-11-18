@@ -540,12 +540,41 @@ IfStatement
   }
 ;
 assign_expression 
-  : primary ASSIGN_OP expression ';'{
+   //put primary instead of identifier 
+   //fiix the += and its sisters 
+  : identifier ASSIGN_OP expression ';'{
     $$ = new None_Terminal_Node("ASSIGN_STATEMENT");
     $$->children.push_back($1);
+    $$->children.push_back(new Operator(":="));
+    $$->children.push_back($3);
+  }
+  | identifier SUB_ASSIGN expression ';'{
+    $$->children.push_back($1);
+    $$->children.push_back(new Operator("-="));
+    $$->children.push_back($3);
+  }
+  | identifier ADD_ASSIGN expression ';'{
+    $$->children.push_back($1);
+    $$->children.push_back(new Operator("+="));
+    $$->children.push_back($3);
+  }
+  | identifier MUL_ASSIGN expression ';'{
+    $$->children.push_back($1);
+    $$->children.push_back(new Operator("*="));
+    $$->children.push_back($3);
+  }
+  | identifier DIV_ASSIGN expression ';'{
+    $$->children.push_back($1);
+    $$->children.push_back(new Operator("/="));
+    $$->children.push_back($3);
+  }
+  | identifier MOD_ASSIGN expression ';'{
+    $$->children.push_back($1);
+    $$->children.push_back(new Operator("%="));
     $$->children.push_back($3);
   }
 ;
+
 iteration_statement
  	: while_expression{
     $$ = new None_Terminal_Node("ITERATION_STATEMENT");

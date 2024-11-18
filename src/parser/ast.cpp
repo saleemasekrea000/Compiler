@@ -799,6 +799,41 @@ void Factor_Expression_code_Gen(AST_Node* node){
     std::cout<<"FACTOR EXPRESSION CREATE\n";
     
 }
+void Assign_code_gen(AST_Node* node) {
+    std::string name = get_name(node);
+    llvm::Value* rightChild = node->children[2]->codegen(); 
+    std::string op = get_op(node->children[1]); 
+    llvm::Value* leftChild = NamedValues[name];
+    llvm::Type* leftType = get_type(node->children[0]); 
+    if (op == ":=") {
+        Builder->CreateStore(rightChild, leftChild);
+    }
+    else if (op == "+=") {
+        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value* sum = Builder->CreateAdd(leftValue, rightChild, "sum");
+        Builder->CreateStore(sum, leftChild);
+    }
+    else if (op == "-=") {
+        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value* diff = Builder->CreateSub(leftValue, rightChild, "diff");
+        Builder->CreateStore(diff, leftChild);
+    }
+    else if (op == "*=") {
+        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value* product = Builder->CreateMul(leftValue, rightChild, "product");
+        Builder->CreateStore(product, leftChild);
+    }
+    else if (op == "/=") {
+        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value* quotient = Builder->CreateSDiv(leftValue, rightChild, "quotient");
+        Builder->CreateStore(quotient, leftChild);
+    }
+    else if (op == "%=") {
+        llvm::Value* leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
+        llvm::Value* remainder = Builder->CreateSRem(leftValue, rightChild, "remainder");
+        Builder->CreateStore(remainder, leftChild);
+    }
+}
 void code_generation(AST_Node* node) {
     if (!node) return;
     switch (node->type)
@@ -807,6 +842,10 @@ void code_generation(AST_Node* node) {
           Varible_Decleration_code_Gen(node);
             break;
        }
+       case ASSIGN_STATEMENT:{
+           Assign_code_gen(node);
+           break;
+       }
        default:
           break;
     }
@@ -814,7 +853,6 @@ void code_generation(AST_Node* node) {
         code_generation(child);  
     }
 }
-
 
 static void InitializeModule() {
     TheContext = std::make_unique<llvm::LLVMContext>();
