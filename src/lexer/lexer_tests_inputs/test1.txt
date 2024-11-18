@@ -1,2 +1,6 @@
-var x : integer is 5;
-var ans1 : integer is x+=5;
+var n :integer is 5;
+var ans : integer is 1;
+while n > 0 loop 
+      ans := ans * n ;
+      n := n - 1;
+    end
