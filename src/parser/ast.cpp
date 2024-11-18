@@ -894,8 +894,10 @@ void If_else_statement_code_gen(AST_Node *node)
     TheFunction->getBasicBlockList().push_back(endIf);
     Builder->SetInsertPoint(endIf);
 }
+std::stack<llvm::BasicBlock*> loopCondBlockStack;
+std::stack<llvm::BasicBlock*> loopExitBlockStack;
 
-void Iteration_code_gen(AST_Node *node)
+void While_code_gen(AST_Node *node)
 {
     // Create basic blocks for loop structure
     llvm::BasicBlock *loop_cond = llvm::BasicBlock::Create(*TheContext, "loop_cond");
@@ -907,6 +909,8 @@ void Iteration_code_gen(AST_Node *node)
     TheFunction->getBasicBlockList().push_back(loop_cond);
     Builder->CreateBr(loop_cond);
     Builder->SetInsertPoint(loop_cond);
+    loopCondBlockStack.push(loop_cond);
+    loopExitBlockStack.push(loop_exit);
 
     llvm::Value *cond = node->children[0]->codegen();
     if (cond->getType() != llvm::Type::getInt1Ty(*TheContext)) {
@@ -923,6 +927,8 @@ void Iteration_code_gen(AST_Node *node)
 
     TheFunction->getBasicBlockList().push_back(loop_exit);
     Builder->SetInsertPoint(loop_exit);
+    loopCondBlockStack.pop();
+    loopExitBlockStack.pop();
 }
 
 void code_generation(AST_Node *node)
@@ -953,15 +959,28 @@ void code_generation(AST_Node *node)
     }
     case WHILE_STATEMENT:
     {
-        Iteration_code_gen(node);
+        While_code_gen(node);
         break;
     }
+        case BREAK_EX:
+        {
+            llvm::BasicBlock *loop_exit = loopExitBlockStack.top();
+            Builder->CreateBr(loop_exit);
+        }
+        break;
+    case CONTINUE_EX: 
+        {
+            llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
+            Builder->CreateBr(loop_cond);
+        }
+        break;
     case PROGRAM:
     case ITERATION_STATEMENT:
     case DECLARATION:
     case SIMPLE_DECLARATION:
     case BODY:
     case STATEMENT:
+    case JUMP_STATEMENT:
     {
         for (const auto &child : node->children)
         {

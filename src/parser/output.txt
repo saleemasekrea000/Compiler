@@ -45,24 +45,6 @@ Program
           Body
             Statement
               Assignment statement
-                Identifier: ans
-                Operator: :=
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Factor
-                          Summand
-                            Primary node
-                              Primary expresson
-                                Identifier: ans
-                        Operator: *
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Identifier: n
-            Statement
-              Assignment statement
                 Identifier: n
                 Operator: :=
                 Expression
@@ -80,3 +62,24 @@ Program
                           Primary node
                             Primary expresson
                               Integer: 1
+            Statement
+              Jump Statement
+                Continue
+            Statement
+              Assignment statement
+                Identifier: ans
+                Operator: :=
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Factor
+                          Summand
+                            Primary node
+                              Primary expresson
+                                Identifier: ans
+                        Operator: *
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Identifier: n
