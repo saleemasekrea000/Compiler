@@ -854,11 +854,9 @@ void If_statement_code_gen(AST_Node *node)
 {
     llvm::Value *CondV = node->children[0]->codegen();
 
-    // Create basic blocks
     llvm::BasicBlock *ifTrue = llvm::BasicBlock::Create(*TheContext, "if_true");
     llvm::BasicBlock *endIf = llvm::BasicBlock::Create(*TheContext, "end_if");
 
-    // Compare the condition with `false` (i1 0)
     CondV = Builder->CreateICmpEQ(
         CondV,
         llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), 0),
@@ -878,37 +876,30 @@ void If_statement_code_gen(AST_Node *node)
 }
 void If_else_statement_code_gen(AST_Node *node)
 {
-    // Generate the condition
     llvm::Value *CondV = node->children[0]->codegen();
 
-    // Create basic blocks for 'if_true', 'if_false', and 'end_if'
     llvm::BasicBlock *ifTrue = llvm::BasicBlock::Create(*TheContext, "if_true");
     llvm::BasicBlock *ifFalse = llvm::BasicBlock::Create(*TheContext, "if_false");
     llvm::BasicBlock *endIf = llvm::BasicBlock::Create(*TheContext, "end_if");
 
-    // Compare the condition with `false` (i1 0)
     CondV = Builder->CreateICmpEQ(
         CondV,
         llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), 0),
         "is_false");
 
-    // Insert the conditional branch
     llvm::Function *TheFunction = Builder->GetInsertBlock()->getParent();
     Builder->CreateCondBr(CondV, ifFalse, ifTrue);
 
-    // Handle the 'if' (true) block
     TheFunction->getBasicBlockList().push_back(ifTrue);
     Builder->SetInsertPoint(ifTrue);
-    code_generation(node->children[1]); // Generate code for the 'if' body
+    code_generation(node->children[1]); 
     Builder->CreateBr(endIf);
 
-    // Handle the 'else' (false) block
     TheFunction->getBasicBlockList().push_back(ifFalse);
     Builder->SetInsertPoint(ifFalse);
-    code_generation(node->children[2]); // Generate code for the 'else' body
+    code_generation(node->children[2]); 
     Builder->CreateBr(endIf);
 
-    // Finalize with the 'end_if' block
     TheFunction->getBasicBlockList().push_back(endIf);
     Builder->SetInsertPoint(endIf);
 }
@@ -917,7 +908,6 @@ std::stack<llvm::BasicBlock *> loopExitBlockStack;
 
 void While_code_gen(AST_Node *node)
 {
-    // Create basic blocks for loop structure
     llvm::BasicBlock *loop_cond = llvm::BasicBlock::Create(*TheContext, "loop_cond");
     llvm::BasicBlock *loop_body = llvm::BasicBlock::Create(*TheContext, "loop_body");
     llvm::BasicBlock *loop_exit = llvm::BasicBlock::Create(*TheContext, "loop_exit");
@@ -956,13 +946,11 @@ void Type_Declaration_codegen(AST_Node *node)
     AST_Node *typeNode = node->children[1];
     Identifier_Node *idNode = static_cast<Identifier_Node *>(identifierNode);
     std::string identifierName = idNode->identifier_name;
-    // Get the LLVM type based on the AST node
     llvm::Type *llvmType = get_type(typeNode);
 
     // Create the alloca instruction to allocate memory for the type
     //llvm::AllocaInst *allocaInst = Builder->CreateAlloca(llvmType, nullptr, identifierName);
     
-    // Store the alloca instruction in the map
     NamedTypes[identifierName] = llvmType;
 }
 
@@ -973,19 +961,16 @@ void Routine_decleration_code_gen(AST_Node* node) {
     std::vector<llvm::Type*> paramTypes;
     AST_Node* params = node->children[1]; 
 
-    // Collect parameter types
     for (auto& param : params->children) {
         paramTypes.push_back(get_type(param->children[1])); 
     }
 
-    // Determine return type
     llvm::Type* returnType = nullptr ;
     if (hasReturnType) {
        returnType=get_type(node->children[3]);
     }
     else returnType = llvm::Type::getInt32Ty(*TheContext);
 
-    // Create function type and function
     funcType = llvm::FunctionType::get(returnType, paramTypes, false);
     function = llvm::Function::Create(
         funcType, 
@@ -998,29 +983,24 @@ void Routine_decleration_code_gen(AST_Node* node) {
     llvm::IRBuilderBase::InsertPoint savedPoint = Builder->saveIP();
     Builder->SetInsertPoint(entry);
 
-    // Parameter initialization
     auto funcArgs = function->args();
     int idx = 0;
     for (auto& arg : funcArgs) {
         std::string paramName = get_name(params->children[idx]);
         llvm::AllocaInst* alloc = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, paramName);
         Builder->CreateStore(&arg, alloc);
-        NamedValues[paramName] = alloc; // Store in the symbol table
+        NamedValues[paramName] = alloc; 
         NamedTypes[paramName]= llvm::Type::getInt32Ty(*TheContext);
         idx++;
     }
 
-    // Generate body code
     code_generation(node->children[2]);
 
-    // Return based on the return type
     if (hasReturnType) {
         Builder->CreateRet(llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 0)); 
     } else {
         Builder->CreateRetVoid();
     }
-
-    // Restore the original insertion point
     Builder->restoreIP(savedPoint);
 }
 
