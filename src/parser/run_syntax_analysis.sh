@@ -11,9 +11,9 @@ g++ -Wno-write-strings -o parser lexer_2.cpp grammar.tab.c ast.cpp -lfl \
 if [ -f "output.ll" ]; then
     echo "output.ll generated successfully."
 
-    llvm-as output.ll -o factorial.bc
+    llvm-as output.ll -o ../factorial.bc
 
-    lli factorial.bc
+    lli ../factorial.bc
 else
     echo "Error: output.ll not found. Ensure the parser generates output.ll."
     exit 1

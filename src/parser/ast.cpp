@@ -801,7 +801,6 @@ llvm::Type *get_type(AST_Node *node)
 }
 void Varible_Decleration_code_Gen(AST_Node *node)
 {
-    std::cout << "Creating Var declaration\n";
     std::string name = get_name(node);
     llvm::Value *v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
     llvm::Value *initial_value = node->children[2]->codegen();
