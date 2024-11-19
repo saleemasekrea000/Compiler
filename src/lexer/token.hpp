@@ -47,6 +47,7 @@ enum TokenType
     RANGE,
     PUNCTUATOR,
     REVERSE,
+    PRINT,
 };
 
 class Token
@@ -105,7 +106,8 @@ public:
             {RELPAR, "RELPAR"},
             {RERLPR, "RERLPR"},
             {RANGE, "RANGE"},
-            {PUNCTUATOR, "PUNCTUATOR"}};
+            {PUNCTUATOR, "PUNCTUATOR"},
+            {PRINT,"PRINT"}};
         return typeMap.at(type);
     }
 

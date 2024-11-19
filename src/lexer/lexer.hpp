@@ -51,6 +51,8 @@ private:
         keywords["boolean"] = TokenType::KEYWORD;
         keywords["var"] = TokenType::KEYWORD;
         keywords["break"] = TokenType::KEYWORD;
+        keywords["print"] = TokenType::KEYWORD;
+        
     }
     bool is_identifier(const string &s);
     bool is_bracket(char c);

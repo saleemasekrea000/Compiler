@@ -231,6 +231,7 @@ TokenType Lexer::token_type(const string &s)
         else if (s=="continue") return CONTINUE;
         else if (s=="var") return VAR;
         else if (s=="reverse") return REVERSE;
+        else if (s=="print")return PRINT;
     }
     if (s == "..")
         return TokenType::RANGE;

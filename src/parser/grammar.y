@@ -23,7 +23,7 @@ void print_indent() {
   char * type_name;
 
 }
-%type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression
+%type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression print_statement
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
 %type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType jumpStatement
 %type <node> body while_expression iteration_statement statement range for_expression assign_expression IfStatement
@@ -36,7 +36,7 @@ void print_indent() {
 %token <real_val> REAL_LITERAL
 %token <bool_val> BOOLEAN_LITERAL
 %token <keyword_val> IS WHILE END ROUTINE VAR INTEGER_LITERAL_KEYWORD REAL_LITERAL_KEYWORD OR AND XOR NOT RANGE REVERSE
-%token <keyword_val> BOOLEAN_LITERAL_KEYWORD RECORD ARRAY FOR RETURN THEN TRUE FALSE TYPE LOOP IN IF ELSE BREAK CONTINUE
+%token <keyword_val> BOOLEAN_LITERAL_KEYWORD RECORD ARRAY FOR RETURN THEN TRUE FALSE TYPE LOOP IN IF ELSE BREAK CONTINUE PRINT
 %token LE_OP GE_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN ASSIGN_OP;
 %%
@@ -491,6 +491,16 @@ statement :
     $$ = new None_Terminal_Node("STATEMENT");
     $$->children.push_back($1);
    }
+   | print_statement ';'{
+    $$ = new None_Terminal_Node("STATEMENT");
+    $$->children.push_back($1);
+   }
+;
+print_statement 
+  : PRINT '(' expression ')' {
+     $$ =  new None_Terminal_Node("PRINT_STATMENT");
+     $$->children.push_back($3);
+  }
 ;
 jumpStatement 
   : return_exp {

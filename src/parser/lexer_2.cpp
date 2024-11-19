@@ -88,6 +88,7 @@ int yylex()
   else if (tokenType=="BOOLEAN_LITERAL_KEYWORD") return BOOLEAN_LITERAL_KEYWORD;
   else if (tokenType=="RANGE")return RANGE;
   else if (tokenType=="CONTINUE")return CONTINUE;
+  else if (tokenType=="PRINT")return PRINT;
   else if (tokenType == "IDENTIFIER")
   {
     yylval.id_val = strdup(tokenValue.c_str());

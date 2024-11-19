@@ -72,6 +72,7 @@ typedef enum Node_Type
     PARAMETER_DECLERATION,
     PARAMETERS_EXPRESSION_LIST,
     ROUTINE_DECLERATION,
+    PRINT_STATMENT,
 } Node_Type;
 
 class AST_Node
@@ -124,7 +125,8 @@ private:
             {"Argument_Expression_List", Argument_Expression_List},
             {"PARAMETER_DECLERATION", PARAMETER_DECLERATION},
             {"PARAMETERS_EXPRESSION_LIST",PARAMETERS_EXPRESSION_LIST},
-            {"ROUTINE_DECLERATION",ROUTINE_DECLERATION}
+            {"ROUTINE_DECLERATION",ROUTINE_DECLERATION},
+            {"PRINT_STATMENT", PRINT_STATMENT},
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())

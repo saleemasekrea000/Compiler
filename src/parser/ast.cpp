@@ -54,6 +54,7 @@ static const std::unordered_map<Node_Type, std::string> type_map = {
     {PARAMETER_DECLERATION, "Parameter Decleration"},
     {PARAMETERS_EXPRESSION_LIST, "Parameters Expression List"},
     {ROUTINE_DECLERATION, "Routine Decleration"},
+    {PRINT_STATMENT, "PRINT"},
 };
 
 void print_ast_helper(AST_Node *node, int indent, FILE *output_file)
@@ -987,23 +988,53 @@ void Routine_decleration_code_gen(AST_Node* node) {
     int idx = 0;
     for (auto& arg : funcArgs) {
         std::string paramName = get_name(params->children[idx]);
-        llvm::AllocaInst* alloc = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, paramName);
+        llvm::AllocaInst* alloc = Builder->CreateAlloca(get_type(params->children[idx]->children[1]), nullptr, paramName);
         Builder->CreateStore(&arg, alloc);
         NamedValues[paramName] = alloc; 
-        NamedTypes[paramName]= llvm::Type::getInt32Ty(*TheContext);
+        NamedTypes[paramName]= get_type(params->children[idx]->children[1]);
         idx++;
     }
 
     code_generation(node->children[2]);
 
-    if (hasReturnType) {
+    /* if (hasReturnType) {
         Builder->CreateRet(llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 0)); 
     } else {
         Builder->CreateRetVoid();
-    }
+    } */
     Builder->restoreIP(savedPoint);
 }
 
+void PrintNodeCodeGen(AST_Node* printNode) {
+    llvm::Function* printfFunc = TheModule->getFunction("printf");
+    if (!printfFunc) {
+        std::vector<llvm::Type*> printfArgs = { llvm::Type::getInt8PtrTy(*TheContext) };
+        llvm::FunctionType* printfType = llvm::FunctionType::get(
+            llvm::Type::getInt32Ty(*TheContext), printfArgs, true
+        );
+        printfFunc = llvm::Function::Create(
+            printfType, llvm::Function::ExternalLinkage, "printf", *TheModule
+        );
+    }
+    AST_Node* expression = printNode->children[0];
+    llvm::Value* exprValue = expression->codegen(); 
+    llvm::Type* exprType = llvm::Type::getInt32Ty(*TheContext);
+    llvm::Value* formatStr = nullptr;
+
+    if (exprType->isIntegerTy(32)) {
+        formatStr = Builder->CreateGlobalStringPtr("%d\n");
+    } else if (exprType->isDoubleTy()) {
+        formatStr = Builder->CreateGlobalStringPtr("%f\n");
+    } else if (exprType->isIntegerTy(1)) {
+        formatStr = Builder->CreateGlobalStringPtr("%d\n"); 
+    } else {
+        llvm::errs() << "Unsupported type for print statement!\n";
+        return;
+    }
+
+    // Call printf with the format string and the expression value
+    Builder->CreateCall(printfFunc, { formatStr, exprValue });
+}
 
 void Routine_call_code_gen(AST_Node *node)
 {
@@ -1070,6 +1101,10 @@ void code_generation(AST_Node *node)
     case RETURN_EX:
     {
         node->codegen();
+        break;
+    }
+    case PRINT_STATMENT:{
+        PrintNodeCodeGen(node);
         break;
     }
     case PROGRAM:

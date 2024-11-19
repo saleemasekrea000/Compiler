@@ -1,15 +1,21 @@
 ; ModuleID = 'KSS'
 source_filename = "KSS"
 
-@.str = private constant [4 x i8] c"%d\0A\00"  ; Format string for printf: "%d\n"
+@0 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
-declare i32 @printf(i8*, ...)                  ; Declare the external printf function
 define void @main() {
 entry:
+  %Factorial_call = call i32 @Factorial(i32 5)
+  %0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %Factorial_call)
+  ret void
+}
+
+define i32 @Factorial(i32 %0) {
+entry:
+  %n = alloca i32, align 4
+  store i32 %0, i32* %n, align 4
   %ans = alloca i32, align 4
   store i32 1, i32* %ans, align 4
-  %n = alloca i32, align 4
-  store i32 5, i32* %n, align 4
   br label %loop_cond
 
 loop_cond:                                        ; preds = %loop_body, %entry
@@ -27,9 +33,9 @@ loop_body:                                        ; preds = %loop_cond
   store i32 %diff, i32* %n, align 4
   br label %loop_cond
 
-loop_exit:                                     ; preds = %loop_cond
-  %final_ans = load i32, i32* %ans, align 4    ; Load final value of ans
-  %fmt_ptr = bitcast [4 x i8]* @.str to i8*    ; Cast format string to i8*
-  call i32 (i8*, ...) @printf(i8* %fmt_ptr, i32 %final_ans) ; Print ans
-  ret void                                     ; Return from main
+loop_exit:                                        ; preds = %loop_cond
+  %ans5 = load i32, i32* %ans, align 4
+  ret i32 %ans5
 }
+
+declare i32 @printf(i8*, ...)
