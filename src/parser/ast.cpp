@@ -15,6 +15,7 @@ static std::unique_ptr<llvm::LLVMContext> TheContext;
 static std::unique_ptr<llvm::IRBuilder<>> Builder;
 static std::unique_ptr<llvm::Module> TheModule;
 static std::map<std::string, llvm::Value *> NamedValues;
+static std::map<std::string, llvm::Type *> NamedTypes;
 
 static const std::unordered_map<Node_Type, std::string> type_map = {
     {PROGRAM, "Program"},
@@ -700,7 +701,7 @@ llvm::Value *AST_Node::codegen()
     {
         std::string name = get_name_id(this);
         llvm::Value *ptr = NamedValues[name];
-        llvm::Type *varType = llvm::Type::getInt32Ty(*TheContext);
+        llvm::Type *varType = NamedTypes[name];
         return Builder->CreateLoad(varType, ptr, name);
     }
     case INTEGER_NODE:
@@ -752,19 +753,22 @@ llvm::Value *AST_Node::codegen()
         }
         break;
     }
-    case RETURN_EX:{
-        AST_Node* expr = this->children[0];
-        llvm::Value* returnValue = expr->codegen();   
+    case RETURN_EX:
+    {
+        AST_Node *expr = this->children[0];
+        llvm::Value *returnValue = expr->codegen();
         return Builder->CreateRet(returnValue);
     }
-    case Routine_Call:{
-        llvm::Function* function = TheModule->getFunction(get_name_id(this->children[0]));
-        std::vector<llvm::Value*> args;
-        for(auto child : this->children[1]->children){
+    case Routine_Call:
+    {
+        llvm::Function *function = TheModule->getFunction(get_name_id(this->children[0]));
+        std::vector<llvm::Value *> args;
+        for (auto child : this->children[1]->children)
+        {
             args.push_back(child->codegen());
         }
-        //std::cout<<args.size()<<'\n';
-        llvm::Value* callInst = Builder->CreateCall(function, args,  get_name_id(this->children[0])+ "_call");
+        // std::cout<<args.size()<<'\n';
+        llvm::Value *callInst = Builder->CreateCall(function, args, get_name_id(this->children[0]) + "_call");
         return callInst;
     }
     default:
@@ -775,7 +779,7 @@ llvm::Value *AST_Node::codegen()
 
 llvm::Type *get_type(AST_Node *node)
 {
-    Type_Node *type_node = static_cast<Type_Node *>(node);
+    Type_Node *type_node = static_cast<Type_Node*>(node);
     std::string name = get_type_name(type_node);
     if (name == "integer")
     {
@@ -790,8 +794,8 @@ llvm::Type *get_type(AST_Node *node)
         return llvm::Type::getInt1Ty(*TheContext);
     }
     else
-    {
-        return llvm::Type::getDoubleTy(*TheContext);
+    { 
+        return NamedTypes[get_name_id(node->children[0])];
     }
 }
 void Varible_Decleration_code_Gen(AST_Node *node)
@@ -802,6 +806,7 @@ void Varible_Decleration_code_Gen(AST_Node *node)
     llvm::Value *initial_value = node->children[2]->codegen();
     Builder->CreateStore(initial_value, v);
     NamedValues[name] = v;
+    NamedTypes[name]=get_type(node->children[1]);
 }
 void Assign_code_gen(AST_Node *node)
 {
@@ -809,7 +814,7 @@ void Assign_code_gen(AST_Node *node)
     llvm::Value *rightChild = node->children[2]->codegen();
     std::string op = get_op(node->children[1]);
     llvm::Value *leftChild = NamedValues[name];
-    llvm::Type *leftType = get_type(node->children[0]);
+    llvm::Type *leftType = NamedTypes[name];
     if (op == ":=")
     {
         Builder->CreateStore(rightChild, leftChild);
@@ -858,10 +863,10 @@ void If_statement_code_gen(AST_Node *node)
         CondV,
         llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), 0),
         "is_false");
-    
+
     Builder->CreateCondBr(CondV, endIf, ifTrue);
     llvm::Function *TheFunction = Builder->GetInsertBlock()->getParent();
-    
+
     TheFunction->getBasicBlockList().push_back(ifTrue);
     Builder->SetInsertPoint(ifTrue);
 
@@ -907,8 +912,8 @@ void If_else_statement_code_gen(AST_Node *node)
     TheFunction->getBasicBlockList().push_back(endIf);
     Builder->SetInsertPoint(endIf);
 }
-std::stack<llvm::BasicBlock*> loopCondBlockStack;
-std::stack<llvm::BasicBlock*> loopExitBlockStack;
+std::stack<llvm::BasicBlock *> loopCondBlockStack;
+std::stack<llvm::BasicBlock *> loopExitBlockStack;
 
 void While_code_gen(AST_Node *node)
 {
@@ -918,7 +923,7 @@ void While_code_gen(AST_Node *node)
     llvm::BasicBlock *loop_exit = llvm::BasicBlock::Create(*TheContext, "loop_exit");
 
     llvm::Function *TheFunction = Builder->GetInsertBlock()->getParent();
-    
+
     TheFunction->getBasicBlockList().push_back(loop_cond);
     Builder->CreateBr(loop_cond);
     Builder->SetInsertPoint(loop_cond);
@@ -926,7 +931,8 @@ void While_code_gen(AST_Node *node)
     loopExitBlockStack.push(loop_exit);
 
     llvm::Value *cond = node->children[0]->codegen();
-    if (cond->getType() != llvm::Type::getInt1Ty(*TheContext)) {
+    if (cond->getType() != llvm::Type::getInt1Ty(*TheContext))
+    {
         cond = Builder->CreateICmpNE(cond, llvm::ConstantInt::get(cond->getType(), 0), "non_zero_condition");
     }
     Builder->CreateCondBr(cond, loop_body, loop_exit);
@@ -944,6 +950,22 @@ void While_code_gen(AST_Node *node)
     loopExitBlockStack.pop();
 }
 
+void Type_Declaration_codegen(AST_Node *node)
+{
+    AST_Node *identifierNode = node->children[0];
+    AST_Node *typeNode = node->children[1];
+    Identifier_Node *idNode = static_cast<Identifier_Node *>(identifierNode);
+    std::string identifierName = idNode->identifier_name;
+    // Get the LLVM type based on the AST node
+    llvm::Type *llvmType = get_type(typeNode);
+
+    // Create the alloca instruction to allocate memory for the type
+    //llvm::AllocaInst *allocaInst = Builder->CreateAlloca(llvmType, nullptr, identifierName);
+    
+    // Store the alloca instruction in the map
+    NamedTypes[identifierName] = llvmType;
+}
+
 void Routine_decleration_code_gen(AST_Node* node) {
     bool hasReturnType = node->children.size() == 4;  
     llvm::FunctionType* funcType;
@@ -953,13 +975,15 @@ void Routine_decleration_code_gen(AST_Node* node) {
 
     // Collect parameter types
     for (auto& param : params->children) {
-        paramTypes.push_back(llvm::Type::getInt32Ty(*TheContext)); 
+        paramTypes.push_back(get_type(param->children[1])); 
     }
 
     // Determine return type
-    llvm::Type* returnType = hasReturnType 
-        ? llvm::Type::getInt32Ty(*TheContext)
-        : llvm::Type::getVoidTy(*TheContext);
+    llvm::Type* returnType = nullptr ;
+    if (hasReturnType) {
+       returnType=get_type(node->children[3]);
+    }
+    else returnType = llvm::Type::getInt32Ty(*TheContext);
 
     // Create function type and function
     funcType = llvm::FunctionType::get(returnType, paramTypes, false);
@@ -982,6 +1006,7 @@ void Routine_decleration_code_gen(AST_Node* node) {
         llvm::AllocaInst* alloc = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, paramName);
         Builder->CreateStore(&arg, alloc);
         NamedValues[paramName] = alloc; // Store in the symbol table
+        NamedTypes[paramName]= llvm::Type::getInt32Ty(*TheContext);
         idx++;
     }
 
@@ -1000,7 +1025,8 @@ void Routine_decleration_code_gen(AST_Node* node) {
 }
 
 
-void Routine_call_code_gen(AST_Node* node){
+void Routine_call_code_gen(AST_Node *node)
+{
     node->codegen();
 }
 void code_generation(AST_Node *node)
@@ -1012,6 +1038,11 @@ void code_generation(AST_Node *node)
     case VARIABLE_DECLARATION:
     {
         Varible_Decleration_code_Gen(node);
+        break;
+    }
+    case TYPE_DECLARATION:
+    {
+        Type_Declaration_codegen(node);
         break;
     }
     case ASSIGN_STATEMENT:
@@ -1040,24 +1071,27 @@ void code_generation(AST_Node *node)
         Builder->CreateBr(loop_exit);
         break;
     }
-    case CONTINUE_EX: 
+    case CONTINUE_EX:
     {
         llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
         Builder->CreateBr(loop_cond);
         break;
     }
-    case ROUTINE_DECLERATION:{
+    case ROUTINE_DECLERATION:
+    {
         Routine_decleration_code_gen(node);
         break;
     }
-    case Routine_Call:{
-       Routine_call_code_gen(node);
-       break;
+    case Routine_Call:
+    {
+        Routine_call_code_gen(node);
+        break;
     }
-    case RETURN_EX:{
+    case RETURN_EX:
+    {
         node->codegen();
         break;
-    } 
+    }
     case PROGRAM:
     case ITERATION_STATEMENT:
     case DECLARATION:
@@ -1096,7 +1130,7 @@ void start_llvm(AST_Node *root)
 {
     InitializeModule();
     code_generation(root);
-    
+
     Builder->CreateRetVoid();
     std::error_code EC;
 

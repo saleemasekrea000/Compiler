@@ -438,7 +438,7 @@ relation
 
 
 typeDecleration 
-   : TYPE identifier IS type {
+   : TYPE identifier IS type ';' {
     $$ = new None_Terminal_Node("TYPE_DECLARATION");
     $$->children.push_back($2);
     $$->children.push_back($4);

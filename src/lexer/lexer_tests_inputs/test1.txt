@@ -1,8 +1,5 @@
-var x1 : integer is 5;
-routine fun (n:integer) : integer is 
-      if n < 0 then   
-        return 1;
-      end 
-    return fun(n-1);
-end 
-x1 := fun(1);
+routine Factorial(n: integer) : integer is 
+   return n;
+end
+
+Factorial(5);
