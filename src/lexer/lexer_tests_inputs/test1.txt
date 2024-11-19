@@ -1,10 +1,4 @@
-routine Factorial(n: integer) is 
-   var ans : integer is 1;
-   while n > 0 loop 
-      ans := ans * n ;
-      n := n - 1;
-   end    
-   return ans;
-end
+var ans : integer is 1;
+var n : integer is 5;
 
-print(Factorial(5));
+print(n);
