@@ -752,6 +752,21 @@ llvm::Value *AST_Node::codegen()
         }
         break;
     }
+    case RETURN_EX:{
+        AST_Node* expr = this->children[0];
+        llvm::Value* returnValue = expr->codegen();   
+        return Builder->CreateRet(returnValue);
+    }
+    case Routine_Call:{
+        llvm::Function* function = TheModule->getFunction(get_name_id(this->children[0]));
+        std::vector<llvm::Value*> args;
+        for(auto child : this->children[1]->children){
+            args.push_back(child->codegen());
+        }
+        //std::cout<<args.size()<<'\n';
+        llvm::Value* callInst = Builder->CreateCall(function, args,  get_name_id(this->children[0])+ "_call");
+        return callInst;
+    }
     default:
         break;
     }
@@ -843,18 +858,16 @@ void If_statement_code_gen(AST_Node *node)
         CondV,
         llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), 0),
         "is_false");
-
+    
+    Builder->CreateCondBr(CondV, endIf, ifTrue);
     llvm::Function *TheFunction = Builder->GetInsertBlock()->getParent();
-
-    // Insert basic blocks into the function
+    
     TheFunction->getBasicBlockList().push_back(ifTrue);
     Builder->SetInsertPoint(ifTrue);
 
-    // Generate code for the body of the `if` statement
     code_generation(node->children[1]);
     Builder->CreateBr(endIf);
 
-    // Insert the `endIf` block
     TheFunction->getBasicBlockList().push_back(endIf);
     Builder->SetInsertPoint(endIf);
 }
@@ -931,6 +944,65 @@ void While_code_gen(AST_Node *node)
     loopExitBlockStack.pop();
 }
 
+void Routine_decleration_code_gen(AST_Node* node) {
+    bool hasReturnType = node->children.size() == 4;  
+    llvm::FunctionType* funcType;
+    llvm::Function* function;
+    std::vector<llvm::Type*> paramTypes;
+    AST_Node* params = node->children[1]; 
+
+    // Collect parameter types
+    for (auto& param : params->children) {
+        paramTypes.push_back(llvm::Type::getInt32Ty(*TheContext)); 
+    }
+
+    // Determine return type
+    llvm::Type* returnType = hasReturnType 
+        ? llvm::Type::getInt32Ty(*TheContext)
+        : llvm::Type::getVoidTy(*TheContext);
+
+    // Create function type and function
+    funcType = llvm::FunctionType::get(returnType, paramTypes, false);
+    function = llvm::Function::Create(
+        funcType, 
+        llvm::Function::ExternalLinkage, 
+        get_name_id(node->children[0]), 
+        *TheModule
+    );
+
+    llvm::BasicBlock* entry = llvm::BasicBlock::Create(*TheContext, "entry", function);
+    llvm::IRBuilderBase::InsertPoint savedPoint = Builder->saveIP();
+    Builder->SetInsertPoint(entry);
+
+    // Parameter initialization
+    auto funcArgs = function->args();
+    int idx = 0;
+    for (auto& arg : funcArgs) {
+        std::string paramName = get_name(params->children[idx]);
+        llvm::AllocaInst* alloc = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, paramName);
+        Builder->CreateStore(&arg, alloc);
+        NamedValues[paramName] = alloc; // Store in the symbol table
+        idx++;
+    }
+
+    // Generate body code
+    code_generation(node->children[2]);
+
+    // Return based on the return type
+    if (hasReturnType) {
+        Builder->CreateRet(llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 0)); 
+    } else {
+        Builder->CreateRetVoid();
+    }
+
+    // Restore the original insertion point
+    Builder->restoreIP(savedPoint);
+}
+
+
+void Routine_call_code_gen(AST_Node* node){
+    node->codegen();
+}
 void code_generation(AST_Node *node)
 {
     if (!node)
@@ -962,18 +1034,30 @@ void code_generation(AST_Node *node)
         While_code_gen(node);
         break;
     }
-        case BREAK_EX:
-        {
-            llvm::BasicBlock *loop_exit = loopExitBlockStack.top();
-            Builder->CreateBr(loop_exit);
-        }
+    case BREAK_EX:
+    {
+        llvm::BasicBlock *loop_exit = loopExitBlockStack.top();
+        Builder->CreateBr(loop_exit);
         break;
+    }
     case CONTINUE_EX: 
-        {
-            llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
-            Builder->CreateBr(loop_cond);
-        }
+    {
+        llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
+        Builder->CreateBr(loop_cond);
         break;
+    }
+    case ROUTINE_DECLERATION:{
+        Routine_decleration_code_gen(node);
+        break;
+    }
+    case Routine_Call:{
+       Routine_call_code_gen(node);
+       break;
+    }
+    case RETURN_EX:{
+        node->codegen();
+        break;
+    } 
     case PROGRAM:
     case ITERATION_STATEMENT:
     case DECLARATION:
@@ -1012,6 +1096,7 @@ void start_llvm(AST_Node *root)
 {
     InitializeModule();
     code_generation(root);
+    
     Builder->CreateRetVoid();
     std::error_code EC;
 

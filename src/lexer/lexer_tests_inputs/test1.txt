@@ -1,6 +1,8 @@
-var n :integer is 5;
-var ans : integer is 1;
-while n > 0 loop 
-      ans := ans * n ;
-      n := n - 1;
-    end
+var x1 : integer is 5;
+routine fun (n:integer) : integer is 
+      if n < 0 then   
+        return 1;
+      end 
+    return fun(n-1);
+end 
+x1 := fun(1);

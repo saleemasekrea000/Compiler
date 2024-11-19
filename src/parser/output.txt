@@ -2,7 +2,7 @@ Program
   Declarations
     Simple declaration
       Variable declaration
-        Identifier: n
+        Identifier: x1
         Type: integer
         Expression
           Relation
@@ -12,74 +12,111 @@ Program
                   Primary node
                     Primary expresson
                       Integer: 5
-    Simple declaration
-      Variable declaration
-        Identifier: ans
-        Type: integer
+    Routine Decleration
+      Identifier: fun
+      Parameters Expression List
+        Parameter Decleration
+          Identifier: n
+          Type: integer
+      Body
+        Statement
+          if statement
+            Expression
+              Relation
+                Simple
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Identifier: n
+                Operator: <
+                Simple
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer: 0
+            Body
+              Statement
+                Jump Statement
+                  Return
+                    Expression
+                      Relation
+                        Simple
+                          Factor
+                            Summand
+                              Primary node
+                                Primary expresson
+                                  Integer: 1
+        Statement
+          Jump Statement
+            Return
+              Expression
+                Relation
+                  Simple
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Routine Call
+                              Identifier: fun
+                              Arguments Expression List
+                                Expression
+                                  Relation
+                                    Simple
+                                      Simple
+                                        Factor
+                                          Summand
+                                            Primary node
+                                              Primary expresson
+                                                Identifier: n
+                                      Operator: -
+                                      Factor
+                                        Summand
+                                          Primary node
+                                            Primary expresson
+                                              Integer: 1
+                    Operator: +
+                    Factor
+                      Summand
+                        Primary node
+                          Routine Call
+                            Identifier: f
+                            Arguments Expression List
+                              Expression
+                                Relation
+                                  Simple
+                                    Simple
+                                      Factor
+                                        Summand
+                                          Primary node
+                                            Primary expresson
+                                              Identifier: n
+                                    Operator: -
+                                    Factor
+                                      Summand
+                                        Primary node
+                                          Primary expresson
+                                            Integer: 2
+      Type: integer
+    Statement
+      Assignment statement
+        Identifier: x1
+        Operator: :=
         Expression
           Relation
             Simple
               Factor
                 Summand
                   Primary node
-                    Primary expresson
-                      Integer: 1
-    Statement
-      Iteration statement
-        While statement
-          Expression
-            Relation
-              Simple
-                Factor
-                  Summand
-                    Primary node
-                      Primary expresson
-                        Identifier: n
-              Operator: >
-              Simple
-                Factor
-                  Summand
-                    Primary node
-                      Primary expresson
-                        Integer: 0
-          Body
-            Statement
-              Assignment statement
-                Identifier: n
-                Operator: :=
-                Expression
-                  Relation
-                    Simple
-                      Simple
-                        Factor
-                          Summand
-                            Primary node
-                              Primary expresson
-                                Identifier: n
-                      Operator: -
-                      Factor
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Integer: 1
-            Statement
-              Jump Statement
-                Continue
-            Statement
-              Assignment statement
-                Identifier: ans
-                Operator: :=
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Factor
-                          Summand
-                            Primary node
-                              Primary expresson
-                                Identifier: ans
-                        Operator: *
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Identifier: n
+                    Routine Call
+                      Identifier: fun
+                      Arguments Expression List
+                        Expression
+                          Relation
+                            Simple
+                              Factor
+                                Summand
+                                  Primary node
+                                    Primary expresson
+                                      Integer: 1
