@@ -2,96 +2,53 @@ Program
   Declarations
     Simple declaration
       Type declaration
-        Identifier: integer_array
-        Type: arrayType
-          Array type
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Integer: 100
-            Type: integer
+        Identifier: point
+        Type: recordType
+          Record type
+            Variable Declarations
+              Variable declaration
+                Identifier: x
+                Type: integer
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Integer: 9
+              Variable declaration
+                Identifier: y
+                Type: integer
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Integer: 4
     Simple declaration
       Variable declaration
-        Identifier: a
+        Identifier: point1
         Type: identifier
-          Identifier: integer_array
+          Identifier: point
     Statement
       Assignment statement
         Primary node
-          Array access
-            Identifier: a
-            Primary node
-              Primary expresson
-                Integer: 1
-        Operator: :=
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Integer: 1
-    Statement
-      Assignment statement
-        Primary node
-          Array access
-            Identifier: a
-            Primary node
-              Primary expresson
-                Integer: 2
-        Operator: :=
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Integer: 3
-    Simple declaration
-      Variable declaration
-        Identifier: x
-        Type: integer
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Integer: 0
-    Statement
-      Assignment statement
-        Primary node
-          Primary expresson
+          Record access
+            Identifier: point1
             Identifier: x
         Operator: :=
         Expression
           Relation
             Simple
-              Simple
-                Factor
-                  Summand
-                    Primary node
-                      Array access
-                        Identifier: a
-                        Primary node
-                          Primary expresson
-                            Integer: 2
-              Operator: +
               Factor
                 Summand
                   Primary node
-                    Array access
-                      Identifier: a
-                      Primary node
-                        Primary expresson
-                          Integer: 1
+                    Record access
+                      Identifier: point1
+                      Identifier: y
     Statement
       PRINT
         Expression
@@ -100,5 +57,6 @@ Program
               Factor
                 Summand
                   Primary node
-                    Primary expresson
+                    Record access
+                      Identifier: point1
                       Identifier: x

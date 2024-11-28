@@ -1,7 +1,9 @@
-type integer_array is array[100] integer;
-var a : integer_array ; 
-a[1] := 1;
-a[2] := 3;
-var x : integer is 0;
-x := a[2] + a[1];
-print(x);
+type point is record {
+    var x : integer is 9;
+    var y : integer is 4;
+}
+end ;
+
+var point1 : point; 
+point1.x:=point1.y;
+print(point1.x);

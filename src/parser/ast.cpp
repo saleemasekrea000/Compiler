@@ -17,6 +17,13 @@ static std::unique_ptr<llvm::Module> TheModule;
 static std::map<std::string, llvm::Value *> NamedValues;
 static std::map<std::string, llvm::Type *> NamedTypes;
 static std::map<std::string, std::pair<llvm::Value*, llvm::Type*>>Arrays;
+struct recordVariable{
+    std::string name;
+    llvm::Type* type;
+    llvm::Value* value;
+};
+static std::map<std::string, std::vector<recordVariable> >Records;
+static std::map<std::pair<std::string,std::string>,std::pair<llvm::Value*, llvm::Type*>>RecordsValues;
 static const std::unordered_map<Node_Type, std::string> type_map = {
     {PROGRAM, "Program"},
     {DECLARATION, "Declarations"},
@@ -712,6 +719,13 @@ llvm::Value *AST_Node::codegen()
         llvm::Value* elementPointer = Builder->CreateGEP(NamedTypes[array_name],arrayPointer, index);
         return Builder->CreateLoad(NamedTypes[array_name], elementPointer, array_name);
     }
+    case RECORD_ACCESS:{
+        std::string record_name = get_name(this);
+        std::string access_operand_name=get_name_id(this->children[1]);
+        return Builder->CreateLoad(RecordsValues[{record_name,access_operand_name}].second,
+             RecordsValues[{record_name,access_operand_name}].first, 
+             record_name+" "+access_operand_name);
+    }
     case INTEGER_NODE:
     {
         return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val);
@@ -861,6 +875,17 @@ void Varible_Decleration_code_Gen(AST_Node *node)
         NamedValues[get_name(node)] = arrayPointer;
         NamedTypes[get_name(node)] = elementType;
     }
+    else if (get_type_name(node->children[1]) == "identifier" && 
+        Records.count(get_name_id(node->children[1]->children[0]))){
+        std::string  RecordTypeName=get_name(node->children[1]);
+        std::string RecordName=get_name(node);
+        for(auto recordVar: Records[RecordTypeName]){
+             RecordsValues[{RecordName,recordVar.name}] = {
+                Builder->CreateAlloca(recordVar.type, nullptr,RecordTypeName +" "+ RecordName +" "+recordVar.name),
+                recordVar.type};  
+            Builder->CreateStore(recordVar.value,RecordsValues[{RecordName,recordVar.name}].first);      
+        }
+    }
     else {
         std::string name = get_name(node);
         llvm::Value* v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
@@ -881,12 +906,16 @@ void Varible_Decleration_code_Gen(AST_Node *node)
 void Assign_code_gen(AST_Node *node){
     llvm::Value *leftChild=nullptr;
     if(node->children[0]->children[0]->type==ARRAY_ACCESS){
-       // print_ast(node->children[0]->children[0],0,"output.txt");
         std::string array_name = get_name_id(node->children[0]->children[0]->children[0]);
         llvm::Value* arrayPointer = NamedValues[array_name];
         llvm::Value* index = node->children[0]->children[0]->children[1]->codegen();
         llvm::Value* elementPointer = Builder->CreateGEP(llvm::Type::getInt32Ty(*TheContext),arrayPointer, index);
         leftChild=elementPointer;
+    }
+    else if (node->children[0]->children[0]->type==RECORD_ACCESS){
+        std::string recordName=get_name(node->children[0]->children[0]);
+        std::string access_operand = get_name_id(node->children[0]->children[0]->children[1]);
+        leftChild=RecordsValues[{recordName,access_operand}].first;
     }
     else{
         std::string name = get_name(node->children[0]->children[0]);
@@ -1036,6 +1065,30 @@ void Type_Declaration_Array_codegen(AST_Node* node){
     Arrays[get_name_id(identifierNode)]={arraySize,llvmType};
 }
 
+void Type_Declaration_Record_codgen(AST_Node* node){
+     std::string RecordName=get_name(node);
+     AST_Node* variblesNode=node->children[1]->children[0]->children[0];
+     std::vector<recordVariable>recordVaribles;
+    for (auto u : variblesNode->children) {
+        recordVariable newRecordVariable;
+        newRecordVariable.name = get_name(u);
+        newRecordVariable.type = get_type(u->children[1]);
+        if (u->children.size() > 2) {
+            newRecordVariable.value = u->children[2]->codegen();
+        } else {
+            if (newRecordVariable.type->isIntegerTy()) {
+                newRecordVariable.value = llvm::ConstantInt::get(newRecordVariable.type, 0);
+            } else if (newRecordVariable.type->isFloatingPointTy()) {
+                newRecordVariable.value = llvm::ConstantFP::get(newRecordVariable.type, 0.0);
+            }
+            else if (newRecordVariable.type->isIntegerTy(1)) {
+            newRecordVariable.value = llvm::ConstantInt::get(newRecordVariable.type, 0);
+            }
+        }
+        recordVaribles.push_back(newRecordVariable);
+    }
+    Records[RecordName]=recordVaribles;
+}
 void Type_Declaration_codegen(AST_Node *node)
 {
     if(get_type_name(node->children[1])=="integer" 
@@ -1043,12 +1096,12 @@ void Type_Declaration_codegen(AST_Node *node)
     || get_type_name(node->children[1])=="boolean"){
         Type_Declaration_primitive_type_codegen(node);
     }   
-    else if (get_type_name(node->children[1])=="arrayType"){
+    else if (get_type_name(node->children[1])=="arrayType"){    print_ast(node,0,"output.txt");
+
       Type_Declaration_Array_codegen(node);
     }
-    else if (get_type_name(node)=="recordType"){
-     //   Type_Declaration_Record_codgen(node);
-     return ;
+    else if (get_type_name(node->children[1])=="recordType"){
+        Type_Declaration_Record_codgen(node);
     }
 }
 
