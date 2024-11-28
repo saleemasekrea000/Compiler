@@ -11,16 +11,16 @@ entry:
   store i32 1, i32* %0, align 4
   %1 = getelementptr i32, i32* %array_ptr, i32 2
   store i32 3, i32* %1, align 4
-  %2 = getelementptr i32, i32* %array_ptr, i32 3
-  %3 = getelementptr i32, i32* %array_ptr, i32 2
-  %a = load i32, i32* %3, align 4
-  %4 = getelementptr i32, i32* %array_ptr, i32 1
-  %a1 = load i32, i32* %4, align 4
+  %x = alloca i32, align 4
+  store i32 0, i32* %x, align 4
+  %2 = getelementptr i32, i32* %array_ptr, i32 2
+  %a = load i32, i32* %2, align 4
+  %3 = getelementptr i32, i32* %array_ptr, i32 1
+  %a1 = load i32, i32* %3, align 4
   %sum = add i32 %a, %a1
-  store i32 %sum, i32* %2, align 4
-  %5 = getelementptr i32, i32* %array_ptr, i32 3
-  %a2 = load i32, i32* %5, align 4
-  %6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %a2)
+  store i32 %sum, i32* %x, align 4
+  %x2 = load i32, i32* %x, align 4
+  %4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %x2)
   ret void
 }
 

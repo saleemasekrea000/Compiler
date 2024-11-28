@@ -53,14 +53,23 @@ Program
                   Primary node
                     Primary expresson
                       Integer: 3
+    Simple declaration
+      Variable declaration
+        Identifier: x
+        Type: integer
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 0
     Statement
       Assignment statement
         Primary node
-          Array access
-            Identifier: a
-            Primary node
-              Primary expresson
-                Integer: 3
+          Primary expresson
+            Identifier: x
         Operator: :=
         Expression
           Relation
@@ -91,8 +100,5 @@ Program
               Factor
                 Summand
                   Primary node
-                    Array access
-                      Identifier: a
-                      Primary node
-                        Primary expresson
-                          Integer: 3
+                    Primary expresson
+                      Identifier: x

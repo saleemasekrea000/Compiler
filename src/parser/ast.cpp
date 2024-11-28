@@ -1035,6 +1035,7 @@ void Type_Declaration_Array_codegen(AST_Node* node){
     llvm::Value* arraySize= typeNode->children[0]->codegen();
     Arrays[get_name_id(identifierNode)]={arraySize,llvmType};
 }
+
 void Type_Declaration_codegen(AST_Node *node)
 {
     if(get_type_name(node->children[1])=="integer" 
@@ -1046,7 +1047,8 @@ void Type_Declaration_codegen(AST_Node *node)
       Type_Declaration_Array_codegen(node);
     }
     else if (get_type_name(node)=="recordType"){
-        Type_Declaration_Record_codgen(node);
+     //   Type_Declaration_Record_codgen(node);
+     return ;
     }
 }
 
