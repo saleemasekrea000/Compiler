@@ -19,6 +19,7 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/IR/Value.h"
+#include <llvm/IR/IntrinsicInst.h>
 #include <algorithm>
 #include <cctype>
 #include <cstdio>

@@ -1,4 +1,6 @@
-var ans : integer is 1;
-var n : integer is 5;
-
-print(n);
+type integer_array is array[100] integer;
+var a : integer_array ; 
+a[1] := 1;
+a[2] := 3;
+a[3] := a[2] + a[1];
+print(a[3]);

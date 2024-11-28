@@ -463,7 +463,7 @@ variableDeclerations
 ;
 
 arrayType 
-   : ARRAY '[' expression ']' type ';' {
+   : ARRAY '[' expression ']' type  {
       $$ = new None_Terminal_Node("ARRAY_TYPE");
       $$->children.push_back($3);
       $$->children.push_back($5);
@@ -552,7 +552,7 @@ IfStatement
 assign_expression 
    //put primary instead of identifier 
    //fiix the += and its sisters 
-  : identifier ASSIGN_OP expression ';'{
+  : primary ASSIGN_OP expression ';'{
     $$ = new None_Terminal_Node("ASSIGN_STATEMENT");
     $$->children.push_back($1);
     $$->children.push_back(new Operator(":="));

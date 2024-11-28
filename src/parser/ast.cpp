@@ -16,7 +16,7 @@ static std::unique_ptr<llvm::IRBuilder<>> Builder;
 static std::unique_ptr<llvm::Module> TheModule;
 static std::map<std::string, llvm::Value *> NamedValues;
 static std::map<std::string, llvm::Type *> NamedTypes;
-
+static std::map<std::string, std::pair<llvm::Value*, llvm::Type*>>Arrays;
 static const std::unordered_map<Node_Type, std::string> type_map = {
     {PROGRAM, "Program"},
     {DECLARATION, "Declarations"},
@@ -705,6 +705,13 @@ llvm::Value *AST_Node::codegen()
         llvm::Type *varType = NamedTypes[name];
         return Builder->CreateLoad(varType, ptr, name);
     }
+    case ARRAY_ACCESS: {
+        std::string array_name = get_name_id(this->children[0]);
+        llvm::Value* arrayPointer = NamedValues[array_name];
+        llvm::Value* index = this->children[1]->codegen();
+        llvm::Value* elementPointer = Builder->CreateGEP(NamedTypes[array_name],arrayPointer, index);
+        return Builder->CreateLoad(NamedTypes[array_name], elementPointer, array_name);
+    }
     case INTEGER_NODE:
     {
         return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val);
@@ -779,7 +786,7 @@ llvm::Value *AST_Node::codegen()
 }
 
 llvm::Type *get_type(AST_Node *node)
-{
+{   
     Type_Node *type_node = static_cast<Type_Node*>(node);
     std::string name = get_type_name(type_node);
     if (name == "integer")
@@ -794,32 +801,105 @@ llvm::Type *get_type(AST_Node *node)
     {
         return llvm::Type::getInt1Ty(*TheContext);
     }
-    else
+    else if (name=="identifier")
     { 
         return NamedTypes[get_name_id(node->children[0])];
     }
+    else{
+        return llvm::Type::getInt32Ty(*TheContext);
+    }
 }
+
 void Varible_Decleration_code_Gen(AST_Node *node)
 {
-    std::string name = get_name(node);
-    llvm::Value *v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
-    llvm::Value *initial_value = node->children[2]->codegen();
-    Builder->CreateStore(initial_value, v);
-    NamedValues[name] = v;
-    NamedTypes[name]=get_type(node->children[1]);
+    if (get_type_name(node->children[1]) == "identifier" && 
+        Arrays.count(get_name_id(node->children[1]->children[0]))) {
+
+        std::pair<llvm::Value*, llvm::Type*> arrayInfo = Arrays[get_name_id(node->children[1]->children[0])];
+        llvm::Value* arraySizeValue = arrayInfo.first;  
+        llvm::Type* elementType = arrayInfo.second;    
+
+        llvm::Function* mallocFunction = TheModule->getFunction("malloc");
+        if (!mallocFunction) {
+            llvm::FunctionType* mallocType = llvm::FunctionType::get(
+                llvm::PointerType::get(llvm::Type::getInt8Ty(*TheContext), 0), 
+                { llvm::Type::getInt64Ty(*TheContext) },                      
+                false                                    
+            );
+            mallocFunction = llvm::Function::Create(
+                mallocType,
+                llvm::Function::ExternalLinkage,
+                "malloc",
+                *TheModule
+            );
+        }
+
+        uint64_t elementSize = TheModule->getDataLayout().getTypeAllocSize(elementType);
+        llvm::Value* elementSizeValue = llvm::ConstantInt::get(
+            llvm::Type::getInt64Ty(*TheContext),
+            elementSize
+        );
+
+        llvm::Value* totalSize = Builder->CreateMul(
+            elementSizeValue,
+            arraySizeValue,
+            "total_array_size"
+        );
+
+        llvm::Value* mallocCall = Builder->CreateCall(
+            mallocFunction,
+            { totalSize },
+            "malloc_call"
+        );
+
+        llvm::Value* arrayPointer = Builder->CreateBitCast(
+            mallocCall,
+            llvm::PointerType::get(elementType, 0),
+            "array_ptr"
+        );
+
+        NamedValues[get_name(node)] = arrayPointer;
+        NamedTypes[get_name(node)] = elementType;
+    }
+    else {
+        std::string name = get_name(node);
+        llvm::Value* v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
+        
+        llvm::Value* initial_value = nullptr;
+        if (node->children.size() > 2) {
+            initial_value = node->children[2]->codegen(); 
+        } else {
+            initial_value = llvm::Constant::getNullValue(get_type(node->children[1]));
+        }
+        
+        Builder->CreateStore(initial_value, v);
+        NamedValues[name] = v;
+        NamedTypes[name] = get_type(node->children[1]);
+    }
 }
-void Assign_code_gen(AST_Node *node)
-{
-    std::string name = get_name(node);
+
+void Assign_code_gen(AST_Node *node){
+    llvm::Value *leftChild=nullptr;
+    if(node->children[0]->children[0]->type==ARRAY_ACCESS){
+       // print_ast(node->children[0]->children[0],0,"output.txt");
+        std::string array_name = get_name_id(node->children[0]->children[0]->children[0]);
+        llvm::Value* arrayPointer = NamedValues[array_name];
+        llvm::Value* index = node->children[0]->children[0]->children[1]->codegen();
+        llvm::Value* elementPointer = Builder->CreateGEP(llvm::Type::getInt32Ty(*TheContext),arrayPointer, index);
+        leftChild=elementPointer;
+    }
+    else{
+        std::string name = get_name(node->children[0]->children[0]);
+        leftChild = NamedValues[name];
+        llvm::Type *leftType = NamedTypes[name];
+    }
     llvm::Value *rightChild = node->children[2]->codegen();
     std::string op = get_op(node->children[1]);
-    llvm::Value *leftChild = NamedValues[name];
-    llvm::Type *leftType = NamedTypes[name];
     if (op == ":=")
     {
         Builder->CreateStore(rightChild, leftChild);
     }
-    else if (op == "+=")
+    /* else if (op == "+=")
     {
         llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
         llvm::Value *sum = Builder->CreateAdd(leftValue, rightChild, "sum");
@@ -848,7 +928,7 @@ void Assign_code_gen(AST_Node *node)
         llvm::Value *leftValue = Builder->CreateLoad(leftType, leftChild, "left_val");
         llvm::Value *remainder = Builder->CreateSRem(leftValue, rightChild, "remainder");
         Builder->CreateStore(remainder, leftChild);
-    }
+    } */
 }
 void If_statement_code_gen(AST_Node *node)
 {
@@ -940,18 +1020,34 @@ void While_code_gen(AST_Node *node)
     loopExitBlockStack.pop();
 }
 
-void Type_Declaration_codegen(AST_Node *node)
-{
+void Type_Declaration_primitive_type_codegen(AST_Node* node){
     AST_Node *identifierNode = node->children[0];
     AST_Node *typeNode = node->children[1];
     Identifier_Node *idNode = static_cast<Identifier_Node *>(identifierNode);
     std::string identifierName = idNode->identifier_name;
     llvm::Type *llvmType = get_type(typeNode);
-
-    // Create the alloca instruction to allocate memory for the type
-    //llvm::AllocaInst *allocaInst = Builder->CreateAlloca(llvmType, nullptr, identifierName);
-    
     NamedTypes[identifierName] = llvmType;
+}
+void Type_Declaration_Array_codegen(AST_Node* node){
+    AST_Node *identifierNode = node->children[0];
+    AST_Node *typeNode = node->children[1]->children[0];
+    llvm::Type* llvmType = get_type(typeNode->children[1]);
+    llvm::Value* arraySize= typeNode->children[0]->codegen();
+    Arrays[get_name_id(identifierNode)]={arraySize,llvmType};
+}
+void Type_Declaration_codegen(AST_Node *node)
+{
+    if(get_type_name(node->children[1])=="integer" 
+    || get_type_name(node->children[1])=="real" 
+    || get_type_name(node->children[1])=="boolean"){
+        Type_Declaration_primitive_type_codegen(node);
+    }   
+    else if (get_type_name(node->children[1])=="arrayType"){
+      Type_Declaration_Array_codegen(node);
+    }
+    else if (get_type_name(node)=="recordType"){
+        Type_Declaration_Record_codgen(node);
+    }
 }
 
 void Routine_decleration_code_gen(AST_Node* node) {
