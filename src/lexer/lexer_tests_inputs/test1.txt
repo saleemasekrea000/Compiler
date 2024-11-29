@@ -1,9 +1,8 @@
-type point is record {
-    var x : integer is 9;
-    var y : integer is 4;
-}
-end ;
 
-var point1 : point; 
-point1.x:=point1.y;
-print(point1.x);
+var x : integer is 1;
+
+for i in 1 .. 5 loop 
+break;
+print(x);
+end
+print(x);

@@ -1,54 +1,52 @@
 Program
   Declarations
     Simple declaration
-      Type declaration
-        Identifier: point
-        Type: recordType
-          Record type
-            Variable Declarations
-              Variable declaration
-                Identifier: x
-                Type: integer
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Integer: 9
-              Variable declaration
-                Identifier: y
-                Type: integer
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Integer: 4
-    Simple declaration
       Variable declaration
-        Identifier: point1
-        Type: identifier
-          Identifier: point
-    Statement
-      Assignment statement
-        Primary node
-          Record access
-            Identifier: point1
-            Identifier: x
-        Operator: :=
+        Identifier: x
+        Type: integer
         Expression
           Relation
             Simple
               Factor
                 Summand
                   Primary node
-                    Record access
-                      Identifier: point1
-                      Identifier: y
+                    Primary expresson
+                      Integer: 1
+    Statement
+      Iteration statement
+        For statement
+          Identifier: i
+          Range
+            Expression
+              Relation
+                Simple
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer: 1
+            Expression
+              Relation
+                Simple
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer: 5
+          Body
+            Statement
+              Jump Statement
+                Break
+            Statement
+              PRINT
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Identifier: x
     Statement
       PRINT
         Expression
@@ -57,6 +55,5 @@ Program
               Factor
                 Summand
                   Primary node
-                    Record access
-                      Identifier: point1
+                    Primary expresson
                       Identifier: x
