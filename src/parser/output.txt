@@ -35,8 +35,25 @@ Program
                           Integer: 5
           Body
             Statement
-              Jump Statement
-                Break
+              Assignment statement
+                Primary node
+                  Primary expresson
+                    Identifier: x
+                Operator: :=
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Factor
+                          Summand
+                            Primary node
+                              Primary expresson
+                                Identifier: x
+                        Operator: *
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Identifier: i
             Statement
               PRINT
                 Expression
@@ -47,13 +64,3 @@ Program
                           Primary node
                             Primary expresson
                               Identifier: x
-    Statement
-      PRINT
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Identifier: x

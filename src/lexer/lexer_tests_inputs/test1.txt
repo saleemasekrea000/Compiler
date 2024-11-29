@@ -2,7 +2,6 @@
 var x : integer is 1;
 
 for i in 1 .. 5 loop 
-break;
-print(x);
+x:= x*i;
+  print(x);
 end
-print(x);

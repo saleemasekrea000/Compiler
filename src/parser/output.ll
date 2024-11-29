@@ -2,7 +2,6 @@
 source_filename = "KSS"
 
 @0 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
-@1 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
 define void @main() {
 entry:
@@ -21,16 +20,17 @@ loop_cond:                                        ; preds = %loop_body, %loop_in
   br i1 %loop_cond1, label %loop_body, label %loop_exit
 
 loop_body:                                        ; preds = %loop_cond
-  br label %loop_exit
   %x2 = load i32, i32* %x, align 4
-  %0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %x2)
+  %i3 = load i32, i32* %i, align 4
+  %mul = mul i32 %x2, %i3
+  store i32 %mul, i32* %x, align 4
+  %x4 = load i32, i32* %x, align 4
+  %0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %x4)
   %increment = add i32 %current_iter, 1
   store i32 %increment, i32* %i, align 4
   br label %loop_cond
 
-loop_exit:                                        ; preds = %loop_body, %loop_cond
-  %x3 = load i32, i32* %x, align 4
-  %1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @1, i32 0, i32 0), i32 %x3)
+loop_exit:                                        ; preds = %loop_cond
   ret void
 }
 

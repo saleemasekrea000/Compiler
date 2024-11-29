@@ -1071,8 +1071,7 @@ void For_code_gen(AST_Node *node)
     TheFunction->getBasicBlockList().push_back(loop_init);
     Builder->CreateBr(loop_init);
     Builder->SetInsertPoint(loop_init);
-
-    loopCondBlockStack.push(loop_init);
+    loopCondBlockStack.push(loop_cond);
     loopExitBlockStack.push(loop_exit);
 
     std::string name = get_name(node);
@@ -1080,7 +1079,7 @@ void For_code_gen(AST_Node *node)
     NamedValues[name] = iter_var;
     NamedTypes[name] = llvm::Type::getInt32Ty(*TheContext);
 
-    llvm::Value *start_value = node->children[1]->children[0]->codegen(); 
+    llvm::Value *start_value = node->children[1]->children[0]->codegen();
     Builder->CreateStore(start_value, iter_var);
 
     Builder->CreateBr(loop_cond);
@@ -1089,8 +1088,8 @@ void For_code_gen(AST_Node *node)
     Builder->SetInsertPoint(loop_cond);
 
     llvm::Value *current_value = Builder->CreateLoad(llvm::Type::getInt32Ty(*TheContext), iter_var, "current_iter");
-    llvm::Value *end_value = node->children[1]->children[1]->codegen(); 
-    llvm::Value *cond = Builder->CreateICmpSLT(current_value, end_value, "loop_cond"); 
+    llvm::Value *end_value = node->children[1]->children[1]->codegen();
+    llvm::Value *cond = Builder->CreateICmpSLT(current_value, end_value, "loop_cond");
 
     Builder->CreateCondBr(cond, loop_body, loop_exit);
 
@@ -1107,7 +1106,6 @@ void For_code_gen(AST_Node *node)
     NamedTypes.erase(name);
     TheFunction->getBasicBlockList().push_back(loop_exit);
     Builder->SetInsertPoint(loop_exit);
-
     loopCondBlockStack.pop();
     loopExitBlockStack.pop();
 }
@@ -1323,14 +1321,20 @@ void code_generation(AST_Node *node)
     {
         llvm::BasicBlock *loop_exit = loopExitBlockStack.top();
         Builder->CreateBr(loop_exit);
+
         break;
     }
+
     case CONTINUE_EX:
-    {
-        llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
-        Builder->CreateBr(loop_cond);
-        break;
-    }
+{
+    llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
+
+    Builder->CreateBr(loop_cond);
+
+    break;
+}
+
+
     case ROUTINE_DECLERATION:
     {
         Routine_decleration_code_gen(node);
