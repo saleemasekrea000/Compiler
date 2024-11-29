@@ -8,6 +8,9 @@
 
 using namespace std;
 
+int yylex();
+void set_tokens(std::vector<Token> &new_tokens);
+
 class Lexer
 {
 private:
@@ -51,6 +54,8 @@ private:
         keywords["boolean"] = TokenType::KEYWORD;
         keywords["var"] = TokenType::KEYWORD;
         keywords["break"] = TokenType::KEYWORD;
+        keywords["print"] = TokenType::KEYWORD;
+        
     }
     bool is_identifier(const string &s);
     bool is_bracket(char c);
