@@ -1078,9 +1078,18 @@ void For_code_gen(AST_Node *node)
     llvm::Value *iter_var = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
     NamedValues[name] = iter_var;
     NamedTypes[name] = llvm::Type::getInt32Ty(*TheContext);
+    bool is_reverse = (node->children[1]->type == RANGE_REVERSE);
 
     llvm::Value *start_value = node->children[1]->children[0]->codegen();
-    Builder->CreateStore(start_value, iter_var);
+    llvm::Value *end_value = node->children[1]->children[1]->codegen();
+    if(is_reverse)
+    {
+        Builder->CreateStore(end_value, iter_var);
+
+    }
+    else{
+        Builder->CreateStore(start_value, iter_var);
+    }
 
     Builder->CreateBr(loop_cond);
 
@@ -1088,8 +1097,15 @@ void For_code_gen(AST_Node *node)
     Builder->SetInsertPoint(loop_cond);
 
     llvm::Value *current_value = Builder->CreateLoad(llvm::Type::getInt32Ty(*TheContext), iter_var, "current_iter");
-    llvm::Value *end_value = node->children[1]->children[1]->codegen();
-    llvm::Value *cond = Builder->CreateICmpSLT(current_value, end_value, "loop_cond");
+    llvm::Value *cond;
+    if (is_reverse)
+    {
+        cond = Builder->CreateICmpSGE(current_value, start_value, "loop_cond"); 
+    }
+    else
+    {
+        cond = Builder->CreateICmpSLT(current_value, end_value, "loop_cond"); 
+    }
 
     Builder->CreateCondBr(cond, loop_body, loop_exit);
 
@@ -1097,8 +1113,15 @@ void For_code_gen(AST_Node *node)
     Builder->SetInsertPoint(loop_body);
 
     code_generation(node->children[2]);
+    llvm::Value *incremented_value;
+    if(is_reverse){
+        incremented_value = Builder->CreateAdd(current_value, llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), -1), "decrement");
+    }
+    else{
+        incremented_value = Builder->CreateAdd(current_value, llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 1), "increment");
 
-    llvm::Value *incremented_value = Builder->CreateAdd(current_value, llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 1), "increment");
+    }
+
     Builder->CreateStore(incremented_value, iter_var);
     Builder->CreateBr(loop_cond);
 

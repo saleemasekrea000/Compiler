@@ -1,7 +1,6 @@
 
 var x : integer is 1;
 
-for i in 1 .. 5 loop 
-x:= x*i;
-  print(x);
+for i in reverse 1 .. 5 loop 
+     print(i);
 end

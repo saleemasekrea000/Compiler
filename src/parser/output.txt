@@ -16,7 +16,7 @@ Program
       Iteration statement
         For statement
           Identifier: i
-          Range
+          Range reverse
             Expression
               Relation
                 Simple
@@ -35,26 +35,6 @@ Program
                           Integer: 5
           Body
             Statement
-              Assignment statement
-                Primary node
-                  Primary expresson
-                    Identifier: x
-                Operator: :=
-                Expression
-                  Relation
-                    Simple
-                      Factor
-                        Factor
-                          Summand
-                            Primary node
-                              Primary expresson
-                                Identifier: x
-                        Operator: *
-                        Summand
-                          Primary node
-                            Primary expresson
-                              Identifier: i
-            Statement
               PRINT
                 Expression
                   Relation
@@ -63,4 +43,4 @@ Program
                         Summand
                           Primary node
                             Primary expresson
-                              Identifier: x
+                              Identifier: i
