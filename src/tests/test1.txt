@@ -1,6 +1,17 @@
-
-var x : integer is 1;
-
-for i in reverse 1 .. 5 loop 
-     print(i);
+type point is record {
+    var x : integer ;
+    var y : integer ;
+} end ;
+routine Factorial(point1: point) : point is 
+   return point1;
 end
+
+var point2 : point ;
+point2.x := 1;
+point2.y := 2; 
+
+var point3 : point ;
+
+point3 := Factorial(point2);
+
+print(point3.y);

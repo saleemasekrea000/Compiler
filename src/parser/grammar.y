@@ -275,21 +275,21 @@ array_access_expression
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
-   | array_access_expression '.' identifier {
+   /* | array_access_expression '.' identifier {
+     $$ = new None_Terminal_Node("RECORD_ACCESS");
+     $$->children.push_back($1);
+     $$->children.push_back($3);
+   } */
+   | identifier '.'  record_expession_access {
      $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
-   | record_expession_access '.'  identifier {
+   /* | record_expession_access '.' array_access_expression {
      $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
-   }
-   | record_expession_access '.' array_access_expression {
-     $$ = new None_Terminal_Node("RECORD_ACCESS");
-     $$->children.push_back($1);
-     $$->children.push_back($3);
-   }
+   } */
 ;
 
 summand
