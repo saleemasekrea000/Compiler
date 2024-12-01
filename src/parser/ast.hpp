@@ -7,24 +7,16 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#include "llvm/ADT/APFloat.h"
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/IR/BasicBlock.h"
-#include "llvm/IR/Constants.h"
-#include "llvm/IR/DerivedTypes.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Type.h"
-#include "llvm/IR/Verifier.h"
-#include "llvm/IR/Value.h"
-#include <llvm/IR/IntrinsicInst.h>
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <map>
+#include "llvm/IR/Value.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+
 
 typedef enum Node_Type
 {
@@ -193,6 +185,4 @@ public:
 
 void print_ast(AST_Node *node, int indent, const std::string &file_name);
 void print_ast_helper(AST_Node *node, int indent, FILE *file);
-void start_llvm(AST_Node *root);
-void code_generation(AST_Node *node);
 #endif // AST_H

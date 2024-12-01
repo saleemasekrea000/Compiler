@@ -4,6 +4,7 @@
 #include "lexer_2.hpp"
 #include "ast.hpp"
 #include "../semantic/semantic.hpp"
+#include "../codegen/codegen.hpp"
 
 void yyerror(char *s);
 int counter = 1;
@@ -51,7 +52,9 @@ program
       semanticAnalysis.Semantic_Analysis_Checks($$);
       semanticAnalysis.optimize($$);
       print_ast($$, 0,"optimize.txt");
-      //start_llvm($$);
+      Codegen codegen_llvm($$);
+      codegen_llvm.start_llvm($$);
+
     }
   ;
 

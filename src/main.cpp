@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "lexer.hpp"
+#include "./lexer/lexer.hpp"
 
 using namespace std;
 
