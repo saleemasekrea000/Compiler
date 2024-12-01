@@ -23,10 +23,21 @@ g++ -Wno-write-strings -o parser_output ./parser/lexer_2.cpp ./parser/grammar.ta
 ./parser_output lexer_tests__tokens.txt
 
 if [ -f "output.ll" ]; then
-    echo "running code generation..."
-    echo "output.ll generated successfully."
-    lli output.ll
+    echo "Validating output.ll..."
+    llvm-as output.ll -o /dev/null 2>validation_errors.txt
+
+    if [ $? -eq 0 ]; then
+        echo "output.ll is valid."
+        echo "running code generation..."
+        lli output.ll
+    else
+        echo "Error: output.ll contains errors."
+        echo "Validation errors:"
+        cat validation_errors.txt
+        exit 1
+    fi
 else
     echo "Error: output.ll not found. Ensure the parser generates output.ll."
     exit 1
+
 fi
