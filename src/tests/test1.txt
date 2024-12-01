@@ -1,10 +1,6 @@
 
 //dksdnoknfgoref
-var ans : integer is 20;
-var n : integer is 2;
-   while n > 1 loop 
-      ans := ans / n ;
-      n := n - 1;
-   end 
+var x : integer is 1;
+var ans : integer is 1--2;
 
 print(ans);

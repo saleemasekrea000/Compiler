@@ -34,7 +34,7 @@ string Lexer::next_token_content(Token last_token)
             ind++;
             return ret;
         }
-        
+
         if (code[ind] == '.')
         {
             if (ret == "" && code[ind + 1] == '.' && code[ind + 2] == ' ')
@@ -61,12 +61,32 @@ string Lexer::next_token_content(Token last_token)
         }
         string cur = "";
         cur += code[ind];
-        if (ret != "" && ( is_operator(cur)))
+        if (ret != "" && (is_operator(cur)))
         {
             return ret;
         }
         if (ret == "" && (is_operator(cur)))
         {
+            if (code[ind] == '-' || code[ind] == '+') 
+    {
+        if (last_token.type == IDENTIFIER || last_token.type == REAL_LITERAL || last_token.type == INTEGER_LITERAL || last_token.type == BOOLEAN_LITERAL) 
+        {
+            ret += code[ind];
+            ind++;
+            return ret;
+        } 
+        else if (isdigit(code[ind + 1])) 
+        {
+            ret += code[ind];  
+            ind++;
+            while (ind < code.size() && isdigit(code[ind])) 
+            {
+                ret += code[ind];  
+                ind++;
+            }
+            return ret; 
+        }
+    }
             if (code[ind] == '=')
             {
                 ret += code[ind];
@@ -81,7 +101,8 @@ string Lexer::next_token_content(Token last_token)
                 ind++;
                 return ret;
             }
-            else {
+            else
+            {
                 ret += code[ind];
                 ind++;
                 return ret;
@@ -93,10 +114,11 @@ string Lexer::next_token_content(Token last_token)
                 return ret;
             ret = code[ind];
             ind++;
-            if(ret==":" && code[ind]=='='){
-             // std::cout<<ret<<'\n'<<endl;
-              ret+=code[ind];
-              ind++;
+            if (ret == ":" && code[ind] == '=')
+            {
+                // std::cout<<ret<<'\n'<<endl;
+                ret += code[ind];
+                ind++;
             }
             return ret;
         }
@@ -202,36 +224,66 @@ TokenType Lexer::token_type(const string &s)
 {
     if (is_keyword(s))
     {
-        if (s == "is") return IS;
-        else if (s == "while") return WHILE;
-        else if (s == "routine")return ROUTINE;
-        else if (s == "end") return END;
-        else if (s == "break") return BREAK;
-        else if (s == "return") return RETURN;
-        else if (s == "not") return NOT;
-        else if (s== "xor") return XOR;
-        else if (s== "or") return OR;
-        else if (s=="and") return AND;
-        else if (s == "else") return ELSE;
-        else if (s=="then") return THEN;
-        else if (s=="if") return IF;
-        else if (s=="in") return IN;
-        else if (s=="then") return THEN;
-        else if (s=="for") return FOR;
-        else if(s=="loop") return LOOP;
-        else if (s == "array") return ARRAY;
-        else if (s=="false") return BOOLEAN_LITERAL;
-        else if(s=="true") return BOOLEAN_LITERAL;
-        else if(s=="record") return RECORD;
-        else if(s=="type") return TYPE;
-        else if (s=="var") return VAR;
-        else if (s=="integer") return INTEGER_LITERAL_KEYWORD;
-        else if (s=="real") return REAL_LITERAL_KEYWORD;
-        else if (s=="boolean") return BOOLEAN_LITERAL_KEYWORD;
-        else if (s=="continue") return CONTINUE;
-        else if (s=="var") return VAR;
-        else if (s=="reverse") return REVERSE;
-        else if (s=="print")return PRINT;
+        if (s == "is")
+            return IS;
+        else if (s == "while")
+            return WHILE;
+        else if (s == "routine")
+            return ROUTINE;
+        else if (s == "end")
+            return END;
+        else if (s == "break")
+            return BREAK;
+        else if (s == "return")
+            return RETURN;
+        else if (s == "not")
+            return NOT;
+        else if (s == "xor")
+            return XOR;
+        else if (s == "or")
+            return OR;
+        else if (s == "and")
+            return AND;
+        else if (s == "else")
+            return ELSE;
+        else if (s == "then")
+            return THEN;
+        else if (s == "if")
+            return IF;
+        else if (s == "in")
+            return IN;
+        else if (s == "then")
+            return THEN;
+        else if (s == "for")
+            return FOR;
+        else if (s == "loop")
+            return LOOP;
+        else if (s == "array")
+            return ARRAY;
+        else if (s == "false")
+            return BOOLEAN_LITERAL;
+        else if (s == "true")
+            return BOOLEAN_LITERAL;
+        else if (s == "record")
+            return RECORD;
+        else if (s == "type")
+            return TYPE;
+        else if (s == "var")
+            return VAR;
+        else if (s == "integer")
+            return INTEGER_LITERAL_KEYWORD;
+        else if (s == "real")
+            return REAL_LITERAL_KEYWORD;
+        else if (s == "boolean")
+            return BOOLEAN_LITERAL_KEYWORD;
+        else if (s == "continue")
+            return CONTINUE;
+        else if (s == "var")
+            return VAR;
+        else if (s == "reverse")
+            return REVERSE;
+        else if (s == "print")
+            return PRINT;
     }
     if (s == "..")
         return TokenType::RANGE;
