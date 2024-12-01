@@ -26,7 +26,6 @@
 #include <cstdlib>
 #include <map>
 
-
 typedef enum Node_Type
 {
     PROGRAM,
@@ -80,9 +79,9 @@ class AST_Node
 {
 public:
     enum Node_Type type;
-    std::vector<AST_Node*> children;
+    std::vector<AST_Node *> children;
     AST_Node(Node_Type t) : type(t) {}
-    llvm::Value* codegen() ;
+    llvm::Value *codegen();
 };
 
 class None_Terminal_Node : public AST_Node
@@ -93,40 +92,40 @@ private:
         static const std::unordered_map<std::string, Node_Type> type_map = {
             {"PROGRAM", PROGRAM},
             {"DECLARATION", DECLARATION},
-            {"SIMPLE_DECLARATION",SIMPLE_DECLARATION},
+            {"SIMPLE_DECLARATION", SIMPLE_DECLARATION},
             {"VARIABLE_DECLARATION", VARIABLE_DECLARATION},
             {"PRIMARY_EXPRESSION", PRIMARY_EXPRESSION},
-            {"PRIMARY_NODE",PRIMARY_NODE},
-            {"ARRAY_ACCESS",ARRAY_ACCESS},
-            {"RECORD_ACCESS",RECORD_ACCESS},
+            {"PRIMARY_NODE", PRIMARY_NODE},
+            {"ARRAY_ACCESS", ARRAY_ACCESS},
+            {"RECORD_ACCESS", RECORD_ACCESS},
             {"SUMMAND", SUMMAND},
-            {"FACTOR",FACTOR},
-            {"SIMPLE",SIMPLE},
-            {"RELATION",RELATION},
-            {"EXPRESSION",EXPRESSION},
+            {"FACTOR", FACTOR},
+            {"SIMPLE", SIMPLE},
+            {"RELATION", RELATION},
+            {"EXPRESSION", EXPRESSION},
             {"TYPE_DECLARATION", TYPE_DECLARATION},
             {"ARRAY_TYPE", ARRAY_TYPE},
             {"RECORD_TYPE", RECORD_TYPE},
-            {"VARIABLE_DECLARATIONS",VARIABLE_DECLARATIONS},
+            {"VARIABLE_DECLARATIONS", VARIABLE_DECLARATIONS},
             {"STATEMENT", STATEMENT},
             {"ITERATION_STATEMENT", ITERATION_STATEMENT},
             {"WHILE_STATEMENT", WHILE_STATEMENT},
             {"BODY", BODY},
-            {"FOR_STATEMENT",FOR_STATEMENT},
+            {"FOR_STATEMENT", FOR_STATEMENT},
             {"RANGE_EX", RANGE_EX},
-            {"RANGE_REVERSE",RANGE_REVERSE},
+            {"RANGE_REVERSE", RANGE_REVERSE},
             {"ASSIGN_STATEMENT", ASSIGN_STATEMENT},
-            {"IF_STATEMENT",IF_STATEMENT},
+            {"IF_STATEMENT", IF_STATEMENT},
             {"IF_STATEMENT_ELSE", IF_STATEMENT_ELSE},
             {"JUMP_STATEMENT", JUMP_STATEMENT},
             {"RETURN_EX", RETURN_EX},
             {"CONTINUE_EX", CONTINUE_EX},
-            {"BREAK_EX",BREAK_EX},
-            {"Routine_Call",Routine_Call},
+            {"BREAK_EX", BREAK_EX},
+            {"Routine_Call", Routine_Call},
             {"Argument_Expression_List", Argument_Expression_List},
             {"PARAMETER_DECLERATION", PARAMETER_DECLERATION},
-            {"PARAMETERS_EXPRESSION_LIST",PARAMETERS_EXPRESSION_LIST},
-            {"ROUTINE_DECLERATION",ROUTINE_DECLERATION},
+            {"PARAMETERS_EXPRESSION_LIST", PARAMETERS_EXPRESSION_LIST},
+            {"ROUTINE_DECLERATION", ROUTINE_DECLERATION},
             {"PRINT_STATMENT", PRINT_STATMENT},
         };
         auto it = type_map.find(type_name);
@@ -141,6 +140,7 @@ private:
     }
 
 public:
+
     None_Terminal_Node(std::string node_type) : AST_Node(str_to_type(node_type)) {}
 };
 
@@ -159,7 +159,6 @@ public:
     Type_Node(const std::string &name)
         : AST_Node(TYPE_NODE), type_name(name) {}
 };
-
 
 class Boolean_Node : public AST_Node
 {
@@ -192,12 +191,8 @@ public:
         : AST_Node(OPERATOR), operation_name(operation_name) {}
 };
 
-
-
-void print_ast(AST_Node *node, int indent, const std::string& file_name);
-void print_ast_helper(AST_Node *node, int indent,FILE * file);
-void Semantic_Analysis_Checks(AST_Node *node);
-void optimize(AST_Node* node);
-void start_llvm(AST_Node* root); 
-void code_generation(AST_Node* node);
+void print_ast(AST_Node *node, int indent, const std::string &file_name);
+void print_ast_helper(AST_Node *node, int indent, FILE *file);
+void start_llvm(AST_Node *root);
+void code_generation(AST_Node *node);
 #endif // AST_H

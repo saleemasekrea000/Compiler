@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "lexer_2.hpp"
 #include "ast.hpp"
+#include "../semantic/semantic.hpp"
 
 void yyerror(char *s);
 int counter = 1;
@@ -46,10 +47,11 @@ program
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
       print_ast($$, 0,"output.txt");
-     // Semantic_Analysis_Checks($$);
-     // optimize($$);
-     // print_ast($$, 0,"optimize.txt");
-      start_llvm($$);
+      Semantic_Analysis semanticAnalysis($$);
+      semanticAnalysis.Semantic_Analysis_Checks($$);
+      semanticAnalysis.optimize($$);
+      print_ast($$, 0,"optimize.txt");
+      //start_llvm($$);
     }
   ;
 

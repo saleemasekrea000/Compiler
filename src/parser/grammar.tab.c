@@ -73,6 +73,7 @@
 #include <stdlib.h>
 #include "lexer_2.hpp"
 #include "ast.hpp"
+#include "../semantic/semantic.hpp"
 
 void yyerror(char *s);
 int counter = 1;
@@ -81,7 +82,7 @@ void print_indent() {
   for(int i = 0; i < indent; i++) printf("  ");
 }
 
-#line 85 "grammar.tab.c"
+#line 86 "grammar.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -606,17 +607,17 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    45,    45,    57,    61,    65,    70,    76,    82,    91,
-      95,    99,   104,   111,   115,   122,   128,   134,   141,   146,
-     149,   152,   155,   159,   163,   171,   175,   179,   183,   188,
-     194,   199,   204,   209,   215,   219,   223,   227,   234,   242,
-     246,   250,   255,   261,   268,   273,   278,   283,   291,   295,
-     303,   307,   313,   319,   328,   332,   338,   347,   351,   357,
-     363,   369,   375,   381,   387,   393,   399,   405,   415,   419,
-     425,   431,   441,   449,   456,   460,   466,   474,   478,   482,
-     486,   490,   494,   500,   506,   510,   514,   520,   523,   529,
-     534,   540,   545,   555,   561,   566,   571,   576,   581,   589,
-     593,   599,   606,   610,   614,   620,   628,   633
+       0,    46,    46,    59,    63,    67,    72,    78,    84,    93,
+      97,   101,   106,   113,   117,   124,   130,   136,   143,   148,
+     151,   154,   157,   161,   165,   173,   177,   181,   185,   190,
+     196,   201,   206,   211,   217,   221,   225,   229,   236,   244,
+     248,   252,   257,   263,   270,   275,   280,   285,   293,   297,
+     305,   309,   315,   321,   330,   334,   340,   349,   353,   359,
+     365,   371,   377,   383,   389,   395,   401,   407,   417,   421,
+     427,   433,   443,   451,   458,   462,   468,   476,   480,   484,
+     488,   492,   496,   502,   508,   512,   516,   522,   525,   531,
+     536,   542,   547,   557,   563,   568,   573,   578,   583,   591,
+     595,   601,   608,   612,   616,   622,   630,   635
 };
 #endif
 
@@ -1373,67 +1374,68 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: declarations  */
-#line 45 "grammar.y"
+#line 46 "grammar.y"
                  { 
       (yyval.node) = new None_Terminal_Node("PROGRAM"); 
       (yyval.node)->children.push_back((yyvsp[0].node)); 
       print_ast((yyval.node), 0,"output.txt");
-     // Semantic_Analysis_Checks($$);
-     // optimize($$);
-     // print_ast($$, 0,"optimize.txt");
-      start_llvm((yyval.node));
+      Semantic_Analysis semanticAnalysis((yyval.node));
+      semanticAnalysis.Semantic_Analysis_Checks((yyval.node));
+      semanticAnalysis.optimize((yyval.node));
+      print_ast((yyval.node), 0,"optimize.txt");
+      //start_llvm($$);
     }
-#line 1387 "grammar.tab.c"
+#line 1389 "grammar.tab.c"
     break;
 
   case 3: /* declarations: declarations simpleDeclaration  */
-#line 57 "grammar.y"
+#line 59 "grammar.y"
                                    {
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1396 "grammar.tab.c"
+#line 1398 "grammar.tab.c"
     break;
 
   case 4: /* declarations: declarations statement  */
-#line 61 "grammar.y"
+#line 63 "grammar.y"
                            {
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1405 "grammar.tab.c"
+#line 1407 "grammar.tab.c"
     break;
 
   case 5: /* declarations: declarations routine_deceration  */
-#line 65 "grammar.y"
+#line 67 "grammar.y"
                                     {
        (yyval.node) = (yyvsp[-1].node);
        (yyval.node)->children.push_back((yyvsp[0].node));
      }
-#line 1414 "grammar.tab.c"
+#line 1416 "grammar.tab.c"
     break;
 
   case 6: /* declarations: %empty  */
-#line 70 "grammar.y"
+#line 72 "grammar.y"
                 {
       (yyval.node) = new None_Terminal_Node("DECLARATION"); 
     }
-#line 1422 "grammar.tab.c"
+#line 1424 "grammar.tab.c"
     break;
 
   case 7: /* routine_deceration: ROUTINE identifier '(' parameters_list ')' IS body END  */
-#line 76 "grammar.y"
+#line 78 "grammar.y"
                                                            {
       (yyval.node) = new None_Terminal_Node("ROUTINE_DECLERATION");
       (yyval.node)->children.push_back((yyvsp[-6].node));
       (yyval.node)->children.push_back((yyvsp[-4].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 1433 "grammar.tab.c"
+#line 1435 "grammar.tab.c"
     break;
 
   case 8: /* routine_deceration: ROUTINE identifier '(' parameters_list ')' ':' type IS body END  */
-#line 82 "grammar.y"
+#line 84 "grammar.y"
                                                                     {
       (yyval.node) = new None_Terminal_Node("ROUTINE_DECLERATION");
       (yyval.node)->children.push_back((yyvsp[-8].node));
@@ -1441,955 +1443,955 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-1].node));
       (yyval.node)->children.push_back((yyvsp[-3].node));
    }
-#line 1445 "grammar.tab.c"
+#line 1447 "grammar.tab.c"
     break;
 
   case 9: /* parameters_list: parameter_decleration  */
-#line 91 "grammar.y"
+#line 93 "grammar.y"
                           {
       (yyval.node) = new None_Terminal_Node("PARAMETERS_EXPRESSION_LIST");
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1454 "grammar.tab.c"
+#line 1456 "grammar.tab.c"
     break;
 
   case 10: /* parameters_list: parameters_list ',' parameter_decleration  */
-#line 95 "grammar.y"
+#line 97 "grammar.y"
                                              {
       (yyval.node) = (yyvsp[-2].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1463 "grammar.tab.c"
+#line 1465 "grammar.tab.c"
     break;
 
   case 11: /* parameters_list: %empty  */
-#line 99 "grammar.y"
+#line 101 "grammar.y"
                 {
       (yyval.node) = new None_Terminal_Node("PARAMETERS_EXPRESSION_LIST");
     }
-#line 1471 "grammar.tab.c"
+#line 1473 "grammar.tab.c"
     break;
 
   case 12: /* parameter_decleration: identifier ':' type  */
-#line 104 "grammar.y"
+#line 106 "grammar.y"
                            { 
       (yyval.node) = new None_Terminal_Node("PARAMETER_DECLERATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1481 "grammar.tab.c"
+#line 1483 "grammar.tab.c"
     break;
 
   case 13: /* simpleDeclaration: variableDeclaration  */
-#line 111 "grammar.y"
+#line 113 "grammar.y"
                         { 
       (yyval.node) = new None_Terminal_Node("SIMPLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1490 "grammar.tab.c"
+#line 1492 "grammar.tab.c"
     break;
 
   case 14: /* simpleDeclaration: typeDecleration  */
-#line 115 "grammar.y"
+#line 117 "grammar.y"
                    {
       (yyval.node) = new None_Terminal_Node("SIMPLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1499 "grammar.tab.c"
+#line 1501 "grammar.tab.c"
     break;
 
   case 15: /* variableDeclaration: VAR identifier IS expression ';'  */
-#line 122 "grammar.y"
+#line 124 "grammar.y"
                                      { 
       (yyval.node) = new None_Terminal_Node("VARIABLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back(new Type_Node("none"));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1510 "grammar.tab.c"
+#line 1512 "grammar.tab.c"
     break;
 
   case 16: /* variableDeclaration: VAR identifier ':' type IS expression ';'  */
-#line 128 "grammar.y"
+#line 130 "grammar.y"
                                               { 
       (yyval.node) = new None_Terminal_Node("VARIABLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[-5].node));
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1521 "grammar.tab.c"
+#line 1523 "grammar.tab.c"
     break;
 
   case 17: /* variableDeclaration: VAR identifier ':' type ';'  */
-#line 134 "grammar.y"
+#line 136 "grammar.y"
                                { 
       (yyval.node) = new None_Terminal_Node("VARIABLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1531 "grammar.tab.c"
+#line 1533 "grammar.tab.c"
     break;
 
   case 18: /* identifier: IDENTIFIER  */
-#line 141 "grammar.y"
+#line 143 "grammar.y"
            {
   (yyval.node) = new Identifier_Node(std::string((yyvsp[0].id_val)));
  }
-#line 1539 "grammar.tab.c"
+#line 1541 "grammar.tab.c"
     break;
 
   case 19: /* type: INTEGER_LITERAL_KEYWORD  */
-#line 146 "grammar.y"
+#line 148 "grammar.y"
                             {
     (yyval.node) = new Type_Node("integer");
   }
-#line 1547 "grammar.tab.c"
+#line 1549 "grammar.tab.c"
     break;
 
   case 20: /* type: REAL_LITERAL_KEYWORD  */
-#line 149 "grammar.y"
+#line 151 "grammar.y"
                          { 
     (yyval.node) = new Type_Node("real");
   }
-#line 1555 "grammar.tab.c"
+#line 1557 "grammar.tab.c"
     break;
 
   case 21: /* type: BOOLEAN_LITERAL_KEYWORD  */
-#line 152 "grammar.y"
+#line 154 "grammar.y"
                             {
     (yyval.node) = new Type_Node("boolean");
   }
-#line 1563 "grammar.tab.c"
+#line 1565 "grammar.tab.c"
     break;
 
   case 22: /* type: identifier  */
-#line 155 "grammar.y"
+#line 157 "grammar.y"
                {
       (yyval.node) = new Type_Node("identifier");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1572 "grammar.tab.c"
+#line 1574 "grammar.tab.c"
     break;
 
   case 23: /* type: recordType  */
-#line 159 "grammar.y"
+#line 161 "grammar.y"
               {
       (yyval.node) = new Type_Node("recordType");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1581 "grammar.tab.c"
+#line 1583 "grammar.tab.c"
     break;
 
   case 24: /* type: arrayType  */
-#line 163 "grammar.y"
+#line 165 "grammar.y"
              {
       (yyval.node) = new Type_Node("arrayType");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1590 "grammar.tab.c"
+#line 1592 "grammar.tab.c"
     break;
 
   case 25: /* primary_expression: int_exp  */
-#line 171 "grammar.y"
+#line 173 "grammar.y"
                  {
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1599 "grammar.tab.c"
+#line 1601 "grammar.tab.c"
     break;
 
   case 26: /* primary_expression: real_exp  */
-#line 175 "grammar.y"
+#line 177 "grammar.y"
             {
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1608 "grammar.tab.c"
+#line 1610 "grammar.tab.c"
     break;
 
   case 27: /* primary_expression: boolean_exp  */
-#line 179 "grammar.y"
+#line 181 "grammar.y"
                {
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1617 "grammar.tab.c"
+#line 1619 "grammar.tab.c"
     break;
 
   case 28: /* primary_expression: unary_op primary  */
-#line 183 "grammar.y"
+#line 185 "grammar.y"
                     {
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[-1].node));
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1627 "grammar.tab.c"
+#line 1629 "grammar.tab.c"
     break;
 
   case 29: /* primary_expression: identifier  */
-#line 188 "grammar.y"
+#line 190 "grammar.y"
                     {
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1636 "grammar.tab.c"
+#line 1638 "grammar.tab.c"
     break;
 
   case 30: /* unary_op: NOT  */
-#line 194 "grammar.y"
+#line 196 "grammar.y"
       {
     (yyval.node) = new Operator("!");
    }
-#line 1644 "grammar.tab.c"
+#line 1646 "grammar.tab.c"
     break;
 
   case 31: /* int_exp: INTEGER_LITERAL  */
-#line 199 "grammar.y"
+#line 201 "grammar.y"
                    {
     (yyval.node) = new Integer_Node((yyvsp[0].int_val));
   }
-#line 1652 "grammar.tab.c"
+#line 1654 "grammar.tab.c"
     break;
 
   case 32: /* real_exp: REAL_LITERAL  */
-#line 204 "grammar.y"
+#line 206 "grammar.y"
                  {
     (yyval.node) = new Real_Node((yyvsp[0].real_val));
   }
-#line 1660 "grammar.tab.c"
+#line 1662 "grammar.tab.c"
     break;
 
   case 33: /* boolean_exp: BOOLEAN_LITERAL  */
-#line 209 "grammar.y"
+#line 211 "grammar.y"
                     {
     (yyval.node) = new Boolean_Node((yyvsp[0].bool_val));
   }
-#line 1668 "grammar.tab.c"
+#line 1670 "grammar.tab.c"
     break;
 
   case 34: /* primary: primary_expression  */
-#line 215 "grammar.y"
+#line 217 "grammar.y"
                             {
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1677 "grammar.tab.c"
+#line 1679 "grammar.tab.c"
     break;
 
   case 35: /* primary: array_access_expression  */
-#line 219 "grammar.y"
+#line 221 "grammar.y"
                            {
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1686 "grammar.tab.c"
+#line 1688 "grammar.tab.c"
     break;
 
   case 36: /* primary: record_expession_access  */
-#line 223 "grammar.y"
+#line 225 "grammar.y"
                            {
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1695 "grammar.tab.c"
+#line 1697 "grammar.tab.c"
     break;
 
   case 37: /* primary: routine_call  */
-#line 227 "grammar.y"
+#line 229 "grammar.y"
                 {
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1704 "grammar.tab.c"
+#line 1706 "grammar.tab.c"
     break;
 
   case 38: /* routine_call: identifier '(' argument_expression_list ')'  */
-#line 234 "grammar.y"
+#line 236 "grammar.y"
                                                 {
       (yyval.node) = new None_Terminal_Node("Routine_Call");
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1714 "grammar.tab.c"
+#line 1716 "grammar.tab.c"
     break;
 
   case 39: /* argument_expression_list: expression  */
-#line 242 "grammar.y"
+#line 244 "grammar.y"
                {
       (yyval.node) = new None_Terminal_Node("Argument_Expression_List");
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1723 "grammar.tab.c"
+#line 1725 "grammar.tab.c"
     break;
 
   case 40: /* argument_expression_list: argument_expression_list ',' expression  */
-#line 246 "grammar.y"
+#line 248 "grammar.y"
                                             {
       (yyval.node) = (yyvsp[-2].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1732 "grammar.tab.c"
+#line 1734 "grammar.tab.c"
     break;
 
   case 41: /* argument_expression_list: %empty  */
-#line 250 "grammar.y"
+#line 252 "grammar.y"
                 {
       (yyval.node) = new None_Terminal_Node("Argument_Expression_List");
     }
-#line 1740 "grammar.tab.c"
+#line 1742 "grammar.tab.c"
     break;
 
   case 42: /* array_access_expression: identifier '[' primary ']'  */
-#line 255 "grammar.y"
+#line 257 "grammar.y"
                                {
     (yyval.node) = new None_Terminal_Node("ARRAY_ACCESS");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
 
   }
-#line 1751 "grammar.tab.c"
+#line 1753 "grammar.tab.c"
     break;
 
   case 43: /* array_access_expression: array_access_expression '[' primary ']'  */
-#line 261 "grammar.y"
+#line 263 "grammar.y"
                                             {
     (yyval.node) = new None_Terminal_Node("ARRAY_ACCESS");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 1761 "grammar.tab.c"
+#line 1763 "grammar.tab.c"
     break;
 
   case 44: /* record_expession_access: identifier '.' identifier  */
-#line 268 "grammar.y"
+#line 270 "grammar.y"
                                {
      (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1771 "grammar.tab.c"
+#line 1773 "grammar.tab.c"
     break;
 
   case 45: /* record_expession_access: array_access_expression '.' identifier  */
-#line 273 "grammar.y"
+#line 275 "grammar.y"
                                             {
      (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1781 "grammar.tab.c"
+#line 1783 "grammar.tab.c"
     break;
 
   case 46: /* record_expession_access: record_expession_access '.' identifier  */
-#line 278 "grammar.y"
+#line 280 "grammar.y"
                                              {
      (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1791 "grammar.tab.c"
+#line 1793 "grammar.tab.c"
     break;
 
   case 47: /* record_expession_access: record_expession_access '.' array_access_expression  */
-#line 283 "grammar.y"
+#line 285 "grammar.y"
                                                          {
      (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1801 "grammar.tab.c"
+#line 1803 "grammar.tab.c"
     break;
 
   case 48: /* summand: primary  */
-#line 291 "grammar.y"
+#line 293 "grammar.y"
             {
       (yyval.node) = new None_Terminal_Node("SUMMAND");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1810 "grammar.tab.c"
+#line 1812 "grammar.tab.c"
     break;
 
   case 49: /* summand: '(' expression ')'  */
-#line 295 "grammar.y"
+#line 297 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("SUMMAND");
       (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 1819 "grammar.tab.c"
+#line 1821 "grammar.tab.c"
     break;
 
   case 50: /* factor: summand  */
-#line 303 "grammar.y"
+#line 305 "grammar.y"
             {
       (yyval.node) = new None_Terminal_Node("FACTOR");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1828 "grammar.tab.c"
+#line 1830 "grammar.tab.c"
     break;
 
   case 51: /* factor: factor '*' summand  */
-#line 307 "grammar.y"
+#line 309 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("FACTOR");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("*"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1839 "grammar.tab.c"
+#line 1841 "grammar.tab.c"
     break;
 
   case 52: /* factor: factor '/' summand  */
-#line 313 "grammar.y"
+#line 315 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("FACTOR");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("/"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1850 "grammar.tab.c"
+#line 1852 "grammar.tab.c"
     break;
 
   case 53: /* factor: factor '%' summand  */
-#line 319 "grammar.y"
+#line 321 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("FACTOR");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("%"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1861 "grammar.tab.c"
+#line 1863 "grammar.tab.c"
     break;
 
   case 54: /* simple: factor  */
-#line 328 "grammar.y"
+#line 330 "grammar.y"
            {
       (yyval.node) = new None_Terminal_Node("SIMPLE");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1870 "grammar.tab.c"
+#line 1872 "grammar.tab.c"
     break;
 
   case 55: /* simple: simple '+' factor  */
-#line 332 "grammar.y"
+#line 334 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("SIMPLE");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("+"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1881 "grammar.tab.c"
+#line 1883 "grammar.tab.c"
     break;
 
   case 56: /* simple: simple '-' factor  */
-#line 338 "grammar.y"
+#line 340 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("SIMPLE");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("-"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1892 "grammar.tab.c"
+#line 1894 "grammar.tab.c"
     break;
 
   case 57: /* relation: simple  */
-#line 347 "grammar.y"
+#line 349 "grammar.y"
            {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1901 "grammar.tab.c"
+#line 1903 "grammar.tab.c"
     break;
 
   case 58: /* relation: simple '<' simple  */
-#line 351 "grammar.y"
+#line 353 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("<"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1912 "grammar.tab.c"
+#line 1914 "grammar.tab.c"
     break;
 
   case 59: /* relation: simple LE_OP simple  */
-#line 357 "grammar.y"
+#line 359 "grammar.y"
                         {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("<="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1923 "grammar.tab.c"
+#line 1925 "grammar.tab.c"
     break;
 
   case 60: /* relation: simple '>' simple  */
-#line 363 "grammar.y"
+#line 365 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator(">"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1934 "grammar.tab.c"
+#line 1936 "grammar.tab.c"
     break;
 
   case 61: /* relation: simple GE_OP simple  */
-#line 369 "grammar.y"
+#line 371 "grammar.y"
                         {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator(">="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1945 "grammar.tab.c"
+#line 1947 "grammar.tab.c"
     break;
 
   case 62: /* relation: simple '=' simple  */
-#line 375 "grammar.y"
+#line 377 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1956 "grammar.tab.c"
+#line 1958 "grammar.tab.c"
     break;
 
   case 63: /* relation: simple SUB_ASSIGN simple  */
-#line 381 "grammar.y"
+#line 383 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("-="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1967 "grammar.tab.c"
+#line 1969 "grammar.tab.c"
     break;
 
   case 64: /* relation: simple ADD_ASSIGN simple  */
-#line 387 "grammar.y"
+#line 389 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("+="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1978 "grammar.tab.c"
+#line 1980 "grammar.tab.c"
     break;
 
   case 65: /* relation: simple MUL_ASSIGN simple  */
-#line 393 "grammar.y"
+#line 395 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("*="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1989 "grammar.tab.c"
+#line 1991 "grammar.tab.c"
     break;
 
   case 66: /* relation: simple DIV_ASSIGN simple  */
-#line 399 "grammar.y"
+#line 401 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("/="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2000 "grammar.tab.c"
+#line 2002 "grammar.tab.c"
     break;
 
   case 67: /* relation: simple MOD_ASSIGN simple  */
-#line 405 "grammar.y"
+#line 407 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("%="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2011 "grammar.tab.c"
+#line 2013 "grammar.tab.c"
     break;
 
   case 68: /* expression: relation  */
-#line 415 "grammar.y"
+#line 417 "grammar.y"
               {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2020 "grammar.tab.c"
+#line 2022 "grammar.tab.c"
     break;
 
   case 69: /* expression: relation AND relation  */
-#line 419 "grammar.y"
+#line 421 "grammar.y"
                           {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("and"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2031 "grammar.tab.c"
+#line 2033 "grammar.tab.c"
     break;
 
   case 70: /* expression: relation OR relation  */
-#line 425 "grammar.y"
+#line 427 "grammar.y"
                          {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("or"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2042 "grammar.tab.c"
+#line 2044 "grammar.tab.c"
     break;
 
   case 71: /* expression: relation XOR relation  */
-#line 431 "grammar.y"
+#line 433 "grammar.y"
                           {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back(new Operator("xor"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2053 "grammar.tab.c"
+#line 2055 "grammar.tab.c"
     break;
 
   case 72: /* typeDecleration: TYPE identifier IS type ';'  */
-#line 441 "grammar.y"
+#line 443 "grammar.y"
                                  {
     (yyval.node) = new None_Terminal_Node("TYPE_DECLARATION");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2063 "grammar.tab.c"
+#line 2065 "grammar.tab.c"
     break;
 
   case 73: /* recordType: RECORD '{' variableDeclerations '}' END  */
-#line 449 "grammar.y"
+#line 451 "grammar.y"
                                              {
       (yyval.node) = new None_Terminal_Node("RECORD_TYPE");
       (yyval.node)->children.push_back((yyvsp[-2].node));
    }
-#line 2072 "grammar.tab.c"
+#line 2074 "grammar.tab.c"
     break;
 
   case 74: /* variableDeclerations: variableDeclerations variableDeclaration  */
-#line 456 "grammar.y"
+#line 458 "grammar.y"
                                              {
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 2081 "grammar.tab.c"
+#line 2083 "grammar.tab.c"
     break;
 
   case 75: /* variableDeclerations: %empty  */
-#line 460 "grammar.y"
+#line 462 "grammar.y"
                   {
       (yyval.node) = new None_Terminal_Node("VARIABLE_DECLARATIONS");
     }
-#line 2089 "grammar.tab.c"
+#line 2091 "grammar.tab.c"
     break;
 
   case 76: /* arrayType: ARRAY '[' expression ']' type  */
-#line 466 "grammar.y"
+#line 468 "grammar.y"
                                     {
       (yyval.node) = new None_Terminal_Node("ARRAY_TYPE");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2099 "grammar.tab.c"
+#line 2101 "grammar.tab.c"
     break;
 
   case 77: /* statement: iteration_statement  */
-#line 474 "grammar.y"
+#line 476 "grammar.y"
                       {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2108 "grammar.tab.c"
+#line 2110 "grammar.tab.c"
     break;
 
   case 78: /* statement: assign_expression  */
-#line 478 "grammar.y"
+#line 480 "grammar.y"
                       {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2117 "grammar.tab.c"
+#line 2119 "grammar.tab.c"
     break;
 
   case 79: /* statement: IfStatement  */
-#line 482 "grammar.y"
+#line 484 "grammar.y"
                 {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2126 "grammar.tab.c"
+#line 2128 "grammar.tab.c"
     break;
 
   case 80: /* statement: jumpStatement  */
-#line 486 "grammar.y"
+#line 488 "grammar.y"
                   {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2135 "grammar.tab.c"
+#line 2137 "grammar.tab.c"
     break;
 
   case 81: /* statement: routine_call ';'  */
-#line 490 "grammar.y"
+#line 492 "grammar.y"
                       {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2144 "grammar.tab.c"
+#line 2146 "grammar.tab.c"
     break;
 
   case 82: /* statement: print_statement ';'  */
-#line 494 "grammar.y"
+#line 496 "grammar.y"
                         {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2153 "grammar.tab.c"
+#line 2155 "grammar.tab.c"
     break;
 
   case 83: /* print_statement: PRINT '(' expression ')'  */
-#line 500 "grammar.y"
+#line 502 "grammar.y"
                              {
      (yyval.node) =  new None_Terminal_Node("PRINT_STATMENT");
      (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2162 "grammar.tab.c"
+#line 2164 "grammar.tab.c"
     break;
 
   case 84: /* jumpStatement: return_exp  */
-#line 506 "grammar.y"
+#line 508 "grammar.y"
                {
     (yyval.node) = new None_Terminal_Node("JUMP_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2171 "grammar.tab.c"
+#line 2173 "grammar.tab.c"
     break;
 
   case 85: /* jumpStatement: continue_exp  */
-#line 510 "grammar.y"
+#line 512 "grammar.y"
                  {
     (yyval.node) = new None_Terminal_Node("JUMP_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2180 "grammar.tab.c"
+#line 2182 "grammar.tab.c"
     break;
 
   case 86: /* jumpStatement: break_exp  */
-#line 514 "grammar.y"
+#line 516 "grammar.y"
               {
     (yyval.node) = new None_Terminal_Node("JUMP_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2189 "grammar.tab.c"
+#line 2191 "grammar.tab.c"
     break;
 
   case 87: /* return_exp: RETURN ';'  */
-#line 520 "grammar.y"
+#line 522 "grammar.y"
              {
    (yyval.node) = new None_Terminal_Node("RETURN_EX");
  }
-#line 2197 "grammar.tab.c"
+#line 2199 "grammar.tab.c"
     break;
 
   case 88: /* return_exp: RETURN expression ';'  */
-#line 523 "grammar.y"
+#line 525 "grammar.y"
                          {
      (yyval.node) = new None_Terminal_Node("RETURN_EX");
      (yyval.node)->children.push_back((yyvsp[-1].node));
  }
-#line 2206 "grammar.tab.c"
+#line 2208 "grammar.tab.c"
     break;
 
   case 89: /* continue_exp: CONTINUE ';'  */
-#line 529 "grammar.y"
+#line 531 "grammar.y"
                {
      (yyval.node) = new None_Terminal_Node("CONTINUE_EX");
  }
-#line 2214 "grammar.tab.c"
+#line 2216 "grammar.tab.c"
     break;
 
   case 90: /* break_exp: BREAK ';'  */
-#line 534 "grammar.y"
+#line 536 "grammar.y"
             {
      (yyval.node) = new None_Terminal_Node("BREAK_EX");
  }
-#line 2222 "grammar.tab.c"
+#line 2224 "grammar.tab.c"
     break;
 
   case 91: /* IfStatement: IF expression THEN body END  */
-#line 540 "grammar.y"
+#line 542 "grammar.y"
                                 {
     (yyval.node) = new None_Terminal_Node("IF_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2232 "grammar.tab.c"
+#line 2234 "grammar.tab.c"
     break;
 
   case 92: /* IfStatement: IF expression THEN body ELSE body END  */
-#line 545 "grammar.y"
+#line 547 "grammar.y"
                                           {
     (yyval.node) = new None_Terminal_Node("IF_STATEMENT_ELSE");
     (yyval.node)->children.push_back((yyvsp[-5].node));
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2243 "grammar.tab.c"
+#line 2245 "grammar.tab.c"
     break;
 
   case 93: /* assign_expression: primary ASSIGN_OP expression ';'  */
-#line 555 "grammar.y"
+#line 557 "grammar.y"
                                     {
     (yyval.node) = new None_Terminal_Node("ASSIGN_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator(":="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2254 "grammar.tab.c"
+#line 2256 "grammar.tab.c"
     break;
 
   case 94: /* assign_expression: identifier SUB_ASSIGN expression ';'  */
-#line 561 "grammar.y"
+#line 563 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("-="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2264 "grammar.tab.c"
+#line 2266 "grammar.tab.c"
     break;
 
   case 95: /* assign_expression: identifier ADD_ASSIGN expression ';'  */
-#line 566 "grammar.y"
+#line 568 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("+="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2274 "grammar.tab.c"
+#line 2276 "grammar.tab.c"
     break;
 
   case 96: /* assign_expression: identifier MUL_ASSIGN expression ';'  */
-#line 571 "grammar.y"
+#line 573 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("*="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2284 "grammar.tab.c"
+#line 2286 "grammar.tab.c"
     break;
 
   case 97: /* assign_expression: identifier DIV_ASSIGN expression ';'  */
-#line 576 "grammar.y"
+#line 578 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("/="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2294 "grammar.tab.c"
+#line 2296 "grammar.tab.c"
     break;
 
   case 98: /* assign_expression: identifier MOD_ASSIGN expression ';'  */
-#line 581 "grammar.y"
+#line 583 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("%="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2304 "grammar.tab.c"
+#line 2306 "grammar.tab.c"
     break;
 
   case 99: /* iteration_statement: while_expression  */
-#line 589 "grammar.y"
+#line 591 "grammar.y"
                           {
     (yyval.node) = new None_Terminal_Node("ITERATION_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2313 "grammar.tab.c"
+#line 2315 "grammar.tab.c"
     break;
 
   case 100: /* iteration_statement: for_expression  */
-#line 593 "grammar.y"
+#line 595 "grammar.y"
                   {
     (yyval.node) = new None_Terminal_Node("ITERATION_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2322 "grammar.tab.c"
+#line 2324 "grammar.tab.c"
     break;
 
   case 101: /* while_expression: WHILE expression LOOP body END  */
-#line 599 "grammar.y"
+#line 601 "grammar.y"
                                  {
     (yyval.node) = new None_Terminal_Node("WHILE_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2332 "grammar.tab.c"
+#line 2334 "grammar.tab.c"
     break;
 
   case 102: /* body: body simpleDeclaration  */
-#line 606 "grammar.y"
+#line 608 "grammar.y"
                            {
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 2341 "grammar.tab.c"
+#line 2343 "grammar.tab.c"
     break;
 
   case 103: /* body: body statement  */
-#line 610 "grammar.y"
+#line 612 "grammar.y"
                    {
        (yyval.node) = (yyvsp[-1].node);
        (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 2350 "grammar.tab.c"
+#line 2352 "grammar.tab.c"
     break;
 
   case 104: /* body: %empty  */
-#line 614 "grammar.y"
+#line 616 "grammar.y"
                 {
       (yyval.node) = new None_Terminal_Node("BODY"); 
     }
-#line 2358 "grammar.tab.c"
+#line 2360 "grammar.tab.c"
     break;
 
   case 105: /* for_expression: FOR identifier range LOOP body END  */
-#line 620 "grammar.y"
+#line 622 "grammar.y"
                                      {
       (yyval.node) = new None_Terminal_Node("FOR_STATEMENT");
       (yyval.node)->children.push_back((yyvsp[-4].node));
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2369 "grammar.tab.c"
+#line 2371 "grammar.tab.c"
     break;
 
   case 106: /* range: IN expression RANGE expression  */
-#line 628 "grammar.y"
+#line 630 "grammar.y"
                                   {
      (yyval.node) = new None_Terminal_Node("RANGE_EX");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2379 "grammar.tab.c"
+#line 2381 "grammar.tab.c"
     break;
 
   case 107: /* range: IN REVERSE expression RANGE expression  */
-#line 633 "grammar.y"
+#line 635 "grammar.y"
                                            {
      (yyval.node) = new None_Terminal_Node("RANGE_REVERSE");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2389 "grammar.tab.c"
+#line 2391 "grammar.tab.c"
     break;
 
 
-#line 2393 "grammar.tab.c"
+#line 2395 "grammar.tab.c"
 
       default: break;
     }
@@ -2582,7 +2584,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 640 "grammar.y"
+#line 642 "grammar.y"
 
 
 void yyerror(char *s) {

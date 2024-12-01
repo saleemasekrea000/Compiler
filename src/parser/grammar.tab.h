@@ -106,7 +106,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "grammar.y"
+#line 16 "grammar.y"
 
   char *id_val;
   int int_val;

@@ -1,2 +1,37 @@
 Program
   Declarations
+    Statement
+      Iteration statement
+        For statement
+          Identifier: i
+          Range reverse
+            Expression
+              Relation
+                Simple
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer: 1
+            Expression
+              Relation
+                Simple
+                  Factor
+                    Summand
+                      Primary node
+                        Primary expresson
+                          Integer: 5
+          Body
+            Statement
+              PRINT
+                Expression
+                  Relation
+                    Simple
+                      Factor
+                        Summand
+                          Primary node
+                            Primary expresson
+                              Identifier: i
+    Statement
+      Jump Statement
+        Break
