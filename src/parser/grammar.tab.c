@@ -543,16 +543,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   453
+#define YYLAST   445
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  65
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  42
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  107
+#define YYNRULES  105
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  213
+#define YYNSTATES  209
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   301
@@ -610,13 +610,13 @@ static const yytype_int16 yyrline[] =
       95,    99,   104,   111,   115,   122,   128,   134,   141,   146,
      149,   152,   155,   159,   163,   171,   175,   179,   183,   188,
      194,   199,   204,   209,   215,   219,   223,   227,   234,   242,
-     246,   250,   255,   261,   268,   273,   278,   283,   291,   295,
-     303,   307,   313,   319,   328,   332,   338,   347,   351,   357,
-     363,   369,   375,   381,   387,   393,   399,   405,   415,   419,
-     425,   431,   441,   449,   456,   460,   466,   474,   478,   482,
-     486,   490,   494,   500,   506,   510,   514,   520,   523,   529,
-     534,   540,   545,   555,   561,   566,   571,   576,   581,   589,
-     593,   599,   606,   610,   614,   620,   628,   633
+     246,   250,   255,   261,   268,   278,   291,   295,   303,   307,
+     313,   319,   328,   332,   338,   347,   351,   357,   363,   369,
+     375,   381,   387,   393,   399,   405,   415,   419,   425,   431,
+     441,   449,   456,   460,   466,   474,   478,   482,   486,   490,
+     494,   500,   506,   510,   514,   520,   523,   529,   534,   540,
+     545,   555,   561,   566,   571,   576,   581,   589,   593,   599,
+     606,   610,   614,   620,   628,   633
 };
 #endif
 
@@ -662,7 +662,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-104)
+#define YYPACT_NINF (-101)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -676,28 +676,27 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-    -104,    23,   211,  -104,  -104,  -104,  -104,  -104,    42,    27,
-      27,  -104,    27,    10,    27,    42,   -18,    20,    29,  -104,
-    -104,  -104,   399,  -104,    32,  -104,  -104,  -104,    31,    44,
-     -26,    12,  -104,  -104,    46,  -104,  -104,  -104,  -104,  -104,
-    -104,  -104,  -104,  -104,    42,   -30,  -104,  -104,  -104,   -16,
-     377,    49,    64,    52,    -5,    71,  -104,    54,    99,    89,
-    -104,  -104,    42,    42,    42,    42,    42,    42,    42,    32,
-      27,  -104,    42,  -104,    32,    27,    27,  -104,    68,    42,
-      42,    42,    42,    42,    42,    42,    42,    42,    42,    42,
-      42,    42,    42,    42,    42,    42,    42,  -104,    27,    42,
-      91,    15,    90,  -104,    91,  -104,    70,    69,    76,    79,
-      81,    82,     6,  -104,    83,  -104,    84,    86,  -104,    88,
-      93,  -104,  -104,  -104,  -104,    -7,    -7,    -7,    -7,    -7,
-      -7,    -7,   -16,   -16,    -7,    -7,    -7,  -104,  -104,  -104,
-     244,    19,  -104,    72,    95,  -104,  -104,  -104,    59,    97,
-    -104,    -1,  -104,  -104,    42,   116,  -104,   106,   120,  -104,
-    -104,  -104,  -104,  -104,  -104,  -104,    42,  -104,  -104,  -104,
-    -104,  -104,  -104,     4,    27,    91,  -104,  -104,    42,    42,
-    -104,   124,    42,   277,  -104,  -104,  -104,  -104,  -104,    91,
-    -104,  -104,    -6,   105,   109,    42,  -104,  -104,   310,   343,
-     143,   152,  -104,    91,  -104,  -104,  -104,  -104,  -104,  -104,
-    -104,   376,  -104
+    -101,    11,   205,  -101,  -101,  -101,  -101,  -101,    36,     2,
+       2,  -101,     2,    12,     2,    36,   -37,   -32,   -20,  -101,
+    -101,  -101,     4,  -101,    27,  -101,  -101,  -101,    -8,    38,
+      -9,  -101,  -101,  -101,    48,  -101,  -101,  -101,  -101,  -101,
+    -101,  -101,  -101,  -101,    36,    39,  -101,  -101,  -101,     5,
+     371,    56,    66,    61,     6,    79,  -101,    60,   106,    96,
+    -101,  -101,    36,    36,    36,    36,    36,    36,    36,    27,
+       2,  -101,    36,  -101,    27,  -101,    76,    36,    36,    36,
+      36,    36,    36,    36,    36,    36,    36,    36,    36,    36,
+      36,    36,    36,    36,    36,  -101,     2,    36,    85,    17,
+     100,  -101,    85,  -101,    82,    81,    84,    88,    89,    90,
+     -13,  -101,    80,    97,  -101,    93,   102,  -101,  -101,  -101,
+    -101,    44,    44,    44,    44,    44,    44,    44,     5,     5,
+      44,    44,    44,  -101,  -101,  -101,   238,    42,  -101,   101,
+     105,  -101,  -101,  -101,    94,   107,  -101,    -1,  -101,  -101,
+      36,   135,  -101,   109,   114,  -101,  -101,  -101,  -101,  -101,
+    -101,  -101,    36,  -101,  -101,  -101,  -101,  -101,  -101,    18,
+       2,    85,  -101,  -101,    36,    36,  -101,   140,    36,   271,
+    -101,  -101,  -101,  -101,  -101,    85,  -101,  -101,   -10,   111,
+     115,    36,  -101,  -101,   304,   337,   155,   156,  -101,    85,
+    -101,  -101,  -101,  -101,  -101,  -101,  -101,   370,  -101
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -708,45 +707,44 @@ static const yytype_int8 yydefact[] =
        6,     0,     2,     1,    18,    31,    32,    33,     0,     0,
        0,    30,     0,     0,     0,     0,     0,     0,     0,     5,
        3,    13,    29,    34,     0,    25,    26,    27,     0,    37,
-      35,    36,    14,     4,     0,    80,    84,    85,    86,    79,
-      78,    77,    99,   100,     0,    29,    48,    37,    50,    54,
-      57,    68,     0,     0,     0,     0,    87,     0,     0,     0,
-      90,    89,     0,     0,     0,     0,     0,     0,    41,     0,
-       0,    28,     0,    81,     0,     0,     0,    82,     0,     0,
+      35,    36,    14,     4,     0,    78,    82,    83,    84,    77,
+      76,    75,    97,    98,     0,    29,    46,    37,    48,    52,
+      55,    66,     0,     0,     0,     0,    85,     0,     0,     0,
+      88,    87,     0,     0,     0,     0,     0,     0,    41,     0,
+       0,    28,     0,    79,     0,    80,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,   104,    11,     0,
-       0,     0,     0,    88,     0,   104,     0,     0,     0,     0,
-       0,     0,     0,    39,     0,    44,     0,     0,    45,    46,
-      47,    49,    51,    52,    53,    59,    61,    65,    66,    67,
-      64,    63,    55,    56,    58,    60,    62,    70,    69,    71,
-       0,     0,     9,     0,     0,    19,    20,    21,     0,     0,
-      22,     0,    23,    24,     0,     0,   104,     0,     0,    83,
-      96,    97,    98,    95,    94,    38,     0,    42,    93,    43,
-     101,   102,   103,     0,     0,     0,    15,    75,     0,     0,
-      17,     0,     0,     0,    72,    91,   104,    40,   104,     0,
-      10,    12,     0,     0,     0,     0,   106,   105,     0,     0,
-       0,     0,    74,     0,    16,   107,    92,     7,   104,    73,
-      76,     0,     8
+       0,     0,     0,     0,     0,   102,    11,     0,     0,     0,
+       0,    86,     0,   102,     0,     0,     0,     0,     0,     0,
+       0,    39,     0,    44,    45,     0,     0,    47,    49,    50,
+      51,    57,    59,    63,    64,    65,    62,    61,    53,    54,
+      56,    58,    60,    68,    67,    69,     0,     0,     9,     0,
+       0,    19,    20,    21,     0,     0,    22,     0,    23,    24,
+       0,     0,   102,     0,     0,    81,    94,    95,    96,    93,
+      92,    38,     0,    42,    91,    43,    99,   100,   101,     0,
+       0,     0,    15,    73,     0,     0,    17,     0,     0,     0,
+      70,    89,   102,    40,   102,     0,    10,    12,     0,     0,
+       0,     0,   104,   103,     0,     0,     0,     0,    72,     0,
+      16,   105,    90,     7,   102,    71,    74,     0,     8
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -104,  -104,  -104,  -104,  -104,   -12,   161,   -28,    -2,  -103,
-    -104,  -104,  -104,  -104,  -104,     1,     7,  -104,    92,  -104,
-      11,   -47,   341,    14,    16,  -104,  -104,  -104,  -104,   164,
-    -104,  -104,  -104,  -104,  -104,  -104,  -104,  -104,  -104,  -101,
-    -104,  -104
+    -101,  -101,  -101,  -101,  -101,    -3,   168,   -17,    -2,   -98,
+    -101,  -101,  -101,  -101,  -101,     0,     7,  -101,  -101,   103,
+      37,   -22,   354,    34,    13,  -101,  -101,  -101,  -101,   170,
+    -101,  -101,  -101,  -101,  -101,  -101,  -101,  -101,  -101,  -100,
+    -101,  -101
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,     1,     2,    19,   141,   142,   171,    21,    45,   151,
-      23,    24,    25,    26,    27,    46,    47,   112,    30,    31,
-      48,    49,    50,    51,    52,    32,   152,   192,   153,   172,
-      34,    35,    36,    37,    38,    39,    40,    41,    42,   140,
-      43,   102
+       0,     1,     2,    19,   137,   138,   167,    21,    45,   147,
+      23,    24,    25,    26,    27,    46,    47,   110,    30,    31,
+      48,    49,    50,    51,    52,    32,   148,   188,   149,   168,
+      34,    35,    36,    37,    38,    39,    40,    41,    42,   136,
+      43,   100
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -754,79 +752,84 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      22,   157,    99,    28,   158,    10,   179,    53,    54,    29,
-      55,   188,    58,     4,     5,     6,     7,    68,     4,     5,
-       6,     7,    69,     3,    70,    71,    74,    11,    75,    57,
-       4,    59,    11,    60,   154,     4,     5,     6,     7,    79,
-      80,    81,   132,   133,   100,     4,     5,     6,     7,    11,
-     180,    89,    90,   189,   165,   183,   166,    44,   201,    11,
-      78,    56,    44,    94,    95,    96,    76,   173,   115,   174,
-     114,    61,   191,   118,   119,   117,    62,    72,   106,   107,
-     108,   109,   110,   111,   113,   198,   200,   199,   116,    44,
-     122,   123,   124,    97,     4,    73,   143,    77,   150,    98,
-     210,   101,   150,   145,   146,   103,   104,   211,   137,   138,
-     139,   147,   148,   149,   105,   144,   121,   155,   159,   156,
-     160,   175,   177,     4,     5,     6,     7,   161,     8,   185,
-     162,    10,   163,   164,   182,   168,   167,    11,    22,   169,
-      69,    28,   195,    12,    13,    74,   176,    29,    14,   178,
-     208,    15,   186,    16,    17,    18,    22,   184,   203,    28,
-     204,   209,   190,    20,   202,    29,    33,     0,   120,     0,
-     181,     0,   143,   150,     0,     0,     0,     0,     0,     0,
-       0,    22,   187,     0,    28,     0,     0,   150,     0,     0,
-      29,     0,     0,     0,   193,   194,    22,    22,   196,    28,
-      28,   150,     0,     0,     0,    29,    29,     0,     0,    22,
-       0,   205,    28,     0,     4,     5,     6,     7,    29,     8,
-       0,     9,    10,     0,     0,     0,     0,     0,    11,     0,
+      22,    10,    28,   154,   153,     4,   175,    53,    54,    29,
+      55,     3,    58,    97,    60,     4,     5,     6,     7,    61,
+       4,     5,     6,     7,    71,   184,    57,    62,    59,    11,
+       4,     5,     6,     7,    11,   161,   150,   162,    72,     4,
+       5,     6,     7,    74,    11,    63,    64,    65,    66,    67,
+     176,    68,   179,    11,   197,    98,    69,    76,    70,    44,
+      77,    78,    79,    56,    44,   128,   129,   185,   113,   112,
+      92,    93,    94,   187,   116,   104,   105,   106,   107,   108,
+     109,   111,   194,    44,   195,   115,    68,   196,     4,    73,
+     169,    69,   170,    70,   139,    95,   146,   141,   142,    75,
+     146,   206,    87,    88,   207,   143,   144,   145,    96,    99,
+     140,   101,   151,   102,   118,   119,   120,     4,     5,     6,
+       7,   103,     8,   181,   117,    10,   133,   134,   135,   152,
+     155,    11,   156,   163,    22,   157,    28,    12,    13,   158,
+     159,   160,    14,    29,   164,    15,   182,    16,    17,    18,
+     171,    70,    22,   178,    28,   165,   172,   173,   191,   174,
+     180,    29,   204,   177,   199,   205,   200,   186,   139,   146,
+      20,   198,    33,   114,     0,   183,     0,    22,     0,    28,
+       0,     0,     0,   146,     0,     0,    29,   189,   190,     0,
+       0,   192,    22,    22,    28,    28,     0,   146,     0,     0,
+       0,    29,    29,     0,   201,    22,     0,    28,     4,     5,
+       6,     7,     0,     8,    29,     9,    10,     0,     0,     0,
+       0,     0,    11,     0,     0,     0,     0,     0,    12,    13,
+       0,     0,     0,    14,     0,     0,    15,     0,    16,    17,
+      18,     4,     5,     6,     7,     0,     8,   166,     0,    10,
+       0,     0,     0,     0,     0,    11,     0,     0,     0,     0,
+       0,    12,    13,     0,     0,     0,    14,     0,     0,    15,
+       0,    16,    17,    18,     4,     5,     6,     7,     0,     8,
+     193,     0,    10,     0,     0,     0,     0,     0,    11,     0,
        0,     0,     0,     0,    12,    13,     0,     0,     0,    14,
        0,     0,    15,     0,    16,    17,    18,     4,     5,     6,
-       7,     0,     8,   170,     0,    10,     0,     0,     0,     0,
+       7,     0,     8,   202,     0,    10,     0,     0,     0,     0,
        0,    11,     0,     0,     0,     0,     0,    12,    13,     0,
        0,     0,    14,     0,     0,    15,     0,    16,    17,    18,
-       4,     5,     6,     7,     0,     8,   197,     0,    10,     0,
+       4,     5,     6,     7,     0,     8,   203,     0,    10,     0,
        0,     0,     0,     0,    11,     0,     0,     0,     0,     0,
       12,    13,     0,     0,     0,    14,     0,     0,    15,     0,
-      16,    17,    18,     4,     5,     6,     7,     0,     8,   206,
+      16,    17,    18,     4,     5,     6,     7,     0,     8,   208,
        0,    10,     0,     0,     0,     0,     0,    11,     0,     0,
        0,     0,     0,    12,    13,     0,     0,     0,    14,     0,
-       0,    15,     0,    16,    17,    18,     4,     5,     6,     7,
-       0,     8,   207,     0,    10,     0,     0,     0,     0,     0,
-      11,     0,     0,     0,     0,     0,    12,    13,     0,     0,
-       0,    14,     0,     0,    15,     0,    16,    17,    18,     4,
-       5,     6,     7,     0,     8,   212,     0,    10,     0,     0,
-       0,     0,     0,    11,     0,     0,     0,     0,     0,    12,
-      13,     0,     0,     0,    14,     0,     0,    15,     0,    16,
-      17,    18,     0,    82,    83,     0,     0,     0,    84,    85,
-      86,    87,    88,   125,   126,   127,   128,   129,   130,   131,
-       0,     0,   134,   135,   136,    89,    90,    91,    92,    93,
-      63,    64,    65,    66,    67,     0,    68,     0,     0,     0,
-       0,    69,     0,    70
+       0,    15,     0,    16,    17,    18,     0,    80,    81,     0,
+       0,     0,    82,    83,    84,    85,    86,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    87,
+      88,    89,    90,    91,   121,   122,   123,   124,   125,   126,
+     127,     0,     0,   130,   131,   132
 };
 
 static const yytype_int16 yycheck[] =
 {
-       2,   104,     7,     2,   105,    11,     7,     9,    10,     2,
-      12,     7,    14,     3,     4,     5,     6,    47,     3,     4,
-       5,     6,    52,     0,    54,    24,    52,    17,    54,    13,
-       3,    15,    17,    51,    19,     3,     4,     5,     6,    55,
-      56,    57,    89,    90,    49,     3,     4,     5,     6,    17,
-      51,    58,    59,    49,    48,   156,    50,    47,    64,    17,
-      44,    51,    47,    14,    15,    16,    54,    48,    70,    50,
-      69,    51,   175,    75,    76,    74,    47,    46,    62,    63,
-      64,    65,    66,    67,    68,   186,   189,   188,    72,    47,
-      79,    80,    81,    29,     3,    51,    98,    51,   100,    47,
-     203,    30,   104,    12,    13,    51,     7,   208,    94,    95,
-      96,    20,    21,    22,    25,    99,    48,   101,    48,    29,
-      51,    49,    63,     3,     4,     5,     6,    51,     8,     9,
-      51,    11,    51,    51,    18,    51,    53,    17,   140,    53,
-      52,   140,    18,    23,    24,    52,    51,   140,    28,    52,
-       7,    31,    32,    33,    34,    35,   158,    51,    53,   158,
-      51,     9,   174,     2,   192,   158,     2,    -1,    76,    -1,
-     154,    -1,   174,   175,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   183,   166,    -1,   183,    -1,    -1,   189,    -1,    -1,
-     183,    -1,    -1,    -1,   178,   179,   198,   199,   182,   198,
-     199,   203,    -1,    -1,    -1,   198,   199,    -1,    -1,   211,
-      -1,   195,   211,    -1,     3,     4,     5,     6,   211,     8,
-      -1,    10,    11,    -1,    -1,    -1,    -1,    -1,    17,    -1,
+       2,    11,     2,   103,   102,     3,     7,     9,    10,     2,
+      12,     0,    14,     7,    51,     3,     4,     5,     6,    51,
+       3,     4,     5,     6,    24,     7,    13,    47,    15,    17,
+       3,     4,     5,     6,    17,    48,    19,    50,    46,     3,
+       4,     5,     6,    52,    17,    41,    42,    43,    44,    45,
+      51,    47,   152,    17,    64,    49,    52,    44,    54,    47,
+      55,    56,    57,    51,    47,    87,    88,    49,    70,    69,
+      14,    15,    16,   171,    74,    62,    63,    64,    65,    66,
+      67,    68,   182,    47,   184,    72,    47,   185,     3,    51,
+      48,    52,    50,    54,    96,    29,    98,    12,    13,    51,
+     102,   199,    58,    59,   204,    20,    21,    22,    47,    30,
+      97,    51,    99,     7,    77,    78,    79,     3,     4,     5,
+       6,    25,     8,     9,    48,    11,    92,    93,    94,    29,
+      48,    17,    51,    53,   136,    51,   136,    23,    24,    51,
+      51,    51,    28,   136,    51,    31,    32,    33,    34,    35,
+      49,    54,   154,    18,   154,    53,    51,    63,    18,    52,
+      51,   154,     7,   150,    53,     9,    51,   170,   170,   171,
+       2,   188,     2,    70,    -1,   162,    -1,   179,    -1,   179,
+      -1,    -1,    -1,   185,    -1,    -1,   179,   174,   175,    -1,
+      -1,   178,   194,   195,   194,   195,    -1,   199,    -1,    -1,
+      -1,   194,   195,    -1,   191,   207,    -1,   207,     3,     4,
+       5,     6,    -1,     8,   207,    10,    11,    -1,    -1,    -1,
+      -1,    -1,    17,    -1,    -1,    -1,    -1,    -1,    23,    24,
+      -1,    -1,    -1,    28,    -1,    -1,    31,    -1,    33,    34,
+      35,     3,     4,     5,     6,    -1,     8,     9,    -1,    11,
+      -1,    -1,    -1,    -1,    -1,    17,    -1,    -1,    -1,    -1,
+      -1,    23,    24,    -1,    -1,    -1,    28,    -1,    -1,    31,
+      -1,    33,    34,    35,     3,     4,     5,     6,    -1,     8,
+       9,    -1,    11,    -1,    -1,    -1,    -1,    -1,    17,    -1,
       -1,    -1,    -1,    -1,    23,    24,    -1,    -1,    -1,    28,
       -1,    -1,    31,    -1,    33,    34,    35,     3,     4,     5,
        6,    -1,     8,     9,    -1,    11,    -1,    -1,    -1,    -1,
@@ -838,18 +841,11 @@ static const yytype_int16 yycheck[] =
       33,    34,    35,     3,     4,     5,     6,    -1,     8,     9,
       -1,    11,    -1,    -1,    -1,    -1,    -1,    17,    -1,    -1,
       -1,    -1,    -1,    23,    24,    -1,    -1,    -1,    28,    -1,
-      -1,    31,    -1,    33,    34,    35,     3,     4,     5,     6,
-      -1,     8,     9,    -1,    11,    -1,    -1,    -1,    -1,    -1,
-      17,    -1,    -1,    -1,    -1,    -1,    23,    24,    -1,    -1,
-      -1,    28,    -1,    -1,    31,    -1,    33,    34,    35,     3,
-       4,     5,     6,    -1,     8,     9,    -1,    11,    -1,    -1,
-      -1,    -1,    -1,    17,    -1,    -1,    -1,    -1,    -1,    23,
-      24,    -1,    -1,    -1,    28,    -1,    -1,    31,    -1,    33,
-      34,    35,    -1,    36,    37,    -1,    -1,    -1,    41,    42,
-      43,    44,    45,    82,    83,    84,    85,    86,    87,    88,
-      -1,    -1,    91,    92,    93,    58,    59,    60,    61,    62,
-      41,    42,    43,    44,    45,    -1,    47,    -1,    -1,    -1,
-      -1,    52,    -1,    54
+      -1,    31,    -1,    33,    34,    35,    -1,    36,    37,    -1,
+      -1,    -1,    41,    42,    43,    44,    45,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    58,
+      59,    60,    61,    62,    80,    81,    82,    83,    84,    85,
+      86,    -1,    -1,    89,    90,    91
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -863,21 +859,20 @@ static const yytype_int8 yystos[] =
      101,   102,   103,   105,    47,    73,    80,    81,    85,    86,
       87,    88,    89,    73,    73,    73,    51,    89,    73,    89,
       51,    51,    47,    41,    42,    43,    44,    45,    47,    52,
-      54,    80,    46,    51,    52,    54,    54,    51,    89,    55,
-      56,    57,    36,    37,    41,    42,    43,    44,    45,    58,
-      59,    60,    61,    62,    14,    15,    16,    29,    47,     7,
-      49,    30,   106,    51,     7,    25,    89,    89,    89,    89,
-      89,    89,    82,    89,    80,    73,    89,    80,    73,    73,
-      83,    48,    85,    85,    85,    87,    87,    87,    87,    87,
-      87,    87,    86,    86,    87,    87,    87,    88,    88,    88,
-     104,    69,    70,    73,    89,    12,    13,    20,    21,    22,
-      73,    74,    91,    93,    19,    89,    29,    74,   104,    48,
-      51,    51,    51,    51,    51,    48,    50,    53,    51,    53,
-       9,    71,    94,    48,    50,    49,    51,    63,    52,     7,
-      51,    89,    18,   104,    51,     9,    32,    89,     7,    49,
-      70,    74,    92,    89,    89,    18,    89,     9,   104,   104,
-      74,    64,    72,    53,    51,    89,     9,     9,     7,     9,
-      74,   104,     9
+      54,    80,    46,    51,    52,    51,    89,    55,    56,    57,
+      36,    37,    41,    42,    43,    44,    45,    58,    59,    60,
+      61,    62,    14,    15,    16,    29,    47,     7,    49,    30,
+     106,    51,     7,    25,    89,    89,    89,    89,    89,    89,
+      82,    89,    80,    73,    84,    89,    80,    48,    85,    85,
+      85,    87,    87,    87,    87,    87,    87,    87,    86,    86,
+      87,    87,    87,    88,    88,    88,   104,    69,    70,    73,
+      89,    12,    13,    20,    21,    22,    73,    74,    91,    93,
+      19,    89,    29,    74,   104,    48,    51,    51,    51,    51,
+      51,    48,    50,    53,    51,    53,     9,    71,    94,    48,
+      50,    49,    51,    63,    52,     7,    51,    89,    18,   104,
+      51,     9,    32,    89,     7,    49,    70,    74,    92,    89,
+      89,    18,    89,     9,   104,   104,    74,    64,    72,    53,
+      51,    89,     9,     9,     7,     9,    74,   104,     9
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -887,13 +882,13 @@ static const yytype_int8 yyr1[] =
       69,    69,    70,    71,    71,    72,    72,    72,    73,    74,
       74,    74,    74,    74,    74,    75,    75,    75,    75,    75,
       76,    77,    78,    79,    80,    80,    80,    80,    81,    82,
-      82,    82,    83,    83,    84,    84,    84,    84,    85,    85,
-      86,    86,    86,    86,    87,    87,    87,    88,    88,    88,
-      88,    88,    88,    88,    88,    88,    88,    88,    89,    89,
-      89,    89,    90,    91,    92,    92,    93,    94,    94,    94,
-      94,    94,    94,    95,    96,    96,    96,    97,    97,    98,
-      99,   100,   100,   101,   101,   101,   101,   101,   101,   102,
-     102,   103,   104,   104,   104,   105,   106,   106
+      82,    82,    83,    83,    84,    84,    85,    85,    86,    86,
+      86,    86,    87,    87,    87,    88,    88,    88,    88,    88,
+      88,    88,    88,    88,    88,    88,    89,    89,    89,    89,
+      90,    91,    92,    92,    93,    94,    94,    94,    94,    94,
+      94,    95,    96,    96,    96,    97,    97,    98,    99,   100,
+     100,   101,   101,   101,   101,   101,   101,   102,   102,   103,
+     104,   104,   104,   105,   106,   106
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -903,13 +898,13 @@ static const yytype_int8 yyr2[] =
        3,     0,     3,     1,     1,     5,     7,     5,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     2,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     4,     1,
-       3,     0,     4,     4,     3,     3,     3,     3,     1,     3,
-       1,     3,     3,     3,     1,     3,     3,     1,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     1,     3,
-       3,     3,     5,     5,     2,     0,     5,     1,     1,     1,
-       1,     2,     2,     4,     1,     1,     1,     2,     3,     2,
-       2,     5,     7,     4,     4,     4,     4,     4,     4,     1,
-       1,     5,     2,     2,     0,     6,     4,     5
+       3,     0,     4,     4,     3,     3,     1,     3,     1,     3,
+       3,     3,     1,     3,     3,     1,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     1,     3,     3,     3,
+       5,     5,     2,     0,     5,     1,     1,     1,     1,     2,
+       2,     4,     1,     1,     1,     2,     3,     2,     2,     5,
+       7,     4,     4,     4,     4,     4,     4,     1,     1,     5,
+       2,     2,     0,     6,     4,     5
 };
 
 
@@ -1383,7 +1378,7 @@ yyreduce:
      // print_ast($$, 0,"optimize.txt");
       start_llvm((yyval.node));
     }
-#line 1387 "grammar.tab.c"
+#line 1382 "grammar.tab.c"
     break;
 
   case 3: /* declarations: declarations simpleDeclaration  */
@@ -1392,7 +1387,7 @@ yyreduce:
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1396 "grammar.tab.c"
+#line 1391 "grammar.tab.c"
     break;
 
   case 4: /* declarations: declarations statement  */
@@ -1401,7 +1396,7 @@ yyreduce:
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1405 "grammar.tab.c"
+#line 1400 "grammar.tab.c"
     break;
 
   case 5: /* declarations: declarations routine_deceration  */
@@ -1410,7 +1405,7 @@ yyreduce:
        (yyval.node) = (yyvsp[-1].node);
        (yyval.node)->children.push_back((yyvsp[0].node));
      }
-#line 1414 "grammar.tab.c"
+#line 1409 "grammar.tab.c"
     break;
 
   case 6: /* declarations: %empty  */
@@ -1418,7 +1413,7 @@ yyreduce:
                 {
       (yyval.node) = new None_Terminal_Node("DECLARATION"); 
     }
-#line 1422 "grammar.tab.c"
+#line 1417 "grammar.tab.c"
     break;
 
   case 7: /* routine_deceration: ROUTINE identifier '(' parameters_list ')' IS body END  */
@@ -1429,7 +1424,7 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-4].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 1433 "grammar.tab.c"
+#line 1428 "grammar.tab.c"
     break;
 
   case 8: /* routine_deceration: ROUTINE identifier '(' parameters_list ')' ':' type IS body END  */
@@ -1441,7 +1436,7 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-1].node));
       (yyval.node)->children.push_back((yyvsp[-3].node));
    }
-#line 1445 "grammar.tab.c"
+#line 1440 "grammar.tab.c"
     break;
 
   case 9: /* parameters_list: parameter_decleration  */
@@ -1450,7 +1445,7 @@ yyreduce:
       (yyval.node) = new None_Terminal_Node("PARAMETERS_EXPRESSION_LIST");
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1454 "grammar.tab.c"
+#line 1449 "grammar.tab.c"
     break;
 
   case 10: /* parameters_list: parameters_list ',' parameter_decleration  */
@@ -1459,7 +1454,7 @@ yyreduce:
       (yyval.node) = (yyvsp[-2].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1463 "grammar.tab.c"
+#line 1458 "grammar.tab.c"
     break;
 
   case 11: /* parameters_list: %empty  */
@@ -1467,7 +1462,7 @@ yyreduce:
                 {
       (yyval.node) = new None_Terminal_Node("PARAMETERS_EXPRESSION_LIST");
     }
-#line 1471 "grammar.tab.c"
+#line 1466 "grammar.tab.c"
     break;
 
   case 12: /* parameter_decleration: identifier ':' type  */
@@ -1477,7 +1472,7 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1481 "grammar.tab.c"
+#line 1476 "grammar.tab.c"
     break;
 
   case 13: /* simpleDeclaration: variableDeclaration  */
@@ -1486,7 +1481,7 @@ yyreduce:
       (yyval.node) = new None_Terminal_Node("SIMPLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1490 "grammar.tab.c"
+#line 1485 "grammar.tab.c"
     break;
 
   case 14: /* simpleDeclaration: typeDecleration  */
@@ -1495,7 +1490,7 @@ yyreduce:
       (yyval.node) = new None_Terminal_Node("SIMPLE_DECLARATION");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1499 "grammar.tab.c"
+#line 1494 "grammar.tab.c"
     break;
 
   case 15: /* variableDeclaration: VAR identifier IS expression ';'  */
@@ -1506,7 +1501,7 @@ yyreduce:
       (yyval.node)->children.push_back(new Type_Node("none"));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1510 "grammar.tab.c"
+#line 1505 "grammar.tab.c"
     break;
 
   case 16: /* variableDeclaration: VAR identifier ':' type IS expression ';'  */
@@ -1517,7 +1512,7 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1521 "grammar.tab.c"
+#line 1516 "grammar.tab.c"
     break;
 
   case 17: /* variableDeclaration: VAR identifier ':' type ';'  */
@@ -1527,7 +1522,7 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1531 "grammar.tab.c"
+#line 1526 "grammar.tab.c"
     break;
 
   case 18: /* identifier: IDENTIFIER  */
@@ -1535,7 +1530,7 @@ yyreduce:
            {
   (yyval.node) = new Identifier_Node(std::string((yyvsp[0].id_val)));
  }
-#line 1539 "grammar.tab.c"
+#line 1534 "grammar.tab.c"
     break;
 
   case 19: /* type: INTEGER_LITERAL_KEYWORD  */
@@ -1543,7 +1538,7 @@ yyreduce:
                             {
     (yyval.node) = new Type_Node("integer");
   }
-#line 1547 "grammar.tab.c"
+#line 1542 "grammar.tab.c"
     break;
 
   case 20: /* type: REAL_LITERAL_KEYWORD  */
@@ -1551,7 +1546,7 @@ yyreduce:
                          { 
     (yyval.node) = new Type_Node("real");
   }
-#line 1555 "grammar.tab.c"
+#line 1550 "grammar.tab.c"
     break;
 
   case 21: /* type: BOOLEAN_LITERAL_KEYWORD  */
@@ -1559,7 +1554,7 @@ yyreduce:
                             {
     (yyval.node) = new Type_Node("boolean");
   }
-#line 1563 "grammar.tab.c"
+#line 1558 "grammar.tab.c"
     break;
 
   case 22: /* type: identifier  */
@@ -1568,7 +1563,7 @@ yyreduce:
       (yyval.node) = new Type_Node("identifier");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1572 "grammar.tab.c"
+#line 1567 "grammar.tab.c"
     break;
 
   case 23: /* type: recordType  */
@@ -1577,7 +1572,7 @@ yyreduce:
       (yyval.node) = new Type_Node("recordType");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1581 "grammar.tab.c"
+#line 1576 "grammar.tab.c"
     break;
 
   case 24: /* type: arrayType  */
@@ -1586,7 +1581,7 @@ yyreduce:
       (yyval.node) = new Type_Node("arrayType");
       (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1590 "grammar.tab.c"
+#line 1585 "grammar.tab.c"
     break;
 
   case 25: /* primary_expression: int_exp  */
@@ -1595,7 +1590,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1599 "grammar.tab.c"
+#line 1594 "grammar.tab.c"
     break;
 
   case 26: /* primary_expression: real_exp  */
@@ -1604,7 +1599,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1608 "grammar.tab.c"
+#line 1603 "grammar.tab.c"
     break;
 
   case 27: /* primary_expression: boolean_exp  */
@@ -1613,7 +1608,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1617 "grammar.tab.c"
+#line 1612 "grammar.tab.c"
     break;
 
   case 28: /* primary_expression: unary_op primary  */
@@ -1623,7 +1618,7 @@ yyreduce:
     (yyval.node)->children.push_back((yyvsp[-1].node));
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1627 "grammar.tab.c"
+#line 1622 "grammar.tab.c"
     break;
 
   case 29: /* primary_expression: identifier  */
@@ -1632,7 +1627,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_EXPRESSION");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1636 "grammar.tab.c"
+#line 1631 "grammar.tab.c"
     break;
 
   case 30: /* unary_op: NOT  */
@@ -1640,7 +1635,7 @@ yyreduce:
       {
     (yyval.node) = new Operator("!");
    }
-#line 1644 "grammar.tab.c"
+#line 1639 "grammar.tab.c"
     break;
 
   case 31: /* int_exp: INTEGER_LITERAL  */
@@ -1648,7 +1643,7 @@ yyreduce:
                    {
     (yyval.node) = new Integer_Node((yyvsp[0].int_val));
   }
-#line 1652 "grammar.tab.c"
+#line 1647 "grammar.tab.c"
     break;
 
   case 32: /* real_exp: REAL_LITERAL  */
@@ -1656,7 +1651,7 @@ yyreduce:
                  {
     (yyval.node) = new Real_Node((yyvsp[0].real_val));
   }
-#line 1660 "grammar.tab.c"
+#line 1655 "grammar.tab.c"
     break;
 
   case 33: /* boolean_exp: BOOLEAN_LITERAL  */
@@ -1664,7 +1659,7 @@ yyreduce:
                     {
     (yyval.node) = new Boolean_Node((yyvsp[0].bool_val));
   }
-#line 1668 "grammar.tab.c"
+#line 1663 "grammar.tab.c"
     break;
 
   case 34: /* primary: primary_expression  */
@@ -1673,7 +1668,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1677 "grammar.tab.c"
+#line 1672 "grammar.tab.c"
     break;
 
   case 35: /* primary: array_access_expression  */
@@ -1682,7 +1677,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1686 "grammar.tab.c"
+#line 1681 "grammar.tab.c"
     break;
 
   case 36: /* primary: record_expession_access  */
@@ -1691,7 +1686,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1695 "grammar.tab.c"
+#line 1690 "grammar.tab.c"
     break;
 
   case 37: /* primary: routine_call  */
@@ -1700,7 +1695,7 @@ yyreduce:
     (yyval.node) = new None_Terminal_Node("PRIMARY_NODE");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 1704 "grammar.tab.c"
+#line 1699 "grammar.tab.c"
     break;
 
   case 38: /* routine_call: identifier '(' argument_expression_list ')'  */
@@ -1710,7 +1705,7 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
     }
-#line 1714 "grammar.tab.c"
+#line 1709 "grammar.tab.c"
     break;
 
   case 39: /* argument_expression_list: expression  */
@@ -1719,7 +1714,7 @@ yyreduce:
       (yyval.node) = new None_Terminal_Node("Argument_Expression_List");
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1723 "grammar.tab.c"
+#line 1718 "grammar.tab.c"
     break;
 
   case 40: /* argument_expression_list: argument_expression_list ',' expression  */
@@ -1728,7 +1723,7 @@ yyreduce:
       (yyval.node) = (yyvsp[-2].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 1732 "grammar.tab.c"
+#line 1727 "grammar.tab.c"
     break;
 
   case 41: /* argument_expression_list: %empty  */
@@ -1736,7 +1731,7 @@ yyreduce:
                 {
       (yyval.node) = new None_Terminal_Node("Argument_Expression_List");
     }
-#line 1740 "grammar.tab.c"
+#line 1735 "grammar.tab.c"
     break;
 
   case 42: /* array_access_expression: identifier '[' primary ']'  */
@@ -1747,7 +1742,7 @@ yyreduce:
     (yyval.node)->children.push_back((yyvsp[-1].node));
 
   }
-#line 1751 "grammar.tab.c"
+#line 1746 "grammar.tab.c"
     break;
 
   case 43: /* array_access_expression: array_access_expression '[' primary ']'  */
@@ -1757,7 +1752,7 @@ yyreduce:
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 1761 "grammar.tab.c"
+#line 1756 "grammar.tab.c"
     break;
 
   case 44: /* record_expession_access: identifier '.' identifier  */
@@ -1767,67 +1762,47 @@ yyreduce:
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1771 "grammar.tab.c"
+#line 1766 "grammar.tab.c"
     break;
 
-  case 45: /* record_expession_access: array_access_expression '.' identifier  */
-#line 273 "grammar.y"
-                                            {
-     (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
-     (yyval.node)->children.push_back((yyvsp[-2].node));
-     (yyval.node)->children.push_back((yyvsp[0].node));
-   }
-#line 1781 "grammar.tab.c"
-    break;
-
-  case 46: /* record_expession_access: record_expession_access '.' identifier  */
+  case 45: /* record_expession_access: identifier '.' record_expession_access  */
 #line 278 "grammar.y"
                                              {
      (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1791 "grammar.tab.c"
+#line 1776 "grammar.tab.c"
     break;
 
-  case 47: /* record_expession_access: record_expession_access '.' array_access_expression  */
-#line 283 "grammar.y"
-                                                         {
-     (yyval.node) = new None_Terminal_Node("RECORD_ACCESS");
-     (yyval.node)->children.push_back((yyvsp[-2].node));
-     (yyval.node)->children.push_back((yyvsp[0].node));
-   }
-#line 1801 "grammar.tab.c"
-    break;
-
-  case 48: /* summand: primary  */
+  case 46: /* summand: primary  */
 #line 291 "grammar.y"
             {
       (yyval.node) = new None_Terminal_Node("SUMMAND");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1810 "grammar.tab.c"
+#line 1785 "grammar.tab.c"
     break;
 
-  case 49: /* summand: '(' expression ')'  */
+  case 47: /* summand: '(' expression ')'  */
 #line 295 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("SUMMAND");
       (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 1819 "grammar.tab.c"
+#line 1794 "grammar.tab.c"
     break;
 
-  case 50: /* factor: summand  */
+  case 48: /* factor: summand  */
 #line 303 "grammar.y"
             {
       (yyval.node) = new None_Terminal_Node("FACTOR");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1828 "grammar.tab.c"
+#line 1803 "grammar.tab.c"
     break;
 
-  case 51: /* factor: factor '*' summand  */
+  case 49: /* factor: factor '*' summand  */
 #line 307 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("FACTOR");
@@ -1835,10 +1810,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("*"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1839 "grammar.tab.c"
+#line 1814 "grammar.tab.c"
     break;
 
-  case 52: /* factor: factor '/' summand  */
+  case 50: /* factor: factor '/' summand  */
 #line 313 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("FACTOR");
@@ -1846,10 +1821,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("/"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1850 "grammar.tab.c"
+#line 1825 "grammar.tab.c"
     break;
 
-  case 53: /* factor: factor '%' summand  */
+  case 51: /* factor: factor '%' summand  */
 #line 319 "grammar.y"
                        {
       (yyval.node) = new None_Terminal_Node("FACTOR");
@@ -1857,19 +1832,19 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("%"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1861 "grammar.tab.c"
+#line 1836 "grammar.tab.c"
     break;
 
-  case 54: /* simple: factor  */
+  case 52: /* simple: factor  */
 #line 328 "grammar.y"
            {
       (yyval.node) = new None_Terminal_Node("SIMPLE");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1870 "grammar.tab.c"
+#line 1845 "grammar.tab.c"
     break;
 
-  case 55: /* simple: simple '+' factor  */
+  case 53: /* simple: simple '+' factor  */
 #line 332 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("SIMPLE");
@@ -1877,10 +1852,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("+"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1881 "grammar.tab.c"
+#line 1856 "grammar.tab.c"
     break;
 
-  case 56: /* simple: simple '-' factor  */
+  case 54: /* simple: simple '-' factor  */
 #line 338 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("SIMPLE");
@@ -1888,19 +1863,19 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("-"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1892 "grammar.tab.c"
+#line 1867 "grammar.tab.c"
     break;
 
-  case 57: /* relation: simple  */
+  case 55: /* relation: simple  */
 #line 347 "grammar.y"
            {
       (yyval.node) = new None_Terminal_Node("RELATION");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1901 "grammar.tab.c"
+#line 1876 "grammar.tab.c"
     break;
 
-  case 58: /* relation: simple '<' simple  */
+  case 56: /* relation: simple '<' simple  */
 #line 351 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1908,10 +1883,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("<"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1912 "grammar.tab.c"
+#line 1887 "grammar.tab.c"
     break;
 
-  case 59: /* relation: simple LE_OP simple  */
+  case 57: /* relation: simple LE_OP simple  */
 #line 357 "grammar.y"
                         {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1919,10 +1894,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("<="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1923 "grammar.tab.c"
+#line 1898 "grammar.tab.c"
     break;
 
-  case 60: /* relation: simple '>' simple  */
+  case 58: /* relation: simple '>' simple  */
 #line 363 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1930,10 +1905,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator(">"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1934 "grammar.tab.c"
+#line 1909 "grammar.tab.c"
     break;
 
-  case 61: /* relation: simple GE_OP simple  */
+  case 59: /* relation: simple GE_OP simple  */
 #line 369 "grammar.y"
                         {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1941,10 +1916,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator(">="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1945 "grammar.tab.c"
+#line 1920 "grammar.tab.c"
     break;
 
-  case 62: /* relation: simple '=' simple  */
+  case 60: /* relation: simple '=' simple  */
 #line 375 "grammar.y"
                       {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1952,10 +1927,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1956 "grammar.tab.c"
+#line 1931 "grammar.tab.c"
     break;
 
-  case 63: /* relation: simple SUB_ASSIGN simple  */
+  case 61: /* relation: simple SUB_ASSIGN simple  */
 #line 381 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1963,10 +1938,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("-="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1967 "grammar.tab.c"
+#line 1942 "grammar.tab.c"
     break;
 
-  case 64: /* relation: simple ADD_ASSIGN simple  */
+  case 62: /* relation: simple ADD_ASSIGN simple  */
 #line 387 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1974,10 +1949,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("+="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1978 "grammar.tab.c"
+#line 1953 "grammar.tab.c"
     break;
 
-  case 65: /* relation: simple MUL_ASSIGN simple  */
+  case 63: /* relation: simple MUL_ASSIGN simple  */
 #line 393 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1985,10 +1960,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("*="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 1989 "grammar.tab.c"
+#line 1964 "grammar.tab.c"
     break;
 
-  case 66: /* relation: simple DIV_ASSIGN simple  */
+  case 64: /* relation: simple DIV_ASSIGN simple  */
 #line 399 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -1996,10 +1971,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("/="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2000 "grammar.tab.c"
+#line 1975 "grammar.tab.c"
     break;
 
-  case 67: /* relation: simple MOD_ASSIGN simple  */
+  case 65: /* relation: simple MOD_ASSIGN simple  */
 #line 405 "grammar.y"
                              {
       (yyval.node) = new None_Terminal_Node("RELATION");
@@ -2007,19 +1982,19 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("%="));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2011 "grammar.tab.c"
+#line 1986 "grammar.tab.c"
     break;
 
-  case 68: /* expression: relation  */
+  case 66: /* expression: relation  */
 #line 415 "grammar.y"
               {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2020 "grammar.tab.c"
+#line 1995 "grammar.tab.c"
     break;
 
-  case 69: /* expression: relation AND relation  */
+  case 67: /* expression: relation AND relation  */
 #line 419 "grammar.y"
                           {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
@@ -2027,10 +2002,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("and"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2031 "grammar.tab.c"
+#line 2006 "grammar.tab.c"
     break;
 
-  case 70: /* expression: relation OR relation  */
+  case 68: /* expression: relation OR relation  */
 #line 425 "grammar.y"
                          {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
@@ -2038,10 +2013,10 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("or"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2042 "grammar.tab.c"
+#line 2017 "grammar.tab.c"
     break;
 
-  case 71: /* expression: relation XOR relation  */
+  case 69: /* expression: relation XOR relation  */
 #line 431 "grammar.y"
                           {
       (yyval.node) = new None_Terminal_Node("EXPRESSION");
@@ -2049,189 +2024,189 @@ yyreduce:
       (yyval.node)->children.push_back(new Operator("xor"));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2053 "grammar.tab.c"
+#line 2028 "grammar.tab.c"
     break;
 
-  case 72: /* typeDecleration: TYPE identifier IS type ';'  */
+  case 70: /* typeDecleration: TYPE identifier IS type ';'  */
 #line 441 "grammar.y"
                                  {
     (yyval.node) = new None_Terminal_Node("TYPE_DECLARATION");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2063 "grammar.tab.c"
+#line 2038 "grammar.tab.c"
     break;
 
-  case 73: /* recordType: RECORD '{' variableDeclerations '}' END  */
+  case 71: /* recordType: RECORD '{' variableDeclerations '}' END  */
 #line 449 "grammar.y"
                                              {
       (yyval.node) = new None_Terminal_Node("RECORD_TYPE");
       (yyval.node)->children.push_back((yyvsp[-2].node));
    }
-#line 2072 "grammar.tab.c"
+#line 2047 "grammar.tab.c"
     break;
 
-  case 74: /* variableDeclerations: variableDeclerations variableDeclaration  */
+  case 72: /* variableDeclerations: variableDeclerations variableDeclaration  */
 #line 456 "grammar.y"
                                              {
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 2081 "grammar.tab.c"
+#line 2056 "grammar.tab.c"
     break;
 
-  case 75: /* variableDeclerations: %empty  */
+  case 73: /* variableDeclerations: %empty  */
 #line 460 "grammar.y"
                   {
       (yyval.node) = new None_Terminal_Node("VARIABLE_DECLARATIONS");
     }
-#line 2089 "grammar.tab.c"
+#line 2064 "grammar.tab.c"
     break;
 
-  case 76: /* arrayType: ARRAY '[' expression ']' type  */
+  case 74: /* arrayType: ARRAY '[' expression ']' type  */
 #line 466 "grammar.y"
                                     {
       (yyval.node) = new None_Terminal_Node("ARRAY_TYPE");
       (yyval.node)->children.push_back((yyvsp[-2].node));
       (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2099 "grammar.tab.c"
+#line 2074 "grammar.tab.c"
     break;
 
-  case 77: /* statement: iteration_statement  */
+  case 75: /* statement: iteration_statement  */
 #line 474 "grammar.y"
                       {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2108 "grammar.tab.c"
+#line 2083 "grammar.tab.c"
     break;
 
-  case 78: /* statement: assign_expression  */
+  case 76: /* statement: assign_expression  */
 #line 478 "grammar.y"
                       {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2117 "grammar.tab.c"
+#line 2092 "grammar.tab.c"
     break;
 
-  case 79: /* statement: IfStatement  */
+  case 77: /* statement: IfStatement  */
 #line 482 "grammar.y"
                 {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2126 "grammar.tab.c"
+#line 2101 "grammar.tab.c"
     break;
 
-  case 80: /* statement: jumpStatement  */
+  case 78: /* statement: jumpStatement  */
 #line 486 "grammar.y"
                   {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2135 "grammar.tab.c"
+#line 2110 "grammar.tab.c"
     break;
 
-  case 81: /* statement: routine_call ';'  */
+  case 79: /* statement: routine_call ';'  */
 #line 490 "grammar.y"
                       {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2144 "grammar.tab.c"
+#line 2119 "grammar.tab.c"
     break;
 
-  case 82: /* statement: print_statement ';'  */
+  case 80: /* statement: print_statement ';'  */
 #line 494 "grammar.y"
                         {
     (yyval.node) = new None_Terminal_Node("STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2153 "grammar.tab.c"
+#line 2128 "grammar.tab.c"
     break;
 
-  case 83: /* print_statement: PRINT '(' expression ')'  */
+  case 81: /* print_statement: PRINT '(' expression ')'  */
 #line 500 "grammar.y"
                              {
      (yyval.node) =  new None_Terminal_Node("PRINT_STATMENT");
      (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2162 "grammar.tab.c"
+#line 2137 "grammar.tab.c"
     break;
 
-  case 84: /* jumpStatement: return_exp  */
+  case 82: /* jumpStatement: return_exp  */
 #line 506 "grammar.y"
                {
     (yyval.node) = new None_Terminal_Node("JUMP_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2171 "grammar.tab.c"
+#line 2146 "grammar.tab.c"
     break;
 
-  case 85: /* jumpStatement: continue_exp  */
+  case 83: /* jumpStatement: continue_exp  */
 #line 510 "grammar.y"
                  {
     (yyval.node) = new None_Terminal_Node("JUMP_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2180 "grammar.tab.c"
+#line 2155 "grammar.tab.c"
     break;
 
-  case 86: /* jumpStatement: break_exp  */
+  case 84: /* jumpStatement: break_exp  */
 #line 514 "grammar.y"
               {
     (yyval.node) = new None_Terminal_Node("JUMP_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2189 "grammar.tab.c"
+#line 2164 "grammar.tab.c"
     break;
 
-  case 87: /* return_exp: RETURN ';'  */
+  case 85: /* return_exp: RETURN ';'  */
 #line 520 "grammar.y"
              {
    (yyval.node) = new None_Terminal_Node("RETURN_EX");
  }
-#line 2197 "grammar.tab.c"
+#line 2172 "grammar.tab.c"
     break;
 
-  case 88: /* return_exp: RETURN expression ';'  */
+  case 86: /* return_exp: RETURN expression ';'  */
 #line 523 "grammar.y"
                          {
      (yyval.node) = new None_Terminal_Node("RETURN_EX");
      (yyval.node)->children.push_back((yyvsp[-1].node));
  }
-#line 2206 "grammar.tab.c"
+#line 2181 "grammar.tab.c"
     break;
 
-  case 89: /* continue_exp: CONTINUE ';'  */
+  case 87: /* continue_exp: CONTINUE ';'  */
 #line 529 "grammar.y"
                {
      (yyval.node) = new None_Terminal_Node("CONTINUE_EX");
  }
-#line 2214 "grammar.tab.c"
+#line 2189 "grammar.tab.c"
     break;
 
-  case 90: /* break_exp: BREAK ';'  */
+  case 88: /* break_exp: BREAK ';'  */
 #line 534 "grammar.y"
             {
      (yyval.node) = new None_Terminal_Node("BREAK_EX");
  }
-#line 2222 "grammar.tab.c"
+#line 2197 "grammar.tab.c"
     break;
 
-  case 91: /* IfStatement: IF expression THEN body END  */
+  case 89: /* IfStatement: IF expression THEN body END  */
 #line 540 "grammar.y"
                                 {
     (yyval.node) = new None_Terminal_Node("IF_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2232 "grammar.tab.c"
+#line 2207 "grammar.tab.c"
     break;
 
-  case 92: /* IfStatement: IF expression THEN body ELSE body END  */
+  case 90: /* IfStatement: IF expression THEN body ELSE body END  */
 #line 545 "grammar.y"
                                           {
     (yyval.node) = new None_Terminal_Node("IF_STATEMENT_ELSE");
@@ -2239,10 +2214,10 @@ yyreduce:
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2243 "grammar.tab.c"
+#line 2218 "grammar.tab.c"
     break;
 
-  case 93: /* assign_expression: primary ASSIGN_OP expression ';'  */
+  case 91: /* assign_expression: primary ASSIGN_OP expression ';'  */
 #line 555 "grammar.y"
                                     {
     (yyval.node) = new None_Terminal_Node("ASSIGN_STATEMENT");
@@ -2250,114 +2225,114 @@ yyreduce:
     (yyval.node)->children.push_back(new Operator(":="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2254 "grammar.tab.c"
+#line 2229 "grammar.tab.c"
     break;
 
-  case 94: /* assign_expression: identifier SUB_ASSIGN expression ';'  */
+  case 92: /* assign_expression: identifier SUB_ASSIGN expression ';'  */
 #line 561 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("-="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2264 "grammar.tab.c"
+#line 2239 "grammar.tab.c"
     break;
 
-  case 95: /* assign_expression: identifier ADD_ASSIGN expression ';'  */
+  case 93: /* assign_expression: identifier ADD_ASSIGN expression ';'  */
 #line 566 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("+="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2274 "grammar.tab.c"
+#line 2249 "grammar.tab.c"
     break;
 
-  case 96: /* assign_expression: identifier MUL_ASSIGN expression ';'  */
+  case 94: /* assign_expression: identifier MUL_ASSIGN expression ';'  */
 #line 571 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("*="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2284 "grammar.tab.c"
+#line 2259 "grammar.tab.c"
     break;
 
-  case 97: /* assign_expression: identifier DIV_ASSIGN expression ';'  */
+  case 95: /* assign_expression: identifier DIV_ASSIGN expression ';'  */
 #line 576 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("/="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2294 "grammar.tab.c"
+#line 2269 "grammar.tab.c"
     break;
 
-  case 98: /* assign_expression: identifier MOD_ASSIGN expression ';'  */
+  case 96: /* assign_expression: identifier MOD_ASSIGN expression ';'  */
 #line 581 "grammar.y"
                                         {
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back(new Operator("%="));
     (yyval.node)->children.push_back((yyvsp[-1].node));
   }
-#line 2304 "grammar.tab.c"
+#line 2279 "grammar.tab.c"
     break;
 
-  case 99: /* iteration_statement: while_expression  */
+  case 97: /* iteration_statement: while_expression  */
 #line 589 "grammar.y"
                           {
     (yyval.node) = new None_Terminal_Node("ITERATION_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2313 "grammar.tab.c"
+#line 2288 "grammar.tab.c"
     break;
 
-  case 100: /* iteration_statement: for_expression  */
+  case 98: /* iteration_statement: for_expression  */
 #line 593 "grammar.y"
                   {
     (yyval.node) = new None_Terminal_Node("ITERATION_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[0].node));
   }
-#line 2322 "grammar.tab.c"
+#line 2297 "grammar.tab.c"
     break;
 
-  case 101: /* while_expression: WHILE expression LOOP body END  */
+  case 99: /* while_expression: WHILE expression LOOP body END  */
 #line 599 "grammar.y"
                                  {
     (yyval.node) = new None_Terminal_Node("WHILE_STATEMENT");
     (yyval.node)->children.push_back((yyvsp[-3].node));
     (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2332 "grammar.tab.c"
+#line 2307 "grammar.tab.c"
     break;
 
-  case 102: /* body: body simpleDeclaration  */
+  case 100: /* body: body simpleDeclaration  */
 #line 606 "grammar.y"
                            {
       (yyval.node) = (yyvsp[-1].node);
       (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 2341 "grammar.tab.c"
+#line 2316 "grammar.tab.c"
     break;
 
-  case 103: /* body: body statement  */
+  case 101: /* body: body statement  */
 #line 610 "grammar.y"
                    {
        (yyval.node) = (yyvsp[-1].node);
        (yyval.node)->children.push_back((yyvsp[0].node));
     }
-#line 2350 "grammar.tab.c"
+#line 2325 "grammar.tab.c"
     break;
 
-  case 104: /* body: %empty  */
+  case 102: /* body: %empty  */
 #line 614 "grammar.y"
                 {
       (yyval.node) = new None_Terminal_Node("BODY"); 
     }
-#line 2358 "grammar.tab.c"
+#line 2333 "grammar.tab.c"
     break;
 
-  case 105: /* for_expression: FOR identifier range LOOP body END  */
+  case 103: /* for_expression: FOR identifier range LOOP body END  */
 #line 620 "grammar.y"
                                      {
       (yyval.node) = new None_Terminal_Node("FOR_STATEMENT");
@@ -2365,31 +2340,31 @@ yyreduce:
       (yyval.node)->children.push_back((yyvsp[-3].node));
       (yyval.node)->children.push_back((yyvsp[-1].node));
    }
-#line 2369 "grammar.tab.c"
+#line 2344 "grammar.tab.c"
     break;
 
-  case 106: /* range: IN expression RANGE expression  */
+  case 104: /* range: IN expression RANGE expression  */
 #line 628 "grammar.y"
                                   {
      (yyval.node) = new None_Terminal_Node("RANGE_EX");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2379 "grammar.tab.c"
+#line 2354 "grammar.tab.c"
     break;
 
-  case 107: /* range: IN REVERSE expression RANGE expression  */
+  case 105: /* range: IN REVERSE expression RANGE expression  */
 #line 633 "grammar.y"
                                            {
      (yyval.node) = new None_Terminal_Node("RANGE_REVERSE");
      (yyval.node)->children.push_back((yyvsp[-2].node));
      (yyval.node)->children.push_back((yyvsp[0].node));
    }
-#line 2389 "grammar.tab.c"
+#line 2364 "grammar.tab.c"
     break;
 
 
-#line 2393 "grammar.tab.c"
+#line 2368 "grammar.tab.c"
 
       default: break;
     }

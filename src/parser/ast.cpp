@@ -17,14 +17,15 @@ static std::unique_ptr<llvm::Module> TheModule;
 static std::map<std::string, llvm::Value *> NamedValues;
 static std::map<std::string, llvm::Type *> NamedTypes;
 static std::map<std::string, std::pair<llvm::Value *, llvm::Type *>> Arrays;
-struct recordVariable
-{
+
+struct recordVariable{
     std::string name;
-    llvm::Type *type;
-    llvm::Value *value;
+    llvm::Type* type;
+    llvm::Value* value;
+    uint64_t sz;
 };
-static std::map<std::string, std::vector<recordVariable>> Records;
-static std::map<std::pair<std::string, std::string>, std::pair<llvm::Value *, llvm::Type *>> RecordsValues;
+static std::map<std::string, std::vector<recordVariable> >Records;
+static std::map<std::string,llvm::Type*>RecordsTypes;
 static const std::unordered_map<Node_Type, std::string> type_map = {
     {PROGRAM, "Program"},
     {DECLARATION, "Declarations"},
@@ -721,13 +722,41 @@ llvm::Value *AST_Node::codegen()
         llvm::Value *elementPointer = Builder->CreateGEP(NamedTypes[array_name], arrayPointer, index);
         return Builder->CreateLoad(NamedTypes[array_name], elementPointer, array_name);
     }
-    case RECORD_ACCESS:
-    {
-        std::string record_name = get_name(this);
-        std::string access_operand_name = get_name_id(this->children[1]);
-        return Builder->CreateLoad(RecordsValues[{record_name, access_operand_name}].second,
-                                   RecordsValues[{record_name, access_operand_name}].first,
-                                   record_name + " " + access_operand_name);
+    case RECORD_ACCESS: {
+        std::string recordName = get_name(this);
+        llvm::Value* recordPtr = NamedValues[recordName];
+        llvm::StructType* recordType = llvm::dyn_cast<llvm::StructType>(NamedTypes[recordName]);
+        AST_Node* currentNode = this;
+        llvm::Value* currentPtr = recordPtr;
+        llvm::Type* currentType = recordType;
+        while (currentNode->children.size() > 1) {
+            std::string fieldName ="";
+            if(currentNode->children[1]->type==RECORD_ACCESS){
+                 fieldName = get_name(currentNode->children[1]);
+            }
+            else{
+                fieldName = get_name_id(currentNode->children[1]);
+            }
+            const auto& fields = Records[get_name(currentNode)];
+            int fieldIndex = -1;
+            llvm::Type* fieldType = nullptr;
+            for (unsigned i = 0; i < fields.size(); ++i) {
+                if (fields[i].name == fieldName) {
+                    fieldIndex = i;
+                    fieldType = fields[i].type;
+                    break;
+                }
+            }
+            llvm::Value* fieldPtr = Builder->CreateStructGEP(currentType, currentPtr, fieldIndex, "fieldPtr");
+            if (llvm::isa<llvm::StructType>(fieldType)) {
+                currentNode = currentNode->children[1];
+                currentPtr=fieldPtr;
+                currentType = llvm::dyn_cast<llvm::StructType>(fieldType);
+            } else {
+                llvm::Value* fieldValue = Builder->CreateLoad(fieldType, fieldPtr, "fieldValue");
+                return fieldValue;
+            }
+        }
     }
     case INTEGER_NODE:
     {
@@ -781,6 +810,7 @@ llvm::Value *AST_Node::codegen()
     case RETURN_EX:
     {
         AST_Node *expr = this->children[0];
+        print_ast(expr,0,"output.txt");
         llvm::Value *returnValue = expr->codegen();
         return Builder->CreateRet(returnValue);
     }
@@ -803,8 +833,8 @@ llvm::Value *AST_Node::codegen()
 }
 
 llvm::Type *get_type(AST_Node *node)
-{
-    Type_Node *type_node = static_cast<Type_Node *>(node);
+{   
+    Type_Node *type_node = static_cast<Type_Node*>(node);
     std::string name = get_type_name(type_node);
     if (name == "integer")
     {
@@ -818,97 +848,75 @@ llvm::Type *get_type(AST_Node *node)
     {
         return llvm::Type::getInt1Ty(*TheContext);
     }
-    else if (name == "identifier")
-    {
+    else if (name=="identifier")
+    { 
+        /* if(RecordsTypes.count(get_name_id(node->children[0]))){
+            return RecordsTypes[get_name_id(node->children[0])];
+        } */
         return NamedTypes[get_name_id(node->children[0])];
     }
-    else
-    {
+    else{
         return llvm::Type::getInt32Ty(*TheContext);
     }
 }
-
-void Varible_Decleration_code_Gen(AST_Node *node)
-{
-    if (get_type_name(node->children[1]) == "identifier" &&
-        Arrays.count(get_name_id(node->children[1]->children[0])))
-    {
-
-        std::pair<llvm::Value *, llvm::Type *> arrayInfo = Arrays[get_name_id(node->children[1]->children[0])];
-        llvm::Value *arraySizeValue = arrayInfo.first;
-        llvm::Type *elementType = arrayInfo.second;
-
-        llvm::Function *mallocFunction = TheModule->getFunction("malloc");
-        if (!mallocFunction)
-        {
-            llvm::FunctionType *mallocType = llvm::FunctionType::get(
-                llvm::PointerType::get(llvm::Type::getInt8Ty(*TheContext), 0),
-                {llvm::Type::getInt64Ty(*TheContext)},
-                false);
-            mallocFunction = llvm::Function::Create(
-                mallocType,
-                llvm::Function::ExternalLinkage,
-                "malloc",
-                *TheModule);
+uint64_t calculateRecordSize(const std::string& recordName) {
+    uint64_t totalSize = 0;
+    for (const auto& field : Records[recordName]) {
+        if (llvm::isa<llvm::StructType>(field.type)) {
+            std::string nestedRecordName = field.type->getStructName().str();
+            totalSize += calculateRecordSize(nestedRecordName);
+        } else {
+            totalSize += field.sz;
         }
-
-        uint64_t elementSize = TheModule->getDataLayout().getTypeAllocSize(elementType);
-        llvm::Value *elementSizeValue = llvm::ConstantInt::get(
-            llvm::Type::getInt64Ty(*TheContext),
-            elementSize);
-
-        llvm::Value *totalSize = Builder->CreateMul(
-            elementSizeValue,
-            arraySizeValue,
-            "total_array_size");
-
-        llvm::Value *mallocCall = Builder->CreateCall(
-            mallocFunction,
-            {totalSize},
-            "malloc_call");
-
-        llvm::Value *arrayPointer = Builder->CreateBitCast(
-            mallocCall,
-            llvm::PointerType::get(elementType, 0),
-            "array_ptr");
-
-        NamedValues[get_name(node)] = arrayPointer;
-        NamedTypes[get_name(node)] = elementType;
+        uint64_t alignment = TheModule->getDataLayout().getABITypeAlignment(field.type);
+        totalSize = llvm::alignTo(totalSize, alignment);
     }
-    else if (get_type_name(node->children[1]) == "identifier" &&
-             Records.count(get_name_id(node->children[1]->children[0])))
-    {
-        std::string RecordTypeName = get_name(node->children[1]);
-        std::string RecordName = get_name(node);
-        for (auto recordVar : Records[RecordTypeName])
-        {
-            RecordsValues[{RecordName, recordVar.name}] = {
-                Builder->CreateAlloca(recordVar.type, nullptr, RecordTypeName + " " + RecordName + " " + recordVar.name),
-                recordVar.type};
-            Builder->CreateStore(recordVar.value, RecordsValues[{RecordName, recordVar.name}].first);
-        }
-    }
-    else
-    {
-        std::string name = get_name(node);
-        llvm::Value *v = Builder->CreateAlloca(get_type(node->children[1]), nullptr, name);
+    return totalSize;
+}
 
-        llvm::Value *initial_value = nullptr;
-        if (node->children.size() > 2)
-        {
-            initial_value = node->children[2]->codegen();
+void initializeNestedRecordFields(llvm::Value* parentPtr, llvm::StructType* parentType, const std::vector<recordVariable>& fields) {
+    for (unsigned i = 0; i < fields.size(); ++i) {
+        const recordVariable& field = fields[i];
+        llvm::Value* fieldPtr = Builder->CreateStructGEP(parentType, parentPtr, i, field.name);
+        if (llvm::isa<llvm::StructType>(field.type)) {
+            const auto& nestedFields = Records[field.type->getStructName().str()];
+            initializeNestedRecordFields(fieldPtr, llvm::dyn_cast<llvm::StructType>(field.type), nestedFields);
+        } else {
+            llvm::Value* initialValue = llvm::Constant::getNullValue(field.type);
+            Builder->CreateStore(initialValue, fieldPtr);
         }
-        else
-        {
-            initial_value = llvm::Constant::getNullValue(get_type(node->children[1]));
-        }
-
-        Builder->CreateStore(initial_value, v);
-        NamedValues[name] = v;
-        NamedTypes[name] = get_type(node->children[1]);
     }
 }
 
+
+void Varible_Decleration_code_Gen(AST_Node *node) {
+    if (get_type_name(node->children[1]) == "identifier" && Records.count(get_name_id(node->children[1]->children[0]))) {
+        std::string recordTypeName = get_name(node->children[1]);
+        std::string recordName = get_name(node);
+        llvm::Type* recordType = RecordsTypes[recordTypeName];
+        llvm::Value* recordAlloc = Builder->CreateAlloca(recordType, nullptr, recordName);
+        NamedValues[recordName] = recordAlloc;
+        NamedTypes[recordName] = recordType;
+        Records[recordName] = Records[recordTypeName];
+        initializeNestedRecordFields(recordAlloc, llvm::dyn_cast<llvm::StructType>(recordType), Records[recordTypeName]);
+    } else {
+        // Scalar Variable Declaration
+        std::string name = get_name(node);
+        llvm::Type* varType = get_type(node->children[1]);
+        llvm::Value* varAlloc = Builder->CreateAlloca(varType, nullptr, name);
+
+        llvm::Value* initialValue = nullptr;
+        if (node->children.size() > 2) {
+            initialValue = node->children[2]->codegen();
+        } else {
+            initialValue = llvm::Constant::getNullValue(varType);
+        }
+
+        Builder->CreateStore(initialValue, varAlloc);
+        NamedValues[name] = varAlloc;
+        NamedTypes[name] = varType;
+    }
+}
 void Assign_code_gen(AST_Node *node)
 {
     llvm::Value *leftChild = nullptr;
@@ -922,9 +930,41 @@ void Assign_code_gen(AST_Node *node)
     }
     else if (node->children[0]->children[0]->type == RECORD_ACCESS)
     {
-        std::string recordName = get_name(node->children[0]->children[0]);
-        std::string access_operand = get_name_id(node->children[0]->children[0]->children[1]);
-        leftChild = RecordsValues[{recordName, access_operand}].first;
+        AST_Node* leftNode = node->children[0]->children[0];
+        std::string recordName = get_name(leftNode);
+        llvm::Value* recordPtr = NamedValues[recordName];
+        llvm::StructType* recordType = llvm::dyn_cast<llvm::StructType>(NamedTypes[recordName]);
+        AST_Node* currentNode = leftNode;
+        llvm::Value* currentPtr = recordPtr;
+        llvm::Type* currentType = recordType;
+        while (currentNode->children.size() > 1) {
+            std::string fieldName ="";
+            if(currentNode->children[1]->type==RECORD_ACCESS){
+                 fieldName = get_name(currentNode->children[1]);
+            }
+            else{
+                fieldName = get_name_id(currentNode->children[1]);
+            }
+            const auto& fields = Records[get_name(currentNode)];
+            int fieldIndex = -1;
+            llvm::Type* fieldType = nullptr;
+            for (unsigned i = 0; i < fields.size(); ++i) {
+                if (fields[i].name == fieldName) {
+                    fieldIndex = i;
+                    fieldType = fields[i].type;
+                    break;
+                }
+            }
+            llvm::Value* fieldPtr = Builder->CreateStructGEP(currentType, currentPtr, fieldIndex, "fieldPtr");
+            if (llvm::isa<llvm::StructType>(fieldType)) {
+                currentNode = currentNode->children[1];
+                currentPtr=fieldPtr;
+                currentType = llvm::dyn_cast<llvm::StructType>(fieldType);
+            } else {
+                leftChild=fieldPtr;
+                break;
+            }
+        }
     }
     else
     {
@@ -1151,39 +1191,38 @@ void Type_Declaration_Array_codegen(AST_Node *node)
     Arrays[get_name_id(identifierNode)] = {arraySize, llvmType};
 }
 
-void Type_Declaration_Record_codgen(AST_Node *node)
-{
-    std::string RecordName = get_name(node);
-    AST_Node *variblesNode = node->children[1]->children[0]->children[0];
-    std::vector<recordVariable> recordVaribles;
-    for (auto u : variblesNode->children)
-    {
-        recordVariable newRecordVariable;
-        newRecordVariable.name = get_name(u);
-        newRecordVariable.type = get_type(u->children[1]);
-        if (u->children.size() > 2)
-        {
-            newRecordVariable.value = u->children[2]->codegen();
-        }
-        else
-        {
-            if (newRecordVariable.type->isIntegerTy())
-            {
-                newRecordVariable.value = llvm::ConstantInt::get(newRecordVariable.type, 0);
-            }
-            else if (newRecordVariable.type->isFloatingPointTy())
-            {
-                newRecordVariable.value = llvm::ConstantFP::get(newRecordVariable.type, 0.0);
-            }
-            else if (newRecordVariable.type->isIntegerTy(1))
-            {
-                newRecordVariable.value = llvm::ConstantInt::get(newRecordVariable.type, 0);
-            }
-        }
-        recordVaribles.push_back(newRecordVariable);
+void Type_Declaration_Record_codgen(AST_Node* node) {
+    std::string recordName = get_name(node);
+    std::vector<llvm::Type*> memberTypes;
+    AST_Node* fieldListNode = node->children[1]->children[0]->children[0];
+
+    for (const auto& fieldNode : fieldListNode->children) {
+        memberTypes.push_back(get_type(fieldNode->children[1]));
     }
-    Records[RecordName] = recordVaribles;
+
+    auto recordType = llvm::StructType::create(*TheContext, memberTypes, recordName, false);
+    RecordsTypes[recordName] = recordType;
+
+    std::vector<recordVariable> fieldVariables;
+    for (const auto& fieldNode : fieldListNode->children) {
+        recordVariable fieldVar;
+        fieldVar.name = get_name(fieldNode);
+        fieldVar.type = get_type(fieldNode->children[1]);
+
+        if (llvm::isa<llvm::StructType>(fieldVar.type)) {
+            fieldVar.sz = calculateRecordSize(fieldVar.type->getStructName().str());
+            Records[fieldVar.name] = Records[get_name(fieldNode->children[1])];
+        } else {
+            fieldVar.sz = TheModule->getDataLayout().getTypeAllocSize(fieldVar.type);
+        }
+
+        fieldVariables.push_back(fieldVar);
+    }
+
+    Records[recordName] = fieldVariables;
+    NamedTypes[recordName] = recordType;
 }
+
 void Type_Declaration_codegen(AST_Node *node)
 {
     if (get_type_name(node->children[1]) == "integer" || get_type_name(node->children[1]) == "real" || get_type_name(node->children[1]) == "boolean")
@@ -1243,6 +1282,9 @@ void Routine_decleration_code_gen(AST_Node *node)
         Builder->CreateStore(&arg, alloc);
         NamedValues[paramName] = alloc;
         NamedTypes[paramName] = get_type(params->children[idx]->children[1]);
+        if (llvm::isa<llvm::StructType>(get_type(params->children[idx]->children[1]))) {
+            Records[paramName] = Records[get_name(params->children[idx]->children[1])];
+        }
         idx++;
     }
 
