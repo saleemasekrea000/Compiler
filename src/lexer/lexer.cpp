@@ -18,6 +18,14 @@ string Lexer::next_token_content(Token last_token)
     string ret = "";
     while (code[ind] != ' ' && code[ind] != '\n' && code[ind] != '\t')
     {
+        if (code[ind] == '/' && code[ind + 1] == '/')
+        {
+            while (code[ind] != '\n' && code[ind] != EOF)
+                ind++;
+            if (ret == "")
+                return next_token_content(last_token);
+            break;
+        }
         if (is_bracket(code[ind]))
         {
             if (ret != "")
@@ -91,14 +99,6 @@ string Lexer::next_token_content(Token last_token)
               ind++;
             }
             return ret;
-        }
-        if (code[ind] == '/' && code[ind + 1] == '/')
-        {
-            while (code[ind] != '\n' && code[ind] != EOF)
-                ind++;
-            if (ret == "")
-                return next_token_content(last_token);
-            break;
         }
         ret += code[ind];
         ind++;
