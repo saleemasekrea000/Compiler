@@ -51,13 +51,9 @@ program
       $$->children.push_back($1); 
       print_ast($$, 0,"output.txt");
       root = $$;
-      /* Semantic_Analysis semanticAnalysis($$);
-      semanticAnalysis.Semantic_Analysis_Checks($$);
-      semanticAnalysis.optimize($$);
-      print_ast($$, 0,"optimize.txt"); */
-      Codegen codegen_llvm($$);
-      codegen_llvm.start_llvm($$);
 
+      Codegen codegen_llvm(root);
+      codegen_llvm.start_llvm(root);
     }
   ;
 

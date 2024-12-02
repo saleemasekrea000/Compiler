@@ -5,6 +5,8 @@
 #include "parser/parser.hpp"
 #include "parser/grammar.tab.h"
 #include "parser/ast.hpp"
+#include "semantic/semantic.hpp"
+#include "codegen/codegen.hpp"
 
 using namespace std;
 
@@ -48,7 +50,10 @@ int main(int argc, char *argv[])
     // Access the root node of the AST
     if (root != nullptr)
     {
-        // Saleem, this means the root is successfully assigned to program.
+        Semantic_Analysis semantic_analysis(root);
+        semantic_analysis.Semantic_Analysis_Checks(root);
+        semantic_analysis.optimize(root);
+        print_ast(root, 0, "optimize.txt");
     }
 
     delete tokens;
