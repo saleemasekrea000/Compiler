@@ -38,6 +38,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Print tokens to tokens.txt
+    ofstream tokens_file("tokens.txt");
+    for (auto token : *tokens)
+    {
+        tokens_file << token.typeToString() << " " << token.content << endl;
+    }
+
     // Parsing
     set_tokens(tokens); // Set the tokens for the parser
     if (yyparse() != 0)
