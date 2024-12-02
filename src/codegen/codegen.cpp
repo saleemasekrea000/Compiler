@@ -8,303 +8,6 @@
 #include "llvm/Support/FileSystem.h"
 #include <memory>
 #include "codegen.hpp"
-
-
-static std::unique_ptr<llvm::LLVMContext> TheContext;
-static std::unique_ptr<llvm::IRBuilder<>> Builder;
-static std::unique_ptr<llvm::Module> TheModule;
-static std::map<std::string, llvm::Value *> NamedValues;
-static std::map<std::string, llvm::Type *> NamedTypes;
-struct ArrayTypes {
-    llvm::Value* sz;
-    std::vector<llvm::Value*> dimensions;
-    llvm::Type* type;
-};
-static std::map<std::string, ArrayTypes> Arrays;
-struct recordVariable{
-    std::string name;
-    llvm::Type* type;
-    llvm::Value* value;
-    uint64_t sz;
-};
-static std::map<std::string, std::vector<recordVariable> >Records;
-static std::map<std::string,llvm::Type*>RecordsTypes;
-void code_generation(AST_Node *node);
-
-std::string get_name(AST_Node *node)
-{
-    AST_Node *child = node->children[0];
-    Identifier_Node *Identifier_node = static_cast<Identifier_Node *>(child);
-    return Identifier_node->identifier_name.c_str();
-}
-std::string get_name_id(AST_Node *node)
-{
-    if (node->type != IDENTIFIER_NODE_TYPE)
-        return "";
-    Identifier_Node *Identifier_node = static_cast<Identifier_Node *>(node);
-    return Identifier_node->identifier_name.c_str();
-}
-std::string get_type_name(AST_Node *node)
-{
-    Type_Node *type_node = static_cast<Type_Node *>(node);
-    return type_node->type_name.c_str();
-}
-
-std::string get_op(AST_Node *node)
-{
-    Operator *op_node = static_cast<Operator *>(node);
-    return op_node->operation_name.c_str();
-}
-
-
-llvm::Value *createBinaryOp(const std::string &op, llvm::Value *left, llvm::Value *right)
-{
-    if (op == "+")
-        return Builder->CreateAdd(left, right, "sum");
-    else if (op == "-")
-        return Builder->CreateSub(left, right, "diff");
-    else if (op == "*")
-        return Builder->CreateMul(left, right, "mul");
-    else if (op == "/")
-        return Builder->CreateSDiv(left, right, "sdiv");
-    else if (op == "%")
-        return Builder->CreateSRem(left, right, "srem");
-    else if (op == "<")
-        return Builder->CreateICmpSLT(left, right, "lt");
-    else if (op == "<=")
-        return Builder->CreateICmpSLE(left, right, "le");
-    else if (op == ">")
-        return Builder->CreateICmpSGT(left, right, "gt");
-    else if (op == ">=")
-        return Builder->CreateICmpSGE(left, right, "ge");
-    else if (op == "=")
-        return Builder->CreateICmpEQ(left, right, "eq");
-    else if (op == "and")
-        return Builder->CreateAnd(left, right, "and");
-    else if (op == "or")
-        return Builder->CreateOr(left, right, "or");
-    else if (op == "xor")
-        return Builder->CreateXor(left, right, "xor");
-    return nullptr;
-}
-
-llvm::Value *createCompoundAssignment(const std::string &op, llvm::Value *left, llvm::Value *right)
-{
-    llvm::Value *result = createBinaryOp(op.substr(0, 1), left, right);
-    Builder->CreateStore(result, left);
-    return result;
-}
-
-std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
-{
-    switch (this->type)
-    {
-    case IDENTIFIER_NODE_TYPE:
-    {
-        std::string name = get_name_id(this);
-        llvm::Value *ptr = NamedValues[name];
-        llvm::Type *varType = NamedTypes[name];
-        return {Builder->CreateLoad(varType, ptr, name),varType};
-    }
-    case ARRAY_ACCESS:
-    {
-        std::string array_name = get_name_id(this->children[0]);
-        llvm::Value *arrayPointer = NamedValues[array_name];
-        llvm::Type *elementType = NamedTypes[array_name];
-        const auto &arrayInfo = Arrays[array_name];
-        llvm::Value *flatIndex = this->children[1]->children[0]->codegen().first;
-        for (size_t i = 1; i < this->children[1]->children.size(); i++) {
-            llvm::Value *dimIndex = this->children[1]->children[i]->codegen().first;
-            llvm::Value *dimSize = arrayInfo.dimensions[i];
-            flatIndex = Builder->CreateMul(flatIndex, dimSize, "multDim");
-            flatIndex = Builder->CreateAdd(flatIndex, dimIndex, "flatIndex");
-        }
-        llvm::Value *elementPointer = Builder->CreateGEP(elementType, arrayPointer, flatIndex, "elementPointer");
-        return {Builder->CreateLoad(elementType, elementPointer, "loadArrayElement"), elementType};
-    }
-    case RECORD_ACCESS: {
-        std::string recordName = get_name(this);
-        llvm::Value* recordPtr = NamedValues[recordName];
-        llvm::StructType* recordType = llvm::dyn_cast<llvm::StructType>(NamedTypes[recordName]);
-        AST_Node* currentNode = this;
-        llvm::Value* currentPtr = recordPtr;
-        llvm::Type* currentType = recordType;
-        while (currentNode->children.size() > 1) {
-            std::string fieldName ="";
-            if(currentNode->children[1]->type==RECORD_ACCESS){
-                 fieldName = get_name(currentNode->children[1]);
-            }
-            else{
-                fieldName = get_name_id(currentNode->children[1]);
-            }
-            const auto& fields = Records[get_name(currentNode)];
-            int fieldIndex = -1;
-            llvm::Type* fieldType = nullptr;
-            for (unsigned i = 0; i < fields.size(); ++i) {
-                if (fields[i].name == fieldName) {
-                    fieldIndex = i;
-                    fieldType = fields[i].type;
-                    break;
-                }
-            }
-            llvm::Value* fieldPtr = Builder->CreateStructGEP(currentType, currentPtr, fieldIndex, "fieldPtr");
-            if (llvm::isa<llvm::StructType>(fieldType)) {
-                currentNode = currentNode->children[1];
-                currentPtr=fieldPtr;
-                currentType = llvm::dyn_cast<llvm::StructType>(fieldType);
-            } else {
-                llvm::Value* fieldValue = Builder->CreateLoad(fieldType, fieldPtr, "fieldValue");
-                return {fieldValue,fieldType};
-            }
-        }
-    }
-    case INTEGER_NODE:
-    {
-        return {llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val),
-          llvm::Type::getInt32Ty(*TheContext)};
-    }
-    case REAL_NODE:
-    {
-        return {llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), static_cast<Real_Node *>(this)->val),
-        llvm::Type::getDoubleTy(*TheContext)};
-    }
-    case BOOLEAN_NODE:
-    {
-        return {llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), static_cast<Boolean_Node *>(this)->val ? 1 : 0),
-        llvm::Type::getInt1Ty(*TheContext)};
-    }
-    case PRIMARY_EXPRESSION:
-    {
-        if (this->children.size() == 2)
-        {
-            std::pair<llvm::Value*, llvm::Type*> x = this->children[1]->codegen();
-            return {llvm::BinaryOperator::CreateNot(x.first, "not"),x.second};
-        }
-        return this->children[0]->codegen();
-    }
-    case PRIMARY_NODE:
-    case SUMMAND:
-    {
-        return this->children[0]->codegen();
-    }
-    case SIMPLE:
-    case FACTOR:
-    case RELATION:
-    case EXPRESSION:
-    {
-        if (this->children.size() == 1) {
-            return this->children[0]->codegen();
-        }
-        auto leftChild = this->children[0]->codegen(); 
-        auto rightChild = this->children[2]->codegen();
-        std::string op = get_op(this->children[1]);
-        llvm::Value *leftValue = leftChild.first;
-        llvm::Value *rightValue = rightChild.first;
-        llvm::Type *leftType = leftChild.second;
-        llvm::Type *rightType = rightChild.second;
-        if (leftType != rightType) {
-            if (leftType->isIntegerTy(32) && rightType->isDoubleTy()) {
-                leftValue = Builder->CreateSIToFP(leftValue, rightType, "intToReal");
-                leftType = rightType;
-            }
-            else if (leftType->isDoubleTy() && rightType->isIntegerTy(32)) {
-                rightValue = Builder->CreateSIToFP(rightValue, leftType, "intToReal");
-                rightType = leftType;
-            }
-            else if (leftType->isIntegerTy(1) && rightType->isIntegerTy(32)) {
-                rightValue = Builder->CreateICmpNE(rightValue, llvm::ConstantInt::get(rightType, 0), "intToBool");
-                rightValue = Builder->CreateZExt(rightValue, llvm::Type::getInt1Ty(*TheContext), "zextBool");
-                leftType=rightType;
-            }
-            else if (leftType->isIntegerTy(32) && rightType->isIntegerTy(1)) {
-                leftValue = Builder->CreateZExt(leftValue, rightType, "boolToInt");
-                rightType = leftType;
-            }
-            else if (leftType->isDoubleTy() && rightType->isIntegerTy(1)) {
-                rightValue = Builder->CreateZExtOrBitCast(rightValue, llvm::Type::getDoubleTy(*TheContext), "boolToDouble");
-                rightType = leftType;
-            }
-            else if (leftType->isIntegerTy(1) && rightType->isDoubleTy()) {
-                leftValue = Builder->CreateFCmpONE(leftValue, llvm::ConstantFP::get(leftType, 0.0), "doubleToBool");
-                leftValue = Builder->CreateZExt(leftValue, llvm::Type::getInt1Ty(*TheContext), "doubleToBoolExt");
-                leftType = rightType;
-            }
-        }
-        if (leftType->isIntegerTy(1) || rightType->isIntegerTy(1)) {
-            if (op == "and" || op == "or" || op == "xor") {
-                if (!leftType->isIntegerTy(1)) {
-                    leftValue = Builder->CreateICmpNE(leftValue, llvm::ConstantInt::get(leftType, 0), "toBool");
-                    leftValue = Builder->CreateZExt(leftValue, llvm::Type::getInt1Ty(*TheContext), "zextBool");
-                }
-                if (!rightType->isIntegerTy(1)) {
-                    rightValue = Builder->CreateICmpNE(rightValue, llvm::ConstantInt::get(rightType, 0), "toBool");
-                    rightValue = Builder->CreateZExt(rightValue, llvm::Type::getInt1Ty(*TheContext), "zextBool");
-                }
-            }
-        }
-        if (leftType == rightType) {
-            if (leftType->isIntegerTy(32)) {
-            if (op == "+") return {Builder->CreateAdd(leftValue, rightValue, "intAdd"), leftType};
-            if (op == "-") return {Builder->CreateSub(leftValue, rightValue, "intSub"), leftType};
-            if (op == "*") return {Builder->CreateMul(leftValue, rightValue, "intMul"), leftType};
-            if (op == "/") return {Builder->CreateSDiv(leftValue, rightValue, "intDiv"), leftType};
-            if (op == "%") return {Builder->CreateSRem(leftValue, rightValue, "intMod"), leftType};
-            if (op == "=") return {Builder->CreateICmpEQ(leftValue, rightValue, "intEq"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == "<") return {Builder->CreateICmpSLT(leftValue, rightValue, "intLT"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == "<=") return {Builder->CreateICmpSLE(leftValue, rightValue, "intLE"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == ">") return {Builder->CreateICmpSGT(leftValue, rightValue, "intGT"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == ">=") return {Builder->CreateICmpSGE(leftValue, rightValue, "intGE"), llvm::Type::getInt1Ty(*TheContext)};
-        } 
-        else if (leftType->isDoubleTy()) {
-            if (op == "+") return {Builder->CreateFAdd(leftValue, rightValue, "realAdd"), leftType};
-            if (op == "-") return {Builder->CreateFSub(leftValue, rightValue, "realSub"), leftType};
-            if (op == "*") return {Builder->CreateFMul(leftValue, rightValue, "realMul"), leftType};
-            if (op == "/") return {Builder->CreateFDiv(leftValue, rightValue, "realDiv"), leftType};
-            if (op == "=") return {Builder->CreateFCmp(llvm::CmpInst::FCMP_OEQ, leftValue, rightValue, "realEq"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == "<") return {Builder->CreateFCmp(llvm::CmpInst::FCMP_OLT, leftValue, rightValue, "realLT"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == "<=") return {Builder->CreateFCmp(llvm::CmpInst::FCMP_OLE, leftValue, rightValue, "realLE"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == ">") return {Builder->CreateFCmp(llvm::CmpInst::FCMP_OGT, leftValue, rightValue, "realGT"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == ">=") return {Builder->CreateFCmp(llvm::CmpInst::FCMP_OGE, leftValue, rightValue, "realGE"), llvm::Type::getInt1Ty(*TheContext)};
-        } 
-        else if (leftType->isIntegerTy(1)) {
-            if (op == "and") return {Builder->CreateAnd(leftValue, rightValue, "boolAnd"), leftType};
-            if (op == "or") return {Builder->CreateOr(leftValue, rightValue, "boolOr"), leftType};
-            if (op == "xor") return {Builder->CreateXor(leftValue, rightValue, "boolXor"), leftType};
-            if (op == "+") return {Builder->CreateAdd(leftValue, rightValue, "intAdd"), leftType};
-            if (op == "-") return {Builder->CreateSub(leftValue, rightValue, "intSub"), leftType};
-            if (op == "*") return {Builder->CreateMul(leftValue, rightValue, "intMul"), leftType};
-            if (op == "/") return {Builder->CreateSDiv(leftValue, rightValue, "intDiv"), leftType};
-            if (op == "=") return {Builder->CreateICmpEQ(leftValue, rightValue, "boolEq"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == "<") return {Builder->CreateICmpSLT(leftValue, rightValue, "boolLT"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == "<=") return {Builder->CreateICmpSLE(leftValue, rightValue, "boolLE"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == ">") return {Builder->CreateICmpSGT(leftValue, rightValue, "boolGT"), llvm::Type::getInt1Ty(*TheContext)};
-            if (op == ">=") return {Builder->CreateICmpSGE(leftValue, rightValue, "boolGE"), llvm::Type::getInt1Ty(*TheContext)};
-        }
-        }
-    }
-    case RETURN_EX:
-    {
-        AST_Node *expr = this->children[0];
-        auto returnValue = expr->codegen();
-        return {Builder->CreateRet(returnValue.first),returnValue.second};
-    }
-    case Routine_Call:
-    {
-        llvm::Function *function = TheModule->getFunction(get_name_id(this->children[0]));
-        std::vector<llvm::Value *> args;
-        for (auto child : this->children[1]->children)
-        {
-            args.push_back(child->codegen().first);
-        }
-        llvm::Value *callInst = Builder->CreateCall(function, args, get_name_id(this->children[0]) + "_call");
-        return {callInst,function->getReturnType()};
-    }
-    default:
-        break;
-    }
-    return {nullptr,nullptr};
-}
-
 llvm::Type *get_type(AST_Node *node)
 {   
     Type_Node *type_node = static_cast<Type_Node*>(node);
@@ -343,6 +46,82 @@ uint64_t calculateRecordSize(const std::string& recordName) {
         totalSize = llvm::alignTo(totalSize, alignment);
     }
     return totalSize;
+}
+class CodegenVisitor : public Visitor {
+public:
+    llvm::Value *resultValue;
+    llvm::Type *resultType;
+
+    void visit(Identifier_Node *node) override {
+        std::string name = node->identifier_name;
+        resultValue = Builder->CreateLoad(NamedTypes[name], NamedValues[name], name);
+        resultType = NamedTypes[name];
+    }
+
+    void visit(Integer_Node *node) override {
+        resultValue = llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), node->value);
+        resultType = llvm::Type::getInt32Ty(*TheContext);
+    }
+
+    void visit(Real_Node *node) override {
+        resultValue = llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), node->value);
+        resultType = llvm::Type::getDoubleTy(*TheContext);
+    }
+
+    void visit(BinaryOp_Node *node) override {
+        node->left->accept(*this);  // Visit left child.
+        llvm::Value *leftValue = resultValue;
+        llvm::Type *leftType = resultType;
+
+        node->right->accept(*this);  // Visit right child.
+        llvm::Value *rightValue = resultValue;
+        llvm::Type *rightType = resultType;
+
+        std::string op = node->op;
+
+        if (leftType == rightType) {
+            if (leftType->isIntegerTy()) {
+                if (op == "+") {
+                    resultValue = Builder->CreateAdd(leftValue, rightValue, "intAdd");
+                } else if (op == "-") {
+                    resultValue = Builder->CreateSub(leftValue, rightValue, "intSub");
+                }
+                // Handle other integer operations.
+            } else if (leftType->isDoubleTy()) {
+                if (op == "+") {
+                    resultValue = Builder->CreateFAdd(leftValue, rightValue, "floatAdd");
+                }
+                // Handle other float operations.
+            }
+        }
+    }
+
+    void visit(ArrayAccess_Node *node) override {
+        // Implement logic for array access.
+    }
+
+    void visit(Return_Node *node) override {
+        node->expression->accept(*this);  // Visit the return expression.
+        Builder->CreateRet(resultValue);
+    }
+
+    void visit(RoutineCall_Node *node) override {
+        llvm::Function *function = TheModule->getFunction(node->name);
+        std::vector<llvm::Value *> args;
+
+        for (auto *argNode : node->arguments) {
+            argNode->accept(*this);
+            args.push_back(resultValue);
+        }
+
+        resultValue = Builder->CreateCall(function, args, node->name + "_call");
+        resultType = function->getReturnType();
+    }
+};
+
+void code_generation(AST_Node *node) {
+    CodegenVisitor visitor;
+    node->accept(visitor);
 }
 
 void initializeNestedRecordFields(llvm::Value* parentPtr, llvm::StructType* parentType, const std::vector<recordVariable>& fields) {
