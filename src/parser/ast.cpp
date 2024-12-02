@@ -46,6 +46,7 @@ static const std::unordered_map<Node_Type, std::string> type_map = {
         {PARAMETERS_EXPRESSION_LIST, "Parameters Expression List"},
         {ROUTINE_DECLERATION, "Routine Decleration"},
         {PRINT_STATMENT, "PRINT"},
+        {DIMENSION_LIST,"DIMENSION_LIST"},
     };
 void print_ast_helper(AST_Node *node, int indent, FILE *output_file)
 {

@@ -15,7 +15,12 @@ static std::unique_ptr<llvm::IRBuilder<>> Builder;
 static std::unique_ptr<llvm::Module> TheModule;
 static std::map<std::string, llvm::Value *> NamedValues;
 static std::map<std::string, llvm::Type *> NamedTypes;
-static std::map<std::string, std::pair<llvm::Value *, llvm::Type *>> Arrays;
+struct ArrayTypes {
+    llvm::Value* sz;
+    std::vector<llvm::Value*> dimensions;
+    llvm::Type* type;
+};
+static std::map<std::string, ArrayTypes> Arrays;
 struct recordVariable{
     std::string name;
     llvm::Type* type;
@@ -105,9 +110,17 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
     {
         std::string array_name = get_name_id(this->children[0]);
         llvm::Value *arrayPointer = NamedValues[array_name];
-        llvm::Value *index = this->children[1]->codegen().first;
-        llvm::Value *elementPointer = Builder->CreateGEP(NamedTypes[array_name], arrayPointer, index);
-        return {Builder->CreateLoad(NamedTypes[array_name], elementPointer, array_name),NamedTypes[array_name]};
+        llvm::Type *elementType = NamedTypes[array_name];
+        const auto &arrayInfo = Arrays[array_name];
+        llvm::Value *flatIndex = this->children[1]->children[0]->codegen().first;
+        for (size_t i = 1; i < this->children[1]->children.size(); i++) {
+            llvm::Value *dimIndex = this->children[1]->children[i]->codegen().first;
+            llvm::Value *dimSize = arrayInfo.dimensions[i];
+            flatIndex = Builder->CreateMul(flatIndex, dimSize, "multDim");
+            flatIndex = Builder->CreateAdd(flatIndex, dimIndex, "flatIndex");
+        }
+        llvm::Value *elementPointer = Builder->CreateGEP(elementType, arrayPointer, flatIndex, "elementPointer");
+        return {Builder->CreateLoad(elementType, elementPointer, "loadArrayElement"), elementType};
     }
     case RECORD_ACCESS: {
         std::string recordName = get_name(this);
@@ -350,9 +363,9 @@ void initializeNestedRecordFields(llvm::Value* parentPtr, llvm::StructType* pare
 void Varible_Decleration_code_Gen(AST_Node *node) {
     if (get_type_name(node->children[1]) == "identifier" && 
         Arrays.count(get_name_id(node->children[1]->children[0]))) {
-        std::pair<llvm::Value*, llvm::Type*> arrayInfo = Arrays[get_name_id(node->children[1]->children[0])];
-        llvm::Value* arraySizeValue = arrayInfo.first;  
-        llvm::Type* elementType = arrayInfo.second;    
+        auto arrayInfo = Arrays[get_name_id(node->children[1]->children[0])];
+        llvm::Value* arraySizeValue = arrayInfo.sz;  
+        llvm::Type* elementType = arrayInfo.type;    
         llvm::Function* mallocFunction = TheModule->getFunction("malloc");
         if (!mallocFunction) {
             llvm::FunctionType* mallocType = llvm::FunctionType::get(
@@ -394,6 +407,7 @@ void Varible_Decleration_code_Gen(AST_Node *node) {
 
         NamedValues[get_name(node)] = arrayPointer;
         NamedTypes[get_name(node)] = elementType;
+        Arrays[get_name(node)] = arrayInfo;
     }
     else if (get_type_name(node->children[1]) == "identifier" &&
      Records.count(get_name_id(node->children[1]->children[0]))) {
@@ -429,10 +443,18 @@ void Assign_code_gen(AST_Node *node)
     if (node->children[0]->children[0]->type == ARRAY_ACCESS) {
         std::string array_name = get_name_id(node->children[0]->children[0]->children[0]);
         llvm::Value *arrayPointer = NamedValues[array_name];
-        llvm::Type *arrayType = NamedTypes[array_name];
-        llvm::Value *index = node->children[0]->children[0]->children[1]->codegen().first;
-        llvm::Value *elementPointer = Builder->CreateGEP(arrayType, arrayPointer, index);
-        leftChild = elementPointer;
+        llvm::Type *elementType = NamedTypes[array_name];
+        auto arrayInfo = Arrays[array_name];
+        llvm::Value *flatIndex = node->children[0]->children[0]->children[1]->children[0]->codegen().first;
+        for (size_t i = 1; i < node->children[0]->children[0]->children[1]->children.size(); i++) {
+            llvm::Value *dimIndex = node->children[0]->children[0]->children[1]->children[i]->codegen().first;
+            llvm::Value *dimSize = arrayInfo.dimensions[i];
+            flatIndex = Builder->CreateMul(flatIndex, dimSize, "multDim");
+            flatIndex = Builder->CreateAdd(flatIndex, dimIndex, "flatIndex");
+        }
+        llvm::Value *elementPointer = Builder->CreateGEP(elementType, arrayPointer, flatIndex, "elementPointer");
+        leftChild= elementPointer;
+        leftType = elementType;
     }
     else if (node->children[0]->children[0]->type == RECORD_ACCESS) {
         AST_Node* leftNode = node->children[0]->children[0];
@@ -682,8 +704,19 @@ void Type_Declaration_Array_codegen(AST_Node *node)
     AST_Node *identifierNode = node->children[0];
     AST_Node *typeNode = node->children[1]->children[0];
     llvm::Type *llvmType = get_type(typeNode->children[1]);
-    llvm::Value *arraySize = typeNode->children[0]->codegen().first;
-    Arrays[get_name_id(identifierNode)] = {arraySize, llvmType};
+    AST_Node *dimensionListNode = typeNode->children[0];
+    llvm::Value *totalSize = llvm::ConstantInt::get(llvm::Type::getInt64Ty(*TheContext), 1);
+    std::vector<llvm::Value*>v;
+    for (AST_Node *dim : dimensionListNode->children) {
+        llvm::Value *dimSize = dim->codegen().first;
+        v.push_back(dimSize);
+        totalSize = Builder->CreateMul(totalSize, dimSize, "totalSize");
+    }
+    ArrayTypes arrayType ;
+    arrayType.sz=totalSize;
+    arrayType.type=llvmType;
+    arrayType.dimensions=v;
+    Arrays[get_name_id(identifierNode)] = arrayType;
 }
 
 void Type_Declaration_Record_codgen(AST_Node* node) {

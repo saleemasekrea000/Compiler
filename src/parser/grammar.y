@@ -28,7 +28,7 @@ void print_indent() {
 %type <node> program simpleDeclaration variableDeclaration declarations identifier type primary_expression print_statement
 %type <node> int_exp real_exp boolean_exp primary unary_op array_access_expression record_expession_access summand
 %type <node> factor simple relation expression typeDecleration arrayType variableDeclerations recordType jumpStatement
-%type <node> body while_expression iteration_statement statement range for_expression assign_expression IfStatement
+%type <node> body while_expression iteration_statement statement range for_expression assign_expression IfStatement dimensionList
 %type <node>return_exp break_exp continue_exp routine_call argument_expression_list parameter_decleration parameters_list routine_deceration
 
 %start program 
@@ -256,20 +256,8 @@ argument_expression_list
       $$ = new None_Terminal_Node("Argument_Expression_List");
     }
 ;
-array_access_expression  
-  : identifier '[' primary ']' {
-    $$ = new None_Terminal_Node("ARRAY_ACCESS");
-    $$->children.push_back($1);
-    $$->children.push_back($3);
 
-  }
-  | array_access_expression '[' primary ']' {
-    $$ = new None_Terminal_Node("ARRAY_ACCESS");
-    $$->children.push_back($1);
-    $$->children.push_back($3);
-  }
-;
- record_expession_access
+record_expession_access
    : identifier '.' identifier {
      $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
@@ -472,13 +460,33 @@ variableDeclerations
     }
 ;
 
-arrayType 
-   : ARRAY '[' expression ']' type  {
-      $$ = new None_Terminal_Node("ARRAY_TYPE");
-      $$->children.push_back($3);
-      $$->children.push_back($5);
-   }
+array_access_expression  
+  : identifier dimensionList {
+    $$ = new None_Terminal_Node("ARRAY_ACCESS");
+    $$->children.push_back($1);
+    $$->children.push_back($2);
+  }
 ;
+
+arrayType
+    : ARRAY dimensionList type {
+        $$ = new None_Terminal_Node("ARRAY_TYPE");
+        $$->children.push_back($2); 
+        $$->children.push_back($3); 
+    }
+;
+
+dimensionList
+    : '[' expression ']' {
+        $$ = new None_Terminal_Node("DIMENSION_LIST");
+        $$->children.push_back($2); 
+    }
+    | dimensionList '[' expression ']' {
+        $$ = $1; 
+        $$->children.push_back($3); 
+    }
+;
+
 
 statement :
    iteration_statement{
@@ -560,7 +568,6 @@ IfStatement
   }
 ;
 assign_expression 
-   //put primary instead of identifier 
    //fiix the += and its sisters 
   : primary ASSIGN_OP expression ';'{
     $$ = new None_Terminal_Node("ASSIGN_STATEMENT");
