@@ -1,13 +1,9 @@
-routine fahrenheit_to_celsius(fahrenheit: real) : real is
-    var celsius: real;
-    celsius := (fahrenheit - 32) * 5 / 9;
-    return celsius;
+var ans : integer is 1;
+routine Factorial(n: integer) is
+while n > 0 loop
+    ans := ans * n ;
+    n := n - 1;
 end
-
-var tempF: real;
-var tempC: real;
-
-tempF := 100.0; 
-
-tempC := fahrenheit_to_celsius(tempF);
-
+return ans;
+end
+Factorial(5);

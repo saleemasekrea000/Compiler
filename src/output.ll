@@ -1,39 +1,55 @@
 ; ModuleID = 'KSS'
 source_filename = "KSS"
 
-@0 = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
+%circle = type { %point, i32 }
+%point = type { i32, i32 }
+
+@0 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
 define void @main() {
 entry:
-  %tempF = alloca double, align 8
-  store double 1.000000e+02, double* %tempF, align 8
-  %tempC = alloca double, align 8
-  %tempF1 = load double, double* %tempF, align 8
-  %fahrenheit_to_celsius_call = call double @fahrenheit_to_celsius(double %tempF1)
-  store double %fahrenheit_to_celsius_call, double* %tempC, align 8
-  %tempC2 = load double, double* %tempC, align 8
-  %tempC3 = load double, double* %tempC, align 8
-  %0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), double %tempC2)
+  %cir = alloca %circle, align 8
+  %center = getelementptr inbounds %circle, %circle* %cir, i32 0, i32 0
+  %x = getelementptr inbounds %point, %point* %center, i32 0, i32 0
+  store i32 0, i32* %x, align 4
+  %y = getelementptr inbounds %point, %point* %center, i32 0, i32 1
+  store i32 0, i32* %y, align 4
+  %radius = getelementptr inbounds %circle, %circle* %cir, i32 0, i32 1
+  store i32 0, i32* %radius, align 4
+  %fieldPtr = getelementptr inbounds %circle, %circle* %cir, i32 0, i32 0
+  %fieldPtr1 = getelementptr inbounds %point, %point* %fieldPtr, i32 0, i32 0
+  store i32 1, i32* %fieldPtr1, align 4
+  %fieldPtr2 = getelementptr inbounds %circle, %circle* %cir, i32 0, i32 0
+  %fieldPtr3 = getelementptr inbounds %point, %point* %fieldPtr2, i32 0, i32 1
+  store i32 2, i32* %fieldPtr3, align 4
+  %cir4 = load %circle, %circle* %cir, align 4
+  %calcDistance_call = call i32 @calcDistance(%circle %cir4)
+  %cir5 = load %circle, %circle* %cir, align 4
+  %calcDistance_call6 = call i32 @calcDistance(%circle %cir5)
+  %0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %calcDistance_call)
   ret void
 }
 
-define double @fahrenheit_to_celsius(double %0) {
+define i32 @calcDistance(%circle %0) {
 entry:
-  %fahrenheit = alloca double, align 8
-  store double %0, double* %fahrenheit, align 8
-  %celsius = alloca double, align 8
-  store double 0.000000e+00, double* %celsius, align 8
-  %fahrenheit1 = load double, double* %fahrenheit, align 8
-  %realSub = fsub double %fahrenheit1, 3.200000e+01
-  %realMul = fmul double %realSub, 5.000000e+00
-  %realDiv = fdiv double %realMul, 9.000000e+00
-  %fahrenheit2 = load double, double* %fahrenheit, align 8
-  %realSub3 = fsub double %fahrenheit2, 3.200000e+01
-  %realMul4 = fmul double %realSub3, 5.000000e+00
-  %realDiv5 = fdiv double %realMul4, 9.000000e+00
-  store double %realDiv, double* %celsius, align 8
-  %celsius6 = load double, double* %celsius, align 8
-  ret double %celsius6
+  %curCir = alloca %circle, align 8
+  store %circle %0, %circle* %curCir, align 4
+  %fieldPtr = getelementptr inbounds %circle, %circle* %curCir, i32 0, i32 0
+  %fieldPtr1 = getelementptr inbounds %point, %point* %fieldPtr, i32 0, i32 0
+  %fieldValue = load i32, i32* %fieldPtr1, align 4
+  %fieldPtr2 = getelementptr inbounds %circle, %circle* %curCir, i32 0, i32 0
+  %fieldPtr3 = getelementptr inbounds %point, %point* %fieldPtr2, i32 0, i32 0
+  %fieldValue4 = load i32, i32* %fieldPtr3, align 4
+  %intMul = mul i32 %fieldValue, %fieldValue4
+  %fieldPtr5 = getelementptr inbounds %circle, %circle* %curCir, i32 0, i32 0
+  %fieldPtr6 = getelementptr inbounds %point, %point* %fieldPtr5, i32 0, i32 1
+  %fieldValue7 = load i32, i32* %fieldPtr6, align 4
+  %fieldPtr8 = getelementptr inbounds %circle, %circle* %curCir, i32 0, i32 0
+  %fieldPtr9 = getelementptr inbounds %point, %point* %fieldPtr8, i32 0, i32 1
+  %fieldValue10 = load i32, i32* %fieldPtr9, align 4
+  %intMul11 = mul i32 %fieldValue7, %fieldValue10
+  %intAdd = add i32 %intMul, %intMul11
+  ret i32 %intAdd
 }
 
 declare i32 @printf(i8*, ...)

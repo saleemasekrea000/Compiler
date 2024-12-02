@@ -1,27 +1,9 @@
-// 11. Find the Minimum of Three Numbers
-routine min_of_three(a: real, b: integer, c: boolean) : integer is
-    var result: integer;
-    if a < b then
-        result := a;
-    else
-        result := b;
-    end
-
-    if result > c then
-        result := c;
-    end
-
-    return result;
+routine Factorial(n: integer) is
+var ans : integer is 1;
+while n > 0 loop
+ans := ans * n ;
+n := n - 1;
 end
-
-var num1: real;
-var num2: integer;
-var num3: boolean;
-var minValue: real;
-
-num1 := 7.5;
-num2 := 3;
-num3 := true;
-
-minValue := min_of_three(num1, num2, num3);
-
+return ans;
+end
+Factorial(5);

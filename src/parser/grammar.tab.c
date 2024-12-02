@@ -1381,10 +1381,10 @@ yyreduce:
       (yyval.node) = new None_Terminal_Node("PROGRAM"); 
       (yyval.node)->children.push_back((yyvsp[0].node)); 
       print_ast((yyval.node), 0,"output.txt");
-    //  Semantic_Analysis semanticAnalysis($$);
-     // semanticAnalysis.Semantic_Analysis_Checks($$);
+     Semantic_Analysis semanticAnalysis((yyval.node));
+    //  semanticAnalysis.Semantic_Analysis_Checks($$);
     //  semanticAnalysis.optimize($$);
-     // print_ast($$, 0,"optimize.txt"); 
+    //  print_ast($$, 0,"optimize.txt"); 
       Codegen codegen_llvm((yyval.node));
       codegen_llvm.start_llvm((yyval.node));
 

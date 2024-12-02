@@ -1,70 +1,95 @@
 Program
   Declarations
+    Simple declaration
+      Type declaration
+        Identifier: point
+        Type: recordType
+          Record type
+            Variable Declarations
+              Variable declaration
+                Identifier: x
+                Type: integer
+              Variable declaration
+                Identifier: y
+                Type: integer
+    Simple declaration
+      Type declaration
+        Identifier: circle
+        Type: recordType
+          Record type
+            Variable Declarations
+              Variable declaration
+                Identifier: center
+                Type: identifier
+                  Identifier: point
+              Variable declaration
+                Identifier: radius
+                Type: integer
     Routine Decleration
-      Identifier: fahrenheit_to_celsius
+      Identifier: calcDistance
       Parameters Expression List
         Parameter Decleration
-          Identifier: fahrenheit
-          Type: real
+          Identifier: curCir
+          Type: identifier
+            Identifier: circle
       Body
-        Simple declaration
-          Variable declaration
-            Identifier: celsius
-            Type: real
-        Statement
-          Assignment statement
-            Primary node
-              Primary expresson
-                Identifier: celsius
-            Operator: :=
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Factor
-                      Factor
-                        Summand
-                          Expression
-                            Relation
-                              Simple
-                                Simple
-                                  Factor
-                                    Summand
-                                      Primary node
-                                        Primary expresson
-                                          Identifier: fahrenheit
-                                Operator: -
-                                Factor
-                                  Summand
-                                    Primary node
-                                      Primary expresson
-                                        Integer: 32
-                      Operator: *
-                      Summand
-                        Primary node
-                          Primary expresson
-                            Integer: 5
-                    Operator: /
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Integer: 9
         Statement
           Jump Statement
             Return
               Expression
                 Relation
                   Simple
+                    Simple
+                      Factor
+                        Factor
+                          Summand
+                            Primary node
+                              Record access
+                                Identifier: curCir
+                                Record access
+                                  Identifier: center
+                                  Identifier: x
+                        Operator: *
+                        Summand
+                          Primary node
+                            Record access
+                              Identifier: curCir
+                              Record access
+                                Identifier: center
+                                Identifier: x
+                    Operator: +
                     Factor
+                      Factor
+                        Summand
+                          Primary node
+                            Record access
+                              Identifier: curCir
+                              Record access
+                                Identifier: center
+                                Identifier: y
+                      Operator: *
                       Summand
                         Primary node
-                          Primary expresson
-                            Identifier: celsius
-      Type: real
+                          Record access
+                            Identifier: curCir
+                            Record access
+                              Identifier: center
+                              Identifier: y
+      Type: integer
     Simple declaration
       Variable declaration
-        Identifier: tempF
-        Type: real
+        Identifier: cir
+        Type: identifier
+          Identifier: circle
+    Statement
+      Assignment statement
+        Primary node
+          Record access
+            Identifier: cir
+            Record access
+              Identifier: center
+              Identifier: x
+        Operator: :=
         Expression
           Relation
             Simple
@@ -72,28 +97,24 @@ Program
                 Summand
                   Primary node
                     Primary expresson
-                      Real: 100.000000
-    Simple declaration
-      Variable declaration
-        Identifier: tempC
-        Type: real
+                      Integer: 1
+    Statement
+      Assignment statement
+        Primary node
+          Record access
+            Identifier: cir
+            Record access
+              Identifier: center
+              Identifier: y
+        Operator: :=
         Expression
           Relation
             Simple
               Factor
                 Summand
                   Primary node
-                    Routine Call
-                      Identifier: fahrenheit_to_celsius
-                      Arguments Expression List
-                        Expression
-                          Relation
-                            Simple
-                              Factor
-                                Summand
-                                  Primary node
-                                    Primary expresson
-                                      Identifier: tempF
+                    Primary expresson
+                      Integer: 2
     Statement
       PRINT
         Expression
@@ -102,5 +123,14 @@ Program
               Factor
                 Summand
                   Primary node
-                    Primary expresson
-                      Identifier: tempC
+                    Routine Call
+                      Identifier: calcDistance
+                      Arguments Expression List
+                        Expression
+                          Relation
+                            Simple
+                              Factor
+                                Summand
+                                  Primary node
+                                    Primary expresson
+                                      Identifier: cir
