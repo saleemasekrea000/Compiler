@@ -1,21 +1,10 @@
-type arrayOfInteger is array[100] integer;
-
-routine sum-of-even-numbers (lengthOfArray: integer, arr: arrayOfInteger) : integer is 
-    var ans : integer is 0
-    for i in 1 .. lengthOfArray loop 
-       if arr[i] % 2 = 0 then 
-          ans := ans + arr[i]
-        end 
-    end
-    return ans 
+routine Factorial(n: integer) is 
+   var ans : integer is 1;
+   while n > 0 loop 
+      ans := ans * n ;
+      n := n - 1;
+   end 
+   return ans;
 end
 
-var arr : arrayOfInteger
-arr[1] := 1
-arr[2] := 2
-arr[3] := 3
-arr[4] := 4
-arr[5] := 5
-arr[6] := 6
-
-var result : integer is sum-of-even-numbers(6, arr)
+print(Factorial(5));
