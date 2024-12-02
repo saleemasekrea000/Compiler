@@ -48,10 +48,10 @@ program
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
       print_ast($$, 0,"output.txt");
-      /* Semantic_Analysis semanticAnalysis($$);
-      semanticAnalysis.Semantic_Analysis_Checks($$);
-      semanticAnalysis.optimize($$);
-      print_ast($$, 0,"optimize.txt"); */
+    //  Semantic_Analysis semanticAnalysis($$);
+     // semanticAnalysis.Semantic_Analysis_Checks($$);
+    //  semanticAnalysis.optimize($$);
+     // print_ast($$, 0,"optimize.txt"); 
       Codegen codegen_llvm($$);
       codegen_llvm.start_llvm($$);
 

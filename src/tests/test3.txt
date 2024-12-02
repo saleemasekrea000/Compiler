@@ -1,13 +1,30 @@
-//calculate the fibonacci of a number 
+type point is record {
+    var x : integer ;
+    var y : integer ;
+} end ;
 
-routine Fibonacci (n: is integer) is 
-      if n<=0 then return 1 end 
-      var x1 : is n-1 ;
-      var x2 : is n-2 ; 
-      return Fibonacci(x1) + Fibonacci(x2)
+routine calcDistance (curPoint: point): integer is 
+    return curPoint.x*curPoint.x+curPoint.y*curPoint.y;
+end 
+routine furthestPoint(point1: point, point2: point) : point is 
+    var dis1 : integer is calcDistance(point1);
+    var dis2 : integer is calcDistance(point2);
+    if dis1 >= dis2 then 
+       return point1;
+    end 
+    return point2;
 end 
 
-var x : is 6
+var point3 : point ;
+var point4 : point ;
 
-Fibonacci(6)
+point3.x := 1;
+point3.y := 2;
+point4.x := 5;
+point4.y := 6;
 
+var ansPoint : point ;
+ansPoint := furthestPoint(point3, point4);
+
+print(ansPoint.x);
+print(ansPoint.y);
