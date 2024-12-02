@@ -1,7 +1,17 @@
-type array1 is array[100] integer ;
+type point is record {
+    var x : integer ;
+    var y : integer ;
+} end ;
+routine Factorial(point1: point) : point is 
+   return point1;
+end
 
-var arr : array1;
+var point2 : point ;
+point2.x := 1;
+point2.y := 2; 
 
-arr[1] := 1;
+var point3 : point ;
 
-print(arr[1]);
+point3 := Factorial(point2);
+
+print(point3.y);
