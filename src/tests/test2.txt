@@ -1,11 +1,219 @@
-// 2. calculate the factorial of a number
-routine Factorial(n: integer) is 
-   var ans : integer is 1;
-   while n > 0 loop 
-      ans := ans * n ;
-      n := n - 1;
-   end 
-   return ans;
-end
+std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
+{
+    switch (this->type)
+    {
+    case IDENTIFIER_NODE_TYPE:
+    {
+        std::string name = get_name_id(this);
+        llvm::Value *ptr = NamedValues[name];
+        llvm::Type *varType = NamedTypes[name];
+        return {Builder->CreateLoad(varType, ptr, name),varType};
+    }
+    case ARRAY_ACCESS:
+    {
+        std::string array_name = get_name_id(this->children[0]);
+        llvm::Value *arrayPointer = NamedValues[array_name];
+        llvm::Value *index = this->children[1]->codegen().first;
+        llvm::Value *elementPointer = Builder->CreateGEP(NamedTypes[array_name], arrayPointer, index);
+        return {Builder->CreateLoad(NamedTypes[array_name], elementPointer, array_name),NamedTypes[array_name]};
+    }
+    case RECORD_ACCESS: {
+        std::string recordName = get_name(this);
+        llvm::Value* recordPtr = NamedValues[recordName];
+        llvm::StructType* recordType = llvm::dyn_cast<llvm::StructType>(NamedTypes[recordName]);
+        AST_Node* currentNode = this;
+        llvm::Value* currentPtr = recordPtr;
+        llvm::Type* currentType = recordType;
+        while (currentNode->children.size() > 1) {
+            std::string fieldName ="";
+            if(currentNode->children[1]->type==RECORD_ACCESS){
+                 fieldName = get_name(currentNode->children[1]);
+            }
+            else{
+                fieldName = get_name_id(currentNode->children[1]);
+            }
+            const auto& fields = Records[get_name(currentNode)];
+            int fieldIndex = -1;
+            llvm::Type* fieldType = nullptr;
+            for (unsigned i = 0; i < fields.size(); ++i) {
+                if (fields[i].name == fieldName) {
+                    fieldIndex = i;
+                    fieldType = fields[i].type;
+                    break;
+                }
+            }
+            llvm::Value* fieldPtr = Builder->CreateStructGEP(currentType, currentPtr, fieldIndex, "fieldPtr");
+            if (llvm::isa<llvm::StructType>(fieldType)) {
+                currentNode = currentNode->children[1];
+                currentPtr=fieldPtr;
+                currentType = llvm::dyn_cast<llvm::StructType>(fieldType);
+            } else {
+                llvm::Value* fieldValue = Builder->CreateLoad(fieldType, fieldPtr, "fieldValue");
+                return {fieldValue,fieldType};
+            }
+        }
+    }
+    case INTEGER_NODE:
+    {
+        return {llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val),
+          llvm::Type::getInt32Ty(*TheContext)};
+    }
+    case REAL_NODE:
+    {
+        return {llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), static_cast<Real_Node *>(this)->val),
+        llvm::Type::getDoubleTy(*TheContext)};
+    }
+    case BOOLEAN_NODE:
+    {
+        return {llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), static_cast<Boolean_Node *>(this)->val ? 1 : 0),
+        llvm::Type::getInt1Ty(*TheContext)};
+    }
+    case PRIMARY_EXPRESSION:
+    {
+        if (this->children.size() == 2)
+        {
+            std::pair<llvm::Value*, llvm::Type*> x = this->children[1]->codegen();
+            return {llvm::BinaryOperator::CreateNot(x.first, "not"),x.second};
+        }
+        return this->children[0]->codegen();
+    }
+    case PRIMARY_NODE:
+    case SUMMAND:
+    {
+        return this->children[0]->codegen();
+    }
+    case SIMPLE:
+    case FACTOR:
+    case RELATION:
+    case EXPRESSION:
+    {
+        if (this->children.size() == 1) {
+            return this->children[0]->codegen();
+        }
+        auto leftChild = this->children[0]->codegen(); 
+        auto rightChild = this->children[2]->codegen();
+        std::string op = get_op(this->children[1]);
+        llvm::Value *leftValue = leftChild.first;
+        llvm::Value *rightValue = rightChild.first;
+        llvm::Type *leftType = leftChild.second;
+        llvm::Type *rightType = rightChild.second;
+        if (leftType->isIntegerTy() && rightType->isDoubleTy()) {
+            leftValue = Builder->CreateSIToFP(leftValue, rightType, "intToReal");
+            leftType = rightType;
+        } else if (leftType->isDoubleTy() && rightType->isIntegerTy()) {
+            rightValue = Builder->CreateSIToFP(rightValue, leftType, "intToReal");
+            rightType = leftType;
+        } else if (leftType->isIntegerTy(1) || rightType->isIntegerTy(1)) {
+            if (op == "and" || op == "or" || op == "xor") {
+                if (!leftType->isIntegerTy(1)) {
+                    leftValue = Builder->CreateICmpNE(leftValue, llvm::ConstantInt::get(leftType, 0), "toBool");
+                    leftValue = Builder->CreateZExt(leftValue, llvm::Type::getInt1Ty(*TheContext), "zextBool");
+                }
+                if (!rightType->isIntegerTy(1)) {
+                    rightValue = Builder->CreateICmpNE(rightValue, llvm::ConstantInt::get(rightType, 0), "toBool");
+                    rightValue = Builder->CreateZExt(rightValue, llvm::Type::getInt1Ty(*TheContext), "zextBool");
+                }
+            }
+        }
+        if (leftType == rightType) {
+            if (leftType->isIntegerTy()) {
+                if (op == "+") return {Builder->CreateAdd(leftValue, rightValue, "intAdd"), leftType};
+                if (op == "-") return {Builder->CreateSub(leftValue, rightValue, "intSub"), leftType};
+                if (op == "*") return {Builder->CreateMul(leftValue, rightValue, "intMul"), leftType};
+                if (op == "/") return {Builder->CreateSDiv(leftValue, rightValue, "intDiv"), leftType};
+                if (op == "%") return {Builder->CreateSRem(leftValue, rightValue, "intMod"), leftType};
+                if (op == "=") return {Builder->CreateICmpEQ(leftValue, rightValue, "intEq"), llvm::Type::getInt1Ty(*TheContext)};
+            } else if (leftType->isDoubleTy()) {
+                if (op == "+") return {Builder->CreateFAdd(leftValue, rightValue, "realAdd"), leftType};
+                if (op == "-") return {Builder->CreateFSub(leftValue, rightValue, "realSub"), leftType};
+                if (op == "*") return {Builder->CreateFMul(leftValue, rightValue, "realMul"), leftType};
+                if (op == "/") return {Builder->CreateFDiv(leftValue, rightValue, "realDiv"), leftType};
+                if (op == "=") return {Builder->CreateICmpEQ(leftValue, rightValue, "intEq"), llvm::Type::getInt1Ty(*TheContext)};
+            } else if (leftType->isIntegerTy(1)) {
+                if (op == "and") return {Builder->CreateAnd(leftValue, rightValue, "boolAnd"), leftType};
+                if (op == "or") return {Builder->CreateOr(leftValue, rightValue, "boolOr"), leftType};
+                if (op == "xor") return {Builder->CreateXor(leftValue, rightValue, "boolXor"), leftType};
+                if (op == "=") return {Builder->CreateICmpEQ(leftValue, rightValue, "intEq"), llvm::Type::getInt1Ty(*TheContext)};
+            }
+        }
+    }
+    case RETURN_EX:
+    {
+        AST_Node *expr = this->children[0];
+        auto returnValue = expr->codegen();
+        return {Builder->CreateRet(returnValue.first),returnValue.second};
+    }
+    case Routine_Call:
+    {
+        llvm::Function *function = TheModule->getFunction(get_name_id(this->children[0]));
+        std::vector<llvm::Value *> args;
+        for (auto child : this->children[1]->children)
+        {
+            args.push_back(child->codegen().first);
+        }
+        llvm::Value *callInst = Builder->CreateCall(function, args, get_name_id(this->children[0]) + "_call");
+        return {callInst,function->getReturnType()};
+    }
+    default:
+        break;
+    }
+    return {nullptr,nullptr};
+} void Routine_decleration_code_gen(AST_Node *node)
+{
+    bool hasReturnType = node->children.size() == 4;
+    llvm::FunctionType *funcType;
+    llvm::Function *function;
+    std::vector<llvm::Type *> paramTypes;
+    AST_Node *params = node->children[1];
 
-Factorial(5);
+    for (auto &param : params->children)
+    {
+        paramTypes.push_back(get_type(param->children[1]));
+    }
+
+    llvm::Type *returnType = nullptr;
+    if (hasReturnType)
+    {
+        returnType = get_type(node->children[3]);
+    }
+    else
+        returnType = llvm::Type::getInt32Ty(*TheContext);
+
+    funcType = llvm::FunctionType::get(returnType, paramTypes, false);
+    function = llvm::Function::Create(
+        funcType,
+        llvm::Function::ExternalLinkage,
+        get_name_id(node->children[0]),
+        *TheModule);
+
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(*TheContext, "entry", function);
+    llvm::IRBuilderBase::InsertPoint savedPoint = Builder->saveIP();
+    Builder->SetInsertPoint(entry);
+
+    auto funcArgs = function->args();
+    int idx = 0;
+    for (auto &arg : funcArgs)
+    {
+        std::string paramName = get_name(params->children[idx]);
+        llvm::AllocaInst *alloc = Builder->CreateAlloca(get_type(params->children[idx]->children[1]), nullptr, paramName);
+        Builder->CreateStore(&arg, alloc);
+        NamedValues[paramName] = alloc;
+        NamedTypes[paramName] = get_type(params->children[idx]->children[1]);
+        if (llvm::isa<llvm::StructType>(get_type(params->children[idx]->children[1]))) {
+            Records[paramName] = Records[get_name(params->children[idx]->children[1])];
+        }
+        idx++;
+    }
+
+    code_generation(node->children[2]);
+
+    /* if (hasReturnType) {
+        Builder->CreateRet(llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), 0));
+    } else {
+        Builder->CreateRetVoid();
+    } */
+    Builder->restoreIP(savedPoint);
+}
+ I am getting this error Running syntax analysis...
+parser_output: /usr/lib/llvm-14/include/llvm/IR/Instructions.h:1194: void llvm::ICmpInst::AssertOK(): Assertion `(getOperand(0)->getType()->isIntOrIntVectorTy() || getOperand(0)->getType()->isPtrOrPtrVectorTy()) && "Invalid operand types for ICmp instruction"' failed.
+./run_pipeline.sh: line 23: 116876 Aborted                 (core dumped) ./parser_output lexer_tests__tokens.txt when I am trying to compile this code 

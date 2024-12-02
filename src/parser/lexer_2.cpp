@@ -101,7 +101,7 @@ int yylex()
   }
   else if (tokenType == "REAL_LITERAL")
   {
-    yylval.real_val = std::stoi(tokenValue);
+    yylval.real_val = std::stod(tokenValue);
     return REAL_LITERAL;
   }
   else if (tokenType == "BOOLEAN_LITERAL")

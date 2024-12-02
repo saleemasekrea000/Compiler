@@ -48,10 +48,10 @@ program
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
       print_ast($$, 0,"output.txt");
-      Semantic_Analysis semanticAnalysis($$);
+      /* Semantic_Analysis semanticAnalysis($$);
       semanticAnalysis.Semantic_Analysis_Checks($$);
       semanticAnalysis.optimize($$);
-      print_ast($$, 0,"optimize.txt");
+      print_ast($$, 0,"optimize.txt"); */
       Codegen codegen_llvm($$);
       codegen_llvm.start_llvm($$);
 
@@ -275,11 +275,16 @@ array_access_expression
      $$->children.push_back($1);
      $$->children.push_back($3);
    }
-   /* | array_access_expression '.' identifier {
+    | array_access_expression '.' identifier {
      $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);
      $$->children.push_back($3);
-   } */
+   } 
+   | array_access_expression '.' record_expession_access {
+     $$ = new None_Terminal_Node("RECORD_ACCESS");
+     $$->children.push_back($1);
+     $$->children.push_back($3);
+   } 
    | identifier '.'  record_expession_access {
      $$ = new None_Terminal_Node("RECORD_ACCESS");
      $$->children.push_back($1);

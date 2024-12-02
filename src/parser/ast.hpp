@@ -73,7 +73,7 @@ public:
     enum Node_Type type;
     std::vector<AST_Node *> children;
     AST_Node(Node_Type t) : type(t) {}
-    llvm::Value *codegen();
+    std::pair<llvm::Value*, llvm::Type*>  codegen();
 };
 
 class None_Terminal_Node : public AST_Node
