@@ -18,7 +18,7 @@
 #include "llvm/IR/Module.h"
 
 
-typedef enum Node_Type
+typedef enum class Node_Type
 {
     PROGRAM,
     DECLARATION,
@@ -83,44 +83,44 @@ private:
     static Node_Type str_to_type(const std::string &type_name)
     {
         static const std::unordered_map<std::string, Node_Type> type_map = {
-            {"PROGRAM", PROGRAM},
-            {"DECLARATION", DECLARATION},
-            {"SIMPLE_DECLARATION", SIMPLE_DECLARATION},
-            {"VARIABLE_DECLARATION", VARIABLE_DECLARATION},
-            {"PRIMARY_EXPRESSION", PRIMARY_EXPRESSION},
-            {"PRIMARY_NODE", PRIMARY_NODE},
-            {"ARRAY_ACCESS", ARRAY_ACCESS},
-            {"RECORD_ACCESS", RECORD_ACCESS},
-            {"SUMMAND", SUMMAND},
-            {"FACTOR", FACTOR},
-            {"SIMPLE", SIMPLE},
-            {"RELATION", RELATION},
-            {"EXPRESSION", EXPRESSION},
-            {"TYPE_DECLARATION", TYPE_DECLARATION},
-            {"ARRAY_TYPE", ARRAY_TYPE},
-            {"RECORD_TYPE", RECORD_TYPE},
-            {"VARIABLE_DECLARATIONS", VARIABLE_DECLARATIONS},
-            {"STATEMENT", STATEMENT},
-            {"ITERATION_STATEMENT", ITERATION_STATEMENT},
-            {"WHILE_STATEMENT", WHILE_STATEMENT},
-            {"BODY", BODY},
-            {"FOR_STATEMENT", FOR_STATEMENT},
-            {"RANGE_EX", RANGE_EX},
-            {"RANGE_REVERSE", RANGE_REVERSE},
-            {"ASSIGN_STATEMENT", ASSIGN_STATEMENT},
-            {"IF_STATEMENT", IF_STATEMENT},
-            {"IF_STATEMENT_ELSE", IF_STATEMENT_ELSE},
-            {"JUMP_STATEMENT", JUMP_STATEMENT},
-            {"RETURN_EX", RETURN_EX},
-            {"CONTINUE_EX", CONTINUE_EX},
-            {"BREAK_EX", BREAK_EX},
-            {"Routine_Call", Routine_Call},
-            {"Argument_Expression_List", Argument_Expression_List},
-            {"PARAMETER_DECLERATION", PARAMETER_DECLERATION},
-            {"PARAMETERS_EXPRESSION_LIST", PARAMETERS_EXPRESSION_LIST},
-            {"ROUTINE_DECLERATION", ROUTINE_DECLERATION},
-            {"PRINT_STATMENT", PRINT_STATMENT},
-            {"DIMENSION_LIST", DIMENSION_LIST},
+            {"PROGRAM", Node_Type::PROGRAM},
+            {"DECLARATION", Node_Type::DECLARATION},
+            {"SIMPLE_DECLARATION", Node_Type::SIMPLE_DECLARATION},
+            {"VARIABLE_DECLARATION", Node_Type::VARIABLE_DECLARATION},
+            {"PRIMARY_EXPRESSION", Node_Type::PRIMARY_EXPRESSION},
+            {"PRIMARY_NODE", Node_Type::PRIMARY_NODE},
+            {"ARRAY_ACCESS", Node_Type::ARRAY_ACCESS},
+            {"RECORD_ACCESS", Node_Type::RECORD_ACCESS},
+            {"SUMMAND", Node_Type::SUMMAND},
+            {"FACTOR", Node_Type::FACTOR},
+            {"SIMPLE", Node_Type::SIMPLE},
+            {"RELATION", Node_Type::RELATION},
+            {"EXPRESSION", Node_Type::EXPRESSION},
+            {"TYPE_DECLARATION", Node_Type::TYPE_DECLARATION},
+            {"ARRAY_TYPE", Node_Type::ARRAY_TYPE},
+            {"RECORD_TYPE", Node_Type::RECORD_TYPE},
+            {"VARIABLE_DECLARATIONS", Node_Type::VARIABLE_DECLARATIONS},
+            {"STATEMENT", Node_Type::STATEMENT},
+            {"ITERATION_STATEMENT", Node_Type::ITERATION_STATEMENT},
+            {"WHILE_STATEMENT", Node_Type::WHILE_STATEMENT},
+            {"BODY", Node_Type::BODY},
+            {"FOR_STATEMENT", Node_Type::FOR_STATEMENT},
+            {"RANGE_EX", Node_Type::RANGE_EX},
+            {"RANGE_REVERSE", Node_Type::RANGE_REVERSE},
+            {"ASSIGN_STATEMENT", Node_Type::ASSIGN_STATEMENT},
+            {"IF_STATEMENT", Node_Type::IF_STATEMENT},
+            {"IF_STATEMENT_ELSE", Node_Type::IF_STATEMENT_ELSE},
+            {"JUMP_STATEMENT", Node_Type::JUMP_STATEMENT},
+            {"RETURN_EX", Node_Type::RETURN_EX},
+            {"CONTINUE_EX", Node_Type::CONTINUE_EX},
+            {"BREAK_EX", Node_Type::BREAK_EX},
+            {"Routine_Call", Node_Type::Routine_Call},
+            {"Argument_Expression_List", Node_Type::Argument_Expression_List},
+            {"PARAMETER_DECLERATION", Node_Type::PARAMETER_DECLERATION},
+            {"PARAMETERS_EXPRESSION_LIST", Node_Type::PARAMETERS_EXPRESSION_LIST},
+            {"ROUTINE_DECLERATION", Node_Type::ROUTINE_DECLERATION},
+            {"PRINT_STATMENT", Node_Type::PRINT_STATMENT},
+            {"DIMENSION_LIST", Node_Type::DIMENSION_LIST},
         };
         auto it = type_map.find(type_name);
         if (it != type_map.end())
@@ -129,7 +129,7 @@ private:
         }
         else
         {
-            return (INVALID);
+            return (Node_Type::INVALID);
         }
     }
 
@@ -143,7 +143,7 @@ class Identifier_Node : public AST_Node
 public:
     std::string identifier_name;
     Identifier_Node(const std::string &name)
-        : AST_Node(IDENTIFIER_NODE_TYPE), identifier_name(name) {}
+        : AST_Node(Node_Type::IDENTIFIER_NODE_TYPE), identifier_name(name) {}
 };
 
 class Type_Node : public AST_Node
@@ -151,7 +151,7 @@ class Type_Node : public AST_Node
 public:
     std::string type_name;
     Type_Node(const std::string &name)
-        : AST_Node(TYPE_NODE), type_name(name) {}
+        : AST_Node(Node_Type::TYPE_NODE), type_name(name) {}
 };
 
 class Boolean_Node : public AST_Node
@@ -159,14 +159,14 @@ class Boolean_Node : public AST_Node
 public:
     bool val;
     Boolean_Node(const bool &val)
-        : AST_Node(BOOLEAN_NODE), val(val) {}
+        : AST_Node(Node_Type::BOOLEAN_NODE), val(val) {}
 };
 class Integer_Node : public AST_Node
 {
 public:
     int val;
     Integer_Node(const int &val)
-        : AST_Node(INTEGER_NODE), val(val) {}
+        : AST_Node(Node_Type::INTEGER_NODE), val(val) {}
 };
 
 class Real_Node : public AST_Node
@@ -174,7 +174,7 @@ class Real_Node : public AST_Node
 public:
     double val;
     Real_Node(const double &val)
-        : AST_Node(REAL_NODE), val(val) {}
+        : AST_Node(Node_Type::REAL_NODE), val(val) {}
 };
 
 class Operator : public AST_Node
@@ -182,7 +182,7 @@ class Operator : public AST_Node
 public:
     std::string operation_name;
     Operator(const std::string &operation_name)
-        : AST_Node(OPERATOR), operation_name(operation_name) {}
+        : AST_Node(Node_Type::OPERATOR), operation_name(operation_name) {}
 };
 
 void print_ast(AST_Node *node, int indent, const std::string &file_name);

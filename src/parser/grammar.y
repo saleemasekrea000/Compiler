@@ -6,7 +6,7 @@
 #include "../semantic/semantic.hpp"
 #include "../codegen/codegen.hpp"
  
-extern int yylex():
+int yylex();
 void yyerror(char *s);
 int counter = 1;
 int indent = 0;

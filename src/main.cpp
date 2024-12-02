@@ -8,7 +8,6 @@
 
 using namespace std;
 
-extern int yyparse(); 
 extern void set_tokens(vector<Token>* tokens);
 extern AST_Node* root;
 

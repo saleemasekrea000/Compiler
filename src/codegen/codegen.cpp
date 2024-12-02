@@ -40,7 +40,7 @@ std::string get_name(AST_Node *node)
 }
 std::string get_name_id(AST_Node *node)
 {
-    if (node->type != IDENTIFIER_NODE_TYPE)
+    if (node->type != Node_Type::IDENTIFIER_NODE_TYPE)
         return "";
     Identifier_Node *Identifier_node = static_cast<Identifier_Node *>(node);
     return Identifier_node->identifier_name.c_str();
@@ -100,14 +100,14 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
 {
     switch (this->type)
     {
-    case IDENTIFIER_NODE_TYPE:
+    case Node_Type::IDENTIFIER_NODE_TYPE:
     {
         std::string name = get_name_id(this);
         llvm::Value *ptr = NamedValues[name];
         llvm::Type *varType = NamedTypes[name];
         return {Builder->CreateLoad(varType, ptr, name),varType};
     }
-    case ARRAY_ACCESS:
+    case Node_Type::ARRAY_ACCESS:
     {
         std::string array_name = get_name_id(this->children[0]);
         llvm::Value *arrayPointer = NamedValues[array_name];
@@ -123,7 +123,8 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
         llvm::Value *elementPointer = Builder->CreateGEP(elementType, arrayPointer, flatIndex, "elementPointer");
         return {Builder->CreateLoad(elementType, elementPointer, "loadArrayElement"), elementType};
     }
-    case RECORD_ACCESS: {
+    case Node_Type::RECORD_ACCESS:
+    {
         std::string recordName = get_name(this);
         llvm::Value* recordPtr = NamedValues[recordName];
         llvm::StructType* recordType = llvm::dyn_cast<llvm::StructType>(NamedTypes[recordName]);
@@ -132,8 +133,9 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
         llvm::Type* currentType = recordType;
         while (currentNode->children.size() > 1) {
             std::string fieldName ="";
-            if(currentNode->children[1]->type==RECORD_ACCESS){
-                 fieldName = get_name(currentNode->children[1]);
+            if (currentNode->children[1]->type == Node_Type::RECORD_ACCESS)
+            {
+                fieldName = get_name(currentNode->children[1]);
             }
             else{
                 fieldName = get_name_id(currentNode->children[1]);
@@ -159,22 +161,22 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
             }
         }
     }
-    case INTEGER_NODE:
+    case Node_Type::INTEGER_NODE:
     {
         return {llvm::ConstantInt::get(llvm::Type::getInt32Ty(*TheContext), static_cast<Integer_Node *>(this)->val),
           llvm::Type::getInt32Ty(*TheContext)};
     }
-    case REAL_NODE:
+    case Node_Type::REAL_NODE:
     {
         return {llvm::ConstantFP::get(llvm::Type::getDoubleTy(*TheContext), static_cast<Real_Node *>(this)->val),
         llvm::Type::getDoubleTy(*TheContext)};
     }
-    case BOOLEAN_NODE:
+    case Node_Type::BOOLEAN_NODE:
     {
         return {llvm::ConstantInt::get(llvm::Type::getInt1Ty(*TheContext), static_cast<Boolean_Node *>(this)->val ? 1 : 0),
         llvm::Type::getInt1Ty(*TheContext)};
     }
-    case PRIMARY_EXPRESSION:
+    case Node_Type::PRIMARY_EXPRESSION:
     {
         if (this->children.size() == 2)
         {
@@ -183,15 +185,15 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
         }
         return this->children[0]->codegen();
     }
-    case PRIMARY_NODE:
-    case SUMMAND:
+    case Node_Type::PRIMARY_NODE:
+    case Node_Type::SUMMAND:
     {
         return this->children[0]->codegen();
     }
-    case SIMPLE:
-    case FACTOR:
-    case RELATION:
-    case EXPRESSION:
+    case Node_Type::SIMPLE:
+    case Node_Type::FACTOR:
+    case Node_Type::RELATION:
+    case Node_Type::EXPRESSION:
     {
         if (this->children.size() == 1) {
             return this->children[0]->codegen();
@@ -283,13 +285,13 @@ std::pair<llvm::Value*, llvm::Type*> AST_Node::codegen()
         }
         }
     }
-    case RETURN_EX:
+    case Node_Type::RETURN_EX:
     {
         AST_Node *expr = this->children[0];
         auto returnValue = expr->codegen();
         return {Builder->CreateRet(returnValue.first),returnValue.second};
     }
-    case Routine_Call:
+    case Node_Type::Routine_Call:
     {
         llvm::Function *function = TheModule->getFunction(get_name_id(this->children[0]));
         std::vector<llvm::Value *> args;
@@ -441,7 +443,8 @@ void Assign_code_gen(AST_Node *node)
 {
     llvm::Type *leftType = nullptr;
     llvm::Value *leftChild = nullptr;
-    if (node->children[0]->children[0]->type == ARRAY_ACCESS) {
+    if (node->children[0]->children[0]->type == Node_Type::ARRAY_ACCESS)
+    {
         std::string array_name = get_name_id(node->children[0]->children[0]->children[0]);
         llvm::Value *arrayPointer = NamedValues[array_name];
         llvm::Type *elementType = NamedTypes[array_name];
@@ -457,7 +460,8 @@ void Assign_code_gen(AST_Node *node)
         leftChild= elementPointer;
         leftType = elementType;
     }
-    else if (node->children[0]->children[0]->type == RECORD_ACCESS) {
+    else if (node->children[0]->children[0]->type == Node_Type::RECORD_ACCESS)
+    {
         AST_Node* leftNode = node->children[0]->children[0];
         std::string recordName = get_name(leftNode);
         llvm::Value* recordPtr = NamedValues[recordName];
@@ -467,7 +471,7 @@ void Assign_code_gen(AST_Node *node)
         llvm::Type* currentType = recordType;
 
         while (currentNode->children.size() > 1) {
-            std::string fieldName = (currentNode->children[1]->type == RECORD_ACCESS) ? get_name(currentNode->children[1]) : get_name_id(currentNode->children[1]);
+            std::string fieldName = (currentNode->children[1]->type == Node_Type::RECORD_ACCESS) ? get_name(currentNode->children[1]) : get_name_id(currentNode->children[1]);
             const auto& fields = Records[get_name(currentNode)];
             int fieldIndex = -1;
             llvm::Type* fieldType = nullptr;
@@ -636,7 +640,7 @@ void For_code_gen(AST_Node *node)
     llvm::Value *iter_var = Builder->CreateAlloca(llvm::Type::getInt32Ty(*TheContext), nullptr, name);
     NamedValues[name] = iter_var;
     NamedTypes[name] = llvm::Type::getInt32Ty(*TheContext);
-    bool is_reverse = (node->children[1]->type == RANGE_REVERSE);
+    bool is_reverse = (node->children[1]->type == Node_Type::RANGE_REVERSE);
 
     llvm::Value *start_value = node->children[1]->children[0]->codegen().first;
     llvm::Value *end_value = node->children[1]->children[1]->codegen().first;
@@ -872,42 +876,42 @@ void code_generation(AST_Node *node)
         return;
     switch (node->type)
     {
-    case VARIABLE_DECLARATION:
+    case Node_Type::VARIABLE_DECLARATION:
     {
         Varible_Decleration_code_Gen(node);
         break;
     }
-    case TYPE_DECLARATION:
+    case Node_Type::TYPE_DECLARATION:
     {
         Type_Declaration_codegen(node);
         break;
     }
-    case ASSIGN_STATEMENT:
+    case Node_Type::ASSIGN_STATEMENT:
     {
         Assign_code_gen(node);
         break;
     }
-    case IF_STATEMENT:
+    case Node_Type::IF_STATEMENT:
     {
         If_statement_code_gen(node);
         break;
     }
-    case IF_STATEMENT_ELSE:
+    case Node_Type::IF_STATEMENT_ELSE:
     {
         If_else_statement_code_gen(node);
         break;
     }
-    case WHILE_STATEMENT:
+    case Node_Type::WHILE_STATEMENT:
     {
         While_code_gen(node);
         break;
     }
-    case FOR_STATEMENT:
+    case Node_Type::FOR_STATEMENT:
     {
         For_code_gen(node);
         break;
     }
-    case BREAK_EX:
+    case Node_Type::BREAK_EX:
     {
         llvm::BasicBlock *loop_exit = loopExitBlockStack.top();
         Builder->CreateBr(loop_exit);
@@ -915,7 +919,7 @@ void code_generation(AST_Node *node)
         break;
     }
 
-    case CONTINUE_EX:
+    case Node_Type::CONTINUE_EX:
     {
         llvm::BasicBlock *loop_cond = loopCondBlockStack.top();
 
@@ -924,34 +928,34 @@ void code_generation(AST_Node *node)
         break;
     }
 
-    case ROUTINE_DECLERATION:
+    case Node_Type::ROUTINE_DECLERATION:
     {
         Routine_decleration_code_gen(node);
         break;
     }
-    case Routine_Call:
+    case Node_Type::Routine_Call:
     {
         Routine_call_code_gen(node);
         break;
     }
-    case RETURN_EX:
+    case Node_Type::RETURN_EX:
     {
         node->codegen();
         break;
     }
-    case PRINT_STATMENT:
+    case Node_Type::PRINT_STATMENT:
     {
         PrintNodeCodeGen(node);
         break;
     }
-    case PROGRAM:
-    case ITERATION_STATEMENT:
-    case DECLARATION:
-    case SIMPLE_DECLARATION:
-    case BODY:
-    case STATEMENT:
-    case JUMP_STATEMENT:
-    case RANGE_EX:
+    case Node_Type::PROGRAM:
+    case Node_Type::ITERATION_STATEMENT:
+    case Node_Type::DECLARATION:
+    case Node_Type::SIMPLE_DECLARATION:
+    case Node_Type::BODY:
+    case Node_Type::STATEMENT:
+    case Node_Type::JUMP_STATEMENT:
+    case Node_Type::RANGE_EX:
     {
         for (const auto &child : node->children)
         {

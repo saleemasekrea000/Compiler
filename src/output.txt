@@ -1,0 +1,119 @@
+Program
+  Declarations
+    Simple declaration
+      Type declaration
+        Identifier: array1
+        Type: arrayType
+          Array type
+            DIMENSION_LIST
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 100
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 200
+            Type: integer
+    Simple declaration
+      Variable declaration
+        Identifier: arr
+        Type: identifier
+          Identifier: array1
+    Statement
+      Assignment statement
+        Primary node
+          Array access
+            Identifier: arr
+            DIMENSION_LIST
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 1
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 2
+        Operator: :=
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Integer: 1
+    Statement
+      Assignment statement
+        Primary node
+          Array access
+            Identifier: arr
+            DIMENSION_LIST
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 1
+              Expression
+                Relation
+                  Simple
+                    Factor
+                      Summand
+                        Primary node
+                          Primary expresson
+                            Integer: 1
+        Operator: :=
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Primary expresson
+                      Boolean: true
+    Statement
+      PRINT
+        Expression
+          Relation
+            Simple
+              Factor
+                Summand
+                  Primary node
+                    Array access
+                      Identifier: arr
+                      DIMENSION_LIST
+                        Expression
+                          Relation
+                            Simple
+                              Factor
+                                Summand
+                                  Primary node
+                                    Primary expresson
+                                      Integer: 5
+                        Expression
+                          Relation
+                            Simple
+                              Factor
+                                Summand
+                                  Primary node
+                                    Primary expresson
+                                      Integer: 5

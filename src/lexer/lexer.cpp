@@ -97,13 +97,13 @@ string Lexer::next_token_content(Token last_token)
             {
                 return ret;
             }
-            if (ret == "" && last_token.type == IDENTIFIER && isalpha(code[ind + 1]))
+            if (ret == "" && last_token.type == TokenType::IDENTIFIER && isalpha(code[ind + 1]))
             {
                 ret += code[ind];
                 ind++;
                 return ret;
             }
-            if (ret == "" && last_token.type == RBRAC && isalpha(code[ind + 1]))
+            if (ret == "" && last_token.type == TokenType::RBRAC && isalpha(code[ind + 1]))
             {
                 ret += code[ind];
                 ind++;
@@ -120,7 +120,7 @@ string Lexer::next_token_content(Token last_token)
         {
             if (code[ind] == '-' || code[ind] == '+') 
     {
-        if (last_token.type == IDENTIFIER || last_token.type == REAL_LITERAL || last_token.type == INTEGER_LITERAL || last_token.type == BOOLEAN_LITERAL) 
+        if (last_token.type == TokenType::IDENTIFIER || last_token.type == TokenType::REAL_LITERAL || last_token.type == TokenType::INTEGER_LITERAL || last_token.type == TokenType::BOOLEAN_LITERAL)
         {
             ret += code[ind];
             ind++;
@@ -297,65 +297,65 @@ TokenType Lexer::token_type(const string &s)
     if (is_keyword(s))
     {
         if (s == "is")
-            return IS;
+            return TokenType::IS;
         else if (s == "while")
-            return WHILE;
+            return TokenType::WHILE;
         else if (s == "routine")
-            return ROUTINE;
+            return TokenType::ROUTINE;
         else if (s == "end")
-            return END;
+            return TokenType::END;
         else if (s == "break")
-            return BREAK;
+            return TokenType::BREAK;
         else if (s == "return")
-            return RETURN;
+            return TokenType::RETURN;
         else if (s == "not")
-            return NOT;
+            return TokenType::NOT;
         else if (s == "xor")
-            return XOR;
+            return TokenType::XOR;
         else if (s == "or")
-            return OR;
+            return TokenType::OR;
         else if (s == "and")
-            return AND;
+            return TokenType::AND;
         else if (s == "else")
-            return ELSE;
+            return TokenType::ELSE;
         else if (s == "then")
-            return THEN;
+            return TokenType::THEN;
         else if (s == "if")
-            return IF;
+            return TokenType::IF;
         else if (s == "in")
-            return IN;
+            return TokenType::IN;
         else if (s == "then")
-            return THEN;
+            return TokenType::THEN;
         else if (s == "for")
-            return FOR;
+            return TokenType::FOR;
         else if (s == "loop")
-            return LOOP;
+            return TokenType::LOOP;
         else if (s == "array")
-            return ARRAY;
+            return TokenType::ARRAY;
         else if (s == "false")
-            return BOOLEAN_LITERAL;
+            return TokenType::BOOLEAN_LITERAL;
         else if (s == "true")
-            return BOOLEAN_LITERAL;
+            return TokenType::BOOLEAN_LITERAL;
         else if (s == "record")
-            return RECORD;
+            return TokenType::RECORD;
         else if (s == "type")
-            return TYPE;
+            return TokenType::TYPE;
         else if (s == "var")
-            return VAR;
+            return TokenType::VAR;
         else if (s == "integer")
-            return INTEGER_LITERAL_KEYWORD;
+            return TokenType::INTEGER_LITERAL_KEYWORD;
         else if (s == "real")
-            return REAL_LITERAL_KEYWORD;
+            return TokenType::REAL_LITERAL_KEYWORD;
         else if (s == "boolean")
-            return BOOLEAN_LITERAL_KEYWORD;
+            return TokenType::BOOLEAN_LITERAL_KEYWORD;
         else if (s == "continue")
-            return CONTINUE;
+            return TokenType::CONTINUE;
         else if (s == "var")
-            return VAR;
+            return TokenType::VAR;
         else if (s == "reverse")
-            return REVERSE;
+            return TokenType::REVERSE;
         else if (s == "print")
-            return PRINT;
+            return TokenType::PRINT;
     }
     if (s == "..")
         return TokenType::RANGE;

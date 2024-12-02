@@ -28,7 +28,7 @@ int yylex()
 
   std::string tokenType, tokenValue;
   Token& token = tokens->at(current_token_index++);
-  tokenType = token.type;
+  tokenType = token.typeToString();
   tokenValue = token.content;
 
   // Return the appropriate token based on the token type

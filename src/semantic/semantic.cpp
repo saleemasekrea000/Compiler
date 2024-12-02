@@ -15,7 +15,7 @@ std::string GetName(AST_Node *node)
 }
 std::string GetNameID(AST_Node *node)
 {
-    if (node->type != IDENTIFIER_NODE_TYPE)
+    if (node->type != Node_Type::IDENTIFIER_NODE_TYPE)
         return "";
     Identifier_Node *Identifier_node = static_cast<Identifier_Node *>(node);
     return Identifier_node->identifier_name.c_str();
@@ -25,7 +25,7 @@ Identifier_Node *getIdentifierNode(AST_Node *node)
     if (!node)
         return nullptr;
 
-    if (!node->children.empty() && node->children[0]->type == IDENTIFIER_NODE_TYPE)
+    if (!node->children.empty() && node->children[0]->type == Node_Type::IDENTIFIER_NODE_TYPE)
     {
         return static_cast<Identifier_Node *>(node->children[0]);
     }
@@ -34,7 +34,7 @@ Identifier_Node *getIdentifierNode(AST_Node *node)
 
 bool checkRoutineDeclarations(AST_Node *node, std::unordered_set<std::string> &declaredRoutineNames)
 {
-    if (node->type == ROUTINE_DECLERATION)
+    if (node->type == Node_Type::ROUTINE_DECLERATION)
     {
         Identifier_Node *identifierNode = getIdentifierNode(node);
         if (identifierNode)
@@ -42,9 +42,9 @@ bool checkRoutineDeclarations(AST_Node *node, std::unordered_set<std::string> &d
             declaredRoutineNames.insert(identifierNode->identifier_name);
         }
     }
-    else if (node->type == Routine_Call)
+    else if (node->type == Node_Type::Routine_Call)
     {
-        if (!node->children.empty() && node->children[0]->type == IDENTIFIER_NODE_TYPE)
+        if (!node->children.empty() && node->children[0]->type == Node_Type::IDENTIFIER_NODE_TYPE)
         {
             Identifier_Node *identifierNode = static_cast<Identifier_Node *>(node->children[0]);
             return declaredRoutineNames.count(identifierNode->identifier_name) > 0;
@@ -66,7 +66,7 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
 {
     if (!node)
         return true;
-    if (node->type == IDENTIFIER_NODE_TYPE)
+    if (node->type == Node_Type::IDENTIFIER_NODE_TYPE)
     {
         if (declaredVariableNames.size() == 0)
         {
@@ -81,7 +81,7 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
     for (int i = 0; i < node->children.size(); i++)
     {
         AST_Node *child = node->children[i];
-        if (child->type == SIMPLE_DECLARATION && child->children[0]->type == VARIABLE_DECLARATION)
+        if (child->type == Node_Type::SIMPLE_DECLARATION && child->children[0]->type == Node_Type::VARIABLE_DECLARATION)
         {
             AST_Node *grand = child->children[0];
             if (grand->children.size() >= 3)
@@ -89,14 +89,14 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
             declaredVariableNames.insert(GetName(grand));
             continue;
         }
-        if (child->type == SIMPLE_DECLARATION && child->children[0]->type == TYPE_DECLARATION)
+        if (child->type == Node_Type::SIMPLE_DECLARATION && child->children[0]->type == Node_Type::TYPE_DECLARATION)
         {
             AST_Node *grand = child->children[0];
             if (grand->children.size() >= 3)
                 ans &= checkVariableDeclarations(grand->children[2], declaredVariableNames);
             continue;
         }
-        if (child->type == ROUTINE_DECLERATION)
+        if (child->type == Node_Type::ROUTINE_DECLERATION)
         {
             AST_Node *grand = child->children[1];
             // printf("%s\n", type_map.at(child->type).c_str());
@@ -107,12 +107,12 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
             ans &= checkVariableDeclarations(child->children[2], declaredVariableNames);
             continue;
         }
-        if (child->type == Routine_Call)
+        if (child->type == Node_Type::Routine_Call)
         {
             ans &= checkVariableDeclarations(child->children[1], declaredVariableNames);
             continue;
         }
-        if (child->type == FOR_STATEMENT)
+        if (child->type == Node_Type::FOR_STATEMENT)
         {
             declaredVariableNames.insert(GetNameID(child->children[0]));
             ans &= checkVariableDeclarations(child->children[1], declaredVariableNames);
@@ -128,7 +128,7 @@ bool checkTypeDeclarations(AST_Node *node, std::unordered_set<std::string> decla
 {
     if (!node)
         return true;
-    if (node->type == TYPE_NODE && node->children.size() > 0 && node->children[0]->type == IDENTIFIER_NODE_TYPE)
+    if (node->type == Node_Type::TYPE_NODE && node->children.size() > 0 && node->children[0]->type == Node_Type::IDENTIFIER_NODE_TYPE)
     {
         if (declaredTypeNames.size() == 0)
         {
@@ -143,7 +143,7 @@ bool checkTypeDeclarations(AST_Node *node, std::unordered_set<std::string> decla
     for (int i = 0; i < node->children.size(); i++)
     {
         AST_Node *child = node->children[i];
-        if (child->type == SIMPLE_DECLARATION && child->children[0]->type == TYPE_DECLARATION)
+        if (child->type == Node_Type::SIMPLE_DECLARATION && child->children[0]->type == Node_Type::TYPE_DECLARATION)
         {
             AST_Node *grand = child->children[0];
             declaredTypeNames.insert(GetNameID(grand->children[0]));
@@ -155,12 +155,12 @@ bool checkTypeDeclarations(AST_Node *node, std::unordered_set<std::string> decla
 }
 bool check_return(AST_Node *node, bool inside_function)
 {
-    if (node->type == RETURN_EX && !inside_function)
+    if (node->type == Node_Type::RETURN_EX && !inside_function)
     {
         return 0;
     }
     bool cur_inside = inside_function;
-    if (node->type == ROUTINE_DECLERATION)
+    if (node->type == Node_Type::ROUTINE_DECLERATION)
     {
         cur_inside = 1;
     }
@@ -173,12 +173,12 @@ bool check_return(AST_Node *node, bool inside_function)
 }
 bool check_continue(AST_Node *node, bool inside_loop)
 {
-    if (node->type == CONTINUE_EX && !inside_loop)
+    if (node->type == Node_Type::CONTINUE_EX && !inside_loop)
     {
         return 0;
     }
     bool cur_inside = inside_loop;
-    if (node->type == ITERATION_STATEMENT)
+    if (node->type == Node_Type::ITERATION_STATEMENT)
     {
         cur_inside = 1;
     }
@@ -191,12 +191,12 @@ bool check_continue(AST_Node *node, bool inside_loop)
 }
 bool check_break(AST_Node *node, bool inside_loop)
 {
-    if (node->type == BREAK_EX && !inside_loop)
+    if (node->type == Node_Type::BREAK_EX && !inside_loop)
     {
         return 0;
     }
     bool cur_inside = inside_loop;
-    if (node->type == ITERATION_STATEMENT)
+    if (node->type == Node_Type::ITERATION_STATEMENT)
     {
         cur_inside = 1;
     }
@@ -254,9 +254,9 @@ void remove_unreachable_code(AST_Node *node)
     int cnt = 1e9;
     for (int i = 0; i < (node->children).size(); i++)
     {
-        if ((node->children)[i]->type == STATEMENT &&
+        if ((node->children)[i]->type == Node_Type::STATEMENT &&
             ((node->children)[i]->children).size() > 0 &&
-            (node->children)[i]->children[0]->type == JUMP_STATEMENT)
+            (node->children)[i]->children[0]->type == Node_Type::JUMP_STATEMENT)
         {
             cnt = i;
             break;
@@ -275,7 +275,7 @@ void remove_unreachable_code(AST_Node *node)
 
 bool used_routine(AST_Node *node, std::string function_name)
 {
-    if (node && node->type == Routine_Call && GetName(node) == function_name)
+    if (node && node->type == Node_Type::Routine_Call && GetName(node) == function_name)
         return 1;
     bool ans = false;
     for (const auto &child : node->children)
@@ -293,7 +293,7 @@ void remove_unused_routines(AST_Node *node)
     for (int i = 0; i < childrenNumber; i++)
     {
         AST_Node *child = node->children[i];
-        if (child->type != ROUTINE_DECLERATION)
+        if (child->type != Node_Type::ROUTINE_DECLERATION)
         {
             curChildren.push_back(child);
             continue;
@@ -324,17 +324,17 @@ bool used_var(AST_Node *node, std::string var_name, bool inside_expression)
 {
     if (!node)
         return false;
-    if (node->type == IDENTIFIER_NODE_TYPE)
+    if (node->type == Node_Type::IDENTIFIER_NODE_TYPE)
     {
         return (GetNameID(node) == var_name && inside_expression);
     }
-    if (node->type == SIMPLE_DECLARATION)
+    if (node->type == Node_Type::SIMPLE_DECLARATION)
     {
         AST_Node *child = node->children[0];
-        if (child->type == VARIABLE_DECLARATION && GetName(child) == var_name)
+        if (child->type == Node_Type::VARIABLE_DECLARATION && GetName(child) == var_name)
             return used_var(child->children[2], var_name, true);
     }
-    if (node->type == ROUTINE_DECLERATION)
+    if (node->type == Node_Type::ROUTINE_DECLERATION)
     {
         if (GetName(node) == var_name)
             return 0;
@@ -345,10 +345,10 @@ bool used_var(AST_Node *node, std::string var_name, bool inside_expression)
                 return 0;
         }
     }
-    if (node->type == FOR_STATEMENT && GetName(node) == var_name)
+    if (node->type == Node_Type::FOR_STATEMENT && GetName(node) == var_name)
         return 0;
     bool ans = false;
-    if (node->type == EXPRESSION)
+    if (node->type == Node_Type::EXPRESSION)
         inside_expression = true;
     for (const auto &child : node->children)
     {
@@ -358,16 +358,16 @@ bool used_var(AST_Node *node, std::string var_name, bool inside_expression)
 }
 std::string get_name_assign(AST_Node *node)
 {
-    if (node->type != ASSIGN_STATEMENT)
+    if (node->type != Node_Type::ASSIGN_STATEMENT)
         return "";
     AST_Node *primary_node = node->children[0];
-    if (primary_node->type != PRIMARY_NODE)
+    if (primary_node->type != Node_Type::PRIMARY_NODE)
         return "";
     AST_Node *primary_exp_node = primary_node->children[0];
-    if (primary_exp_node->type != PRIMARY_EXPRESSION)
+    if (primary_exp_node->type != Node_Type::PRIMARY_EXPRESSION)
         return "";
     AST_Node *id_node = primary_exp_node->children[0];
-    if (id_node->type != IDENTIFIER_NODE_TYPE)
+    if (id_node->type != Node_Type::IDENTIFIER_NODE_TYPE)
         return "";
     return GetNameID(id_node);
 }
@@ -375,20 +375,20 @@ void remove_assignment(AST_Node *node, std::string var_name)
 {
     if (!node)
         return;
-    if (node->type == VARIABLE_DECLARATION && GetName(node) == var_name)
+    if (node->type == Node_Type::VARIABLE_DECLARATION && GetName(node) == var_name)
         return;
     int childrenNumber = node->children.size();
     std::vector<AST_Node *> curChildren;
     for (int i = 0; i < childrenNumber; i++)
     {
         AST_Node *child = node->children[i];
-        if (child->type != STATEMENT)
+        if (child->type != Node_Type::STATEMENT)
         {
             curChildren.push_back(child);
             continue;
         }
         AST_Node *grand = child->children[0];
-        if (grand->type != ASSIGN_STATEMENT)
+        if (grand->type != Node_Type::ASSIGN_STATEMENT)
         {
             curChildren.push_back(child);
             continue;
@@ -417,13 +417,13 @@ void remove_unused_varible(AST_Node *node)
     for (int i = 0; i < childrenNumber; i++)
     {
         AST_Node *child = node->children[i];
-        if (child->type != SIMPLE_DECLARATION)
+        if (child->type != Node_Type::SIMPLE_DECLARATION)
         {
             curChildren.push_back(child);
             continue;
         }
         AST_Node *grand = child->children[0];
-        if (grand->type != VARIABLE_DECLARATION)
+        if (grand->type != Node_Type::VARIABLE_DECLARATION)
         {
             curChildren.push_back(child);
             continue;
@@ -459,7 +459,7 @@ bool used_type(AST_Node *node, std::string type_name)
 {
     if (!node)
         return false;
-    if (node->type == TYPE_NODE)
+    if (node->type == Node_Type::TYPE_NODE)
     {
         return (GetTypeName(node) == type_name);
     }
@@ -479,13 +479,13 @@ void remove_unused_types(AST_Node *node)
     for (int i = 0; i < childrenNumber; i++)
     {
         AST_Node *child = node->children[i];
-        if (child->type != SIMPLE_DECLARATION)
+        if (child->type != Node_Type::SIMPLE_DECLARATION)
         {
             curChildren.push_back(child);
             continue;
         }
         AST_Node *grand = child->children[0];
-        if (grand->type != TYPE_DECLARATION)
+        if (grand->type != Node_Type::TYPE_DECLARATION)
         {
             curChildren.push_back(child);
             continue;

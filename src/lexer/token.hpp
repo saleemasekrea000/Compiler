@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-enum TokenType
+enum class TokenType
 {
     KEYWORD,
     IS,
