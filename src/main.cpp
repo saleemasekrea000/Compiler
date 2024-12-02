@@ -1,9 +1,16 @@
 #include <iostream>
 #include <fstream>
 
-#include "./lexer/lexer.hpp"
+#include "lexer/lexer.hpp"
+#include "parser/parser.hpp"
+#include "parser/grammar.tab.h"
+#include "parser/ast.hpp"
 
 using namespace std;
+
+extern int yyparse(); 
+extern void set_tokens(vector<Token>* tokens);
+extern AST_Node* root;
 
 int main(int argc, char *argv[])
 {
@@ -21,26 +28,31 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    string output_file_name = "lexer_tests_outputs" + file_name.substr(file_name.find_last_of("/"));
-
-    output_file_name = output_file_name.substr(0, file_name.find_last_of(".") + 1) + "_tokens.txt";
-    cout << "Generating: " << output_file_name << endl;
-    // Redirect cout to the output file
-    freopen(output_file_name.c_str(), "w", stdout);
-
+    // Lexing
     Lexer lexer(file_name);
     vector<Token> *tokens = lexer.scan_code();
-    if (tokens == NULL)
+    if (tokens == nullptr)
     {
         lexer.print_errors();
+        return 1;
     }
-    else
+
+    // Parsing
+    set_tokens(tokens); // Set the tokens for the parser
+    if (yyparse() != 0)
     {
-        for (const Token &token : *tokens)
-        {
-            cout << token << endl;
-        }
+        cout << "Error: Parsing failed.\n";
         delete tokens;
+        return 1;
     }
+
+    // Access the root node of the AST
+    if (root != nullptr)
+    {
+        // Saleem, this means the root is successfully assigned to program.
+    }
+
+    delete tokens;
+    
     return 0;
 }

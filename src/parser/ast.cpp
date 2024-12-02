@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ast.hpp"
-#include "lexer_2.hpp"
+#include "parser.hpp"
 #include <cstdio>
 #include <memory>
 #include <string>

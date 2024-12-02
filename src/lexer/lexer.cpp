@@ -7,6 +7,57 @@
 
 #include "lexer.hpp"
 
+Lexer::Lexer(string filename)
+{
+    fin.open(filename);
+    initKeywords();
+    tokenized_code = new vector<Token>;
+    error_messages = new vector<string>;
+}
+
+Lexer::~Lexer()
+{
+    if (fin.is_open())
+    {
+        fin.close();
+    }
+}
+
+void Lexer::initKeywords()
+{
+    keywords["is"] = TokenType::KEYWORD;
+    keywords["type"] = TokenType::KEYWORD;
+    keywords["record"] = TokenType::KEYWORD;
+    keywords["end"] = TokenType::KEYWORD;
+    keywords["true"] = TokenType::KEYWORD;
+    keywords["false"] = TokenType::KEYWORD;
+    keywords["array"] = TokenType::KEYWORD;
+    keywords["while"] = TokenType::KEYWORD;
+    keywords["loop"] = TokenType::KEYWORD;
+    keywords["for"] = TokenType::KEYWORD;
+    keywords["in"] = TokenType::KEYWORD;
+    keywords["reverse"] = TokenType::KEYWORD;
+    keywords["if"] = TokenType::KEYWORD;
+    keywords["then"] = TokenType::KEYWORD;
+    keywords["else"] = TokenType::KEYWORD;
+    keywords["routine"] = TokenType::KEYWORD;
+    keywords["and"] = TokenType::KEYWORD;
+    keywords["xor"] = TokenType::KEYWORD;
+    keywords["or"] = TokenType::KEYWORD;
+    keywords["not"] = TokenType::KEYWORD;
+    keywords["foreach"] = TokenType::KEYWORD;
+    keywords["from"] = TokenType::KEYWORD;
+    keywords["return"] = TokenType::KEYWORD;
+    keywords["reverse"] = TokenType::KEYWORD;
+    keywords["continue"] = TokenType::KEYWORD;
+    keywords["integer"] = TokenType::KEYWORD;
+    keywords["real"] = TokenType::KEYWORD;
+    keywords["boolean"] = TokenType::KEYWORD;
+    keywords["var"] = TokenType::KEYWORD;
+    keywords["break"] = TokenType::KEYWORD;
+    keywords["print"] = TokenType::KEYWORD;
+}
+
 string Lexer::next_token_content(Token last_token)
 {
     while (ind < code.size() && (code[ind] == ' ' || code[ind] == '\n' || code[ind] == '\t'))
@@ -200,7 +251,28 @@ bool Lexer::is_pancutator(char c)
 }
 bool Lexer::is_operator(const string &s)
 {
-    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=", "%=", ":="};
+    static unordered_set<string> operators;
+    static bool initialized = false;
+    if (!initialized)
+    {
+        operators.insert("+");
+        operators.insert("-");
+        operators.insert("*");
+        operators.insert("/");
+        operators.insert(">");
+        operators.insert("<");
+        operators.insert(">=");
+        operators.insert("<=");
+        operators.insert("/=");
+        operators.insert("=");
+        operators.insert("%");
+        operators.insert("+=");
+        operators.insert("-=");
+        operators.insert("*=");
+        operators.insert("%=");
+        operators.insert(":=");
+        initialized = true;
+    }
     return operators.find(s) != operators.end();
 }
 

@@ -1,6 +1,9 @@
-#include <string>
+#ifndef TOKEN_HPP
+#define TOKEN_HPP
 
-using namespace std;
+#include <iostream>
+#include <string>
+#include <unordered_map>
 
 enum TokenType
 {
@@ -52,71 +55,17 @@ enum TokenType
 
 class Token
 {
-
 public:
     TokenType type;
-    string content;
+    std::string content;
     Token() {}
-    Token(TokenType t, const string &v)
-        : type(t), content(v)
-    {
-    }
-    string typeToString() const
-    {
-        static unordered_map<TokenType, string> typeMap{
-            {KEYWORD, "KEYWORD"},
-            {IS, "IS"},
-            {WHILE, "WHILE"},
-            {ROUTINE, "ROUTINE"},
-            {END, "END"},
-            {BREAK, "BREAK"},
-            {REVERSE, "REVERSE"},
-            {RETURN, "RETURN"},
-            {NOT, "NOT"},
-            {XOR, "XOR"},
-            {OR,  "OR"},
-            {AND, "AND"},
-            {ELSE, "ELSE"},
-            {THEN, "THEN"},
-            {IF, "IF"},
-            {IN, "IN"},
-            {FOR, "FOR"},
-            {LOOP, "LOOP"},
-            {ARRAY, "ARRAY"},
-            {FALSE, "FALSE"},
-            {TRUE, "TRUE"},
-            {RECORD, "RECORD"},
-            {TYPE, "TYPE"},
-            {VAR, "VAR"},
-            {INTEGER_LITERAL_KEYWORD,"INTEGER_LITERAL_KEYWORD"},
-            {REAL_LITERAL_KEYWORD,"REAL_LITERAL_KEYWORD"},
-            {BOOLEAN_LITERAL_KEYWORD,"BOOLEAN_LITERAL_KEYWORD"},
-            {CONTINUE, "CONTINUE"},
-            {IDENTIFIER, "IDENTIFIER"},
-            {INTEGER_LITERAL, "INTEGER_LITERAL"},
-            {REAL_LITERAL, "REAL_LITERAL"},
-            {BOOLEAN_LITERAL, "BOOLEAN_LITERAL"},
-            {VAR_LITERAL, "VAR_LITERAL"},
-            {OPERATOR, "OPERATOR"},
-            {ERROR, "ERROR"},
-            {LPAR, "LPAR"},
-            {RPAR, "RPAR"},
-            {LBRAC, "LBRAC"},
-            {RBRAC, "RBRAC"},
-            {RELPAR, "RELPAR"},
-            {RERLPR, "RERLPR"},
-            {RANGE, "RANGE"},
-            {PUNCTUATOR, "PUNCTUATOR"},
-            {PRINT,"PRINT"}};
-        return typeMap.at(type);
-    }
+    Token(TokenType t, const std::string &v);
 
-    operator string() const
-    {
-        return typeToString() + " " + content + "\n";
-    }
-    friend ostream &operator<<(ostream &os, const Token &token)
-    {
-        return os << token.typeToString() << " " << token.content;
-    }
+    std::string typeToString() const;
+
+    operator std::string() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Token &token);
 };
+
+#endif // TOKEN_HPP

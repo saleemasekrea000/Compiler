@@ -5,6 +5,12 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <map>
+
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/BasicBlock.h"
@@ -18,11 +24,6 @@
 #include "llvm/IR/Verifier.h"
 #include "llvm/IR/Value.h"
 #include <llvm/IR/IntrinsicInst.h>
-#include <algorithm>
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-#include <map>
 #include "../parser/ast.hpp"
 
 class Codegen {
