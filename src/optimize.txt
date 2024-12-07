@@ -4,9 +4,9 @@ Program
       Identifier: calcDistance
       Parameters Expression List
         Parameter Decleration
-          Identifier: curPoint
+          Identifier: curCir
           Type: identifier
-            Identifier: point
+            Identifier: circle
       Body
         Statement
           Jump Statement
@@ -20,141 +20,50 @@ Program
                           Summand
                             Primary node
                               Record access
-                                Identifier: curPoint
-                                Identifier: x
+                                Identifier: curCir
+                                Record access
+                                  Identifier: center
+                                  Identifier: x
                         Operator: *
                         Summand
                           Primary node
                             Record access
-                              Identifier: curPoint
-                              Identifier: x
+                              Identifier: curCir
+                              Record access
+                                Identifier: center
+                                Identifier: x
                     Operator: +
                     Factor
                       Factor
                         Summand
                           Primary node
                             Record access
-                              Identifier: curPoint
-                              Identifier: y
+                              Identifier: curCir
+                              Record access
+                                Identifier: center
+                                Identifier: y
                       Operator: *
                       Summand
                         Primary node
                           Record access
-                            Identifier: curPoint
-                            Identifier: y
+                            Identifier: curCir
+                            Record access
+                              Identifier: center
+                              Identifier: y
       Type: integer
-    Routine Decleration
-      Identifier: furthestPoint
-      Parameters Expression List
-        Parameter Decleration
-          Identifier: point1
-          Type: identifier
-            Identifier: point
-        Parameter Decleration
-          Identifier: point2
-          Type: identifier
-            Identifier: point
-      Body
-        Simple declaration
-          Variable declaration
-            Identifier: dis1
-            Type: integer
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Routine Call
-                          Identifier: calcDistance
-                          Arguments Expression List
-                            Expression
-                              Relation
-                                Simple
-                                  Factor
-                                    Summand
-                                      Primary node
-                                        Primary expresson
-                                          Identifier: point1
-        Simple declaration
-          Variable declaration
-            Identifier: dis2
-            Type: integer
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Routine Call
-                          Identifier: calcDistance
-                          Arguments Expression List
-                            Expression
-                              Relation
-                                Simple
-                                  Factor
-                                    Summand
-                                      Primary node
-                                        Primary expresson
-                                          Identifier: point2
-        Statement
-          if statement
-            Expression
-              Relation
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Identifier: dis1
-                Operator: >=
-                Simple
-                  Factor
-                    Summand
-                      Primary node
-                        Primary expresson
-                          Identifier: dis2
-            Body
-              Statement
-                Jump Statement
-                  Return
-                    Expression
-                      Relation
-                        Simple
-                          Factor
-                            Summand
-                              Primary node
-                                Primary expresson
-                                  Identifier: point1
-        Statement
-          Jump Statement
-            Return
-              Expression
-                Relation
-                  Simple
-                    Factor
-                      Summand
-                        Primary node
-                          Primary expresson
-                            Identifier: point2
-      Type: identifier
-        Identifier: point
     Simple declaration
       Variable declaration
-        Identifier: point3
+        Identifier: cir
         Type: identifier
-          Identifier: point
-    Simple declaration
-      Variable declaration
-        Identifier: point4
-        Type: identifier
-          Identifier: point
+          Identifier: circle
     Statement
       Assignment statement
         Primary node
           Record access
-            Identifier: point3
-            Identifier: x
+            Identifier: cir
+            Record access
+              Identifier: center
+              Identifier: x
         Operator: :=
         Expression
           Relation
@@ -168,8 +77,10 @@ Program
       Assignment statement
         Primary node
           Record access
-            Identifier: point3
-            Identifier: y
+            Identifier: cir
+            Record access
+              Identifier: center
+              Identifier: y
         Operator: :=
         Expression
           Relation
@@ -180,46 +91,7 @@ Program
                     Primary expresson
                       Integer: 2
     Statement
-      Assignment statement
-        Primary node
-          Record access
-            Identifier: point4
-            Identifier: x
-        Operator: :=
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Integer: 5
-    Statement
-      Assignment statement
-        Primary node
-          Record access
-            Identifier: point4
-            Identifier: y
-        Operator: :=
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Primary expresson
-                      Integer: 6
-    Simple declaration
-      Variable declaration
-        Identifier: ansPoint
-        Type: identifier
-          Identifier: point
-    Statement
-      Assignment statement
-        Primary node
-          Primary expresson
-            Identifier: ansPoint
-        Operator: :=
+      PRINT
         Expression
           Relation
             Simple
@@ -227,7 +99,7 @@ Program
                 Summand
                   Primary node
                     Routine Call
-                      Identifier: furthestPoint
+                      Identifier: calcDistance
                       Arguments Expression List
                         Expression
                           Relation
@@ -236,34 +108,4 @@ Program
                                 Summand
                                   Primary node
                                     Primary expresson
-                                      Identifier: point3
-                        Expression
-                          Relation
-                            Simple
-                              Factor
-                                Summand
-                                  Primary node
-                                    Primary expresson
-                                      Identifier: point4
-    Statement
-      PRINT
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Record access
-                      Identifier: ansPoint
-                      Identifier: x
-    Statement
-      PRINT
-        Expression
-          Relation
-            Simple
-              Factor
-                Summand
-                  Primary node
-                    Record access
-                      Identifier: ansPoint
-                      Identifier: y
+                                      Identifier: cir
