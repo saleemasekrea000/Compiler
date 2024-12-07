@@ -1,14 +1,16 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer_2.hpp"
+#include "parser.hpp"
 #include "ast.hpp"
 #include "../semantic/semantic.hpp"
 #include "../codegen/codegen.hpp"
-
+ 
+int yylex();
 void yyerror(char *s);
 int counter = 1;
 int indent = 0;
+AST_Node* root;
 void print_indent() {
   for(int i = 0; i < indent; i++) printf("  ");
 }
@@ -47,14 +49,7 @@ program
   : declarations { 
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
-      print_ast($$, 0,"output.txt");
-     Semantic_Analysis semanticAnalysis($$);
-    //  semanticAnalysis.Semantic_Analysis_Checks($$);
-    //  semanticAnalysis.optimize($$);
-    //  print_ast($$, 0,"optimize.txt"); 
-      Codegen codegen_llvm($$);
-      codegen_llvm.start_llvm($$);
-
+      root = $$;
     }
   ;
 

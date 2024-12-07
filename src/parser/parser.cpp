@@ -1,28 +1,36 @@
+#include <vector>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <cstring>
-#include "lexer_2.hpp"
-#include "ast.hpp"
+#include "parser.hpp"
 #include "grammar.tab.h"
 
-std::ifstream tokenFile;
+
+using namespace std;
+
+static vector<Token>* tokens;
+static size_t current_token_index = 0;
 
 
+void set_tokens(vector<Token>* token_vector)
+{
+    tokens = token_vector;
+    current_token_index = 0;
+}
 
 int yylex()
 {
-  std::string line;
-  if (!std::getline(tokenFile, line))
+  if (tokens == nullptr || current_token_index >= tokens->size())
   {
-    // End of file, return 0 to indicate end of input
-    return 0;
+      return 0; // No more tokens
   }
 
-  // Parse the line to get the token type and value
   std::string tokenType, tokenValue;
-  std::istringstream lineStream(line);
-  lineStream >> tokenType >> tokenValue;
+  Token& token = tokens->at(current_token_index++);
+  tokenType = token.typeToString();
+  tokenValue = token.content;
+
   // Return the appropriate token based on the token type
   
   if (tokenValue == "+=") return ADD_ASSIGN;
@@ -115,23 +123,3 @@ int yylex()
   return -1;
 }
 
-int main(int argc, char **argv)
-{
-  if (argc != 2)
-  {
-    fprintf(stderr, "Usage: %s <input file>\n", argv[0]);
-    return 1;
-  }
-
-  FILE *input_file = fopen(argv[1], "r");
-  if (!input_file)
-  {
-    perror("Error opening input file");
-    return 1;
-  }
-  tokenFile.open(argv[1]);
-  yyparse();
-  tokenFile.close();
-  fclose(input_file);
-  return 0;
-}

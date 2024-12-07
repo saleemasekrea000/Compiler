@@ -7,6 +7,57 @@
 
 #include "lexer.hpp"
 
+Lexer::Lexer(string filename)
+{
+    fin.open(filename);
+    initKeywords();
+    tokenized_code = new vector<Token>;
+    error_messages = new vector<string>;
+}
+
+Lexer::~Lexer()
+{
+    if (fin.is_open())
+    {
+        fin.close();
+    }
+}
+
+void Lexer::initKeywords()
+{
+    keywords["is"] = TokenType::KEYWORD;
+    keywords["type"] = TokenType::KEYWORD;
+    keywords["record"] = TokenType::KEYWORD;
+    keywords["end"] = TokenType::KEYWORD;
+    keywords["true"] = TokenType::KEYWORD;
+    keywords["false"] = TokenType::KEYWORD;
+    keywords["array"] = TokenType::KEYWORD;
+    keywords["while"] = TokenType::KEYWORD;
+    keywords["loop"] = TokenType::KEYWORD;
+    keywords["for"] = TokenType::KEYWORD;
+    keywords["in"] = TokenType::KEYWORD;
+    keywords["reverse"] = TokenType::KEYWORD;
+    keywords["if"] = TokenType::KEYWORD;
+    keywords["then"] = TokenType::KEYWORD;
+    keywords["else"] = TokenType::KEYWORD;
+    keywords["routine"] = TokenType::KEYWORD;
+    keywords["and"] = TokenType::KEYWORD;
+    keywords["xor"] = TokenType::KEYWORD;
+    keywords["or"] = TokenType::KEYWORD;
+    keywords["not"] = TokenType::KEYWORD;
+    keywords["foreach"] = TokenType::KEYWORD;
+    keywords["from"] = TokenType::KEYWORD;
+    keywords["return"] = TokenType::KEYWORD;
+    keywords["reverse"] = TokenType::KEYWORD;
+    keywords["continue"] = TokenType::KEYWORD;
+    keywords["integer"] = TokenType::KEYWORD;
+    keywords["real"] = TokenType::KEYWORD;
+    keywords["boolean"] = TokenType::KEYWORD;
+    keywords["var"] = TokenType::KEYWORD;
+    keywords["break"] = TokenType::KEYWORD;
+    keywords["print"] = TokenType::KEYWORD;
+}
+
 string Lexer::next_token_content(Token last_token)
 {
     while (ind < code.size() && (code[ind] == ' ' || code[ind] == '\n' || code[ind] == '\t'))
@@ -46,13 +97,13 @@ string Lexer::next_token_content(Token last_token)
             {
                 return ret;
             }
-            if (ret == "" && last_token.type == IDENTIFIER && isalpha(code[ind + 1]))
+            if (ret == "" && last_token.type == TokenType::IDENTIFIER && isalpha(code[ind + 1]))
             {
                 ret += code[ind];
                 ind++;
                 return ret;
             }
-            if (ret == "" && last_token.type == RBRAC && isalpha(code[ind + 1]))
+            if (ret == "" && last_token.type == TokenType::RBRAC && isalpha(code[ind + 1]))
             {
                 ret += code[ind];
                 ind++;
@@ -69,7 +120,7 @@ string Lexer::next_token_content(Token last_token)
         {
             if (code[ind] == '-' || code[ind] == '+') 
     {
-        if (last_token.type == IDENTIFIER || last_token.type == REAL_LITERAL || last_token.type == INTEGER_LITERAL || last_token.type == BOOLEAN_LITERAL) 
+        if (last_token.type == TokenType::IDENTIFIER || last_token.type == TokenType::REAL_LITERAL || last_token.type == TokenType::INTEGER_LITERAL || last_token.type == TokenType::BOOLEAN_LITERAL)
         {
             ret += code[ind];
             ind++;
@@ -200,7 +251,28 @@ bool Lexer::is_pancutator(char c)
 }
 bool Lexer::is_operator(const string &s)
 {
-    static const unordered_set<string> operators = {"+", "-", "*", "/", ">", "<", ">=", "<=", "/=", "=", "%", "+=", "-=", "*=", "%=", ":="};
+    static unordered_set<string> operators;
+    static bool initialized = false;
+    if (!initialized)
+    {
+        operators.insert("+");
+        operators.insert("-");
+        operators.insert("*");
+        operators.insert("/");
+        operators.insert(">");
+        operators.insert("<");
+        operators.insert(">=");
+        operators.insert("<=");
+        operators.insert("/=");
+        operators.insert("=");
+        operators.insert("%");
+        operators.insert("+=");
+        operators.insert("-=");
+        operators.insert("*=");
+        operators.insert("%=");
+        operators.insert(":=");
+        initialized = true;
+    }
     return operators.find(s) != operators.end();
 }
 
@@ -225,65 +297,65 @@ TokenType Lexer::token_type(const string &s)
     if (is_keyword(s))
     {
         if (s == "is")
-            return IS;
+            return TokenType::IS;
         else if (s == "while")
-            return WHILE;
+            return TokenType::WHILE;
         else if (s == "routine")
-            return ROUTINE;
+            return TokenType::ROUTINE;
         else if (s == "end")
-            return END;
+            return TokenType::END;
         else if (s == "break")
-            return BREAK;
+            return TokenType::BREAK;
         else if (s == "return")
-            return RETURN;
+            return TokenType::RETURN;
         else if (s == "not")
-            return NOT;
+            return TokenType::NOT;
         else if (s == "xor")
-            return XOR;
+            return TokenType::XOR;
         else if (s == "or")
-            return OR;
+            return TokenType::OR;
         else if (s == "and")
-            return AND;
+            return TokenType::AND;
         else if (s == "else")
-            return ELSE;
+            return TokenType::ELSE;
         else if (s == "then")
-            return THEN;
+            return TokenType::THEN;
         else if (s == "if")
-            return IF;
+            return TokenType::IF;
         else if (s == "in")
-            return IN;
+            return TokenType::IN;
         else if (s == "then")
-            return THEN;
+            return TokenType::THEN;
         else if (s == "for")
-            return FOR;
+            return TokenType::FOR;
         else if (s == "loop")
-            return LOOP;
+            return TokenType::LOOP;
         else if (s == "array")
-            return ARRAY;
+            return TokenType::ARRAY;
         else if (s == "false")
-            return BOOLEAN_LITERAL;
+            return TokenType::BOOLEAN_LITERAL;
         else if (s == "true")
-            return BOOLEAN_LITERAL;
+            return TokenType::BOOLEAN_LITERAL;
         else if (s == "record")
-            return RECORD;
+            return TokenType::RECORD;
         else if (s == "type")
-            return TYPE;
+            return TokenType::TYPE;
         else if (s == "var")
-            return VAR;
+            return TokenType::VAR;
         else if (s == "integer")
-            return INTEGER_LITERAL_KEYWORD;
+            return TokenType::INTEGER_LITERAL_KEYWORD;
         else if (s == "real")
-            return REAL_LITERAL_KEYWORD;
+            return TokenType::REAL_LITERAL_KEYWORD;
         else if (s == "boolean")
-            return BOOLEAN_LITERAL_KEYWORD;
+            return TokenType::BOOLEAN_LITERAL_KEYWORD;
         else if (s == "continue")
-            return CONTINUE;
+            return TokenType::CONTINUE;
         else if (s == "var")
-            return VAR;
+            return TokenType::VAR;
         else if (s == "reverse")
-            return REVERSE;
+            return TokenType::REVERSE;
         else if (s == "print")
-            return PRINT;
+            return TokenType::PRINT;
     }
     if (s == "..")
         return TokenType::RANGE;

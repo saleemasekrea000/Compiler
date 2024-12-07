@@ -1,9 +1,17 @@
 #include <iostream>
 #include <fstream>
 
-#include "./lexer/lexer.hpp"
+#include "lexer/lexer.hpp"
+#include "parser/parser.hpp"
+#include "parser/grammar.tab.h"
+#include "parser/ast.hpp"
+#include "semantic/semantic.hpp"
+#include "codegen/codegen.hpp"
 
 using namespace std;
+
+extern void set_tokens(vector<Token>* tokens);
+extern AST_Node* root;
 
 int main(int argc, char *argv[])
 {
@@ -21,26 +29,45 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    string output_file_name = "lexer_tests_outputs" + file_name.substr(file_name.find_last_of("/"));
-
-    output_file_name = output_file_name.substr(0, file_name.find_last_of(".") + 1) + "_tokens.txt";
-    cout << "Generating: " << output_file_name << endl;
-    // Redirect cout to the output file
-    freopen(output_file_name.c_str(), "w", stdout);
-
+    // Lexing
     Lexer lexer(file_name);
     vector<Token> *tokens = lexer.scan_code();
-    if (tokens == NULL)
+    if (tokens == nullptr)
     {
         lexer.print_errors();
+        return 1;
     }
-    else
+
+    // Print tokens to tokens.txt
+    ofstream tokens_file("tokens.txt");
+    for (auto token : *tokens)
     {
-        for (const Token &token : *tokens)
-        {
-            cout << token << endl;
-        }
-        delete tokens;
+        tokens_file << token.typeToString() << " " << token.content << endl;
     }
+
+    // Parsing
+    set_tokens(tokens); // Set the tokens for the parser
+    if (yyparse() != 0)
+    {
+        cout << "Error: Parsing failed.\n";
+        delete tokens;
+        return 1;
+    }
+
+    if (root != nullptr)
+    {
+        print_ast(root, 0, "output.txt");
+
+        Semantic_Analysis semantic_analysis(root);
+        semantic_analysis.Semantic_Analysis_Checks(root);
+        semantic_analysis.optimize(root);
+        print_ast(root, 0, "optimize.txt");
+
+        Codegen codegen_llvm(root);
+        codegen_llvm.start_llvm(root);
+    }
+
+    delete tokens;
+    
     return 0;
 }

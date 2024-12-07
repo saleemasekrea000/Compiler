@@ -1,26 +1,19 @@
-echo "Running lexer tests..."
+echo "Compiling and running the pipeline..."
 
 #!/bin/bash
 
-g++ main.cpp ./lexer/lexer.cpp -o main
-
-# dir="lexer_tests_inputs"
-file="tests/test1.txt"
-# for file in "$dir"/*
-#do
-  ./main "$file"
-#done
-
-
-echo "Running syntax analysis..."
-
 bison -d -o ./parser/grammar.tab.c ./parser/grammar.y
 
+g++ -Wno-write-strings -std=c++11 main.cpp lexer/lexer.cpp lexer/token.cpp parser/ast.cpp parser/parser.cpp parser/grammar.tab.c semantic/semantic.cpp codegen/codegen.cpp -o main -lfl `llvm-config --cxxflags --ldflags --system-libs --libs all`
 
-g++ -Wno-write-strings -o parser_output ./parser/lexer_2.cpp ./parser/grammar.tab.c ./parser/ast.cpp ./semantic/semantic.hpp ./semantic/semantic.cpp ./codegen/codegen.hpp ./codegen/codegen.cpp -lfl \
-    `llvm-config --cxxflags --ldflags --system-libs --libs all`
+file="tests/test1.txt"
+./main "$file"
 
-./parser_output lexer_tests__tokens.txt
+echo "Lexical analysis complete."
+echo "Parsing complete."
+echo "Semantic analysis complete."
+echo "Code generation complete."
+
 
 if [ -f "output.ll" ]; then
     echo "Validating output.ll..."
@@ -29,6 +22,8 @@ if [ -f "output.ll" ]; then
     if [ $? -eq 0 ]; then
         echo "output.ll is valid."
         echo "running code generation..."
+        echo ""
+        echo "Code result:"
         lli output.ll
     else
         echo "Error: output.ll contains errors."
