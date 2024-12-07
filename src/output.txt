@@ -108,7 +108,7 @@ Program
                                 Summand
                                   Primary node
                                     Primary expresson
-                                      Integer: 5
+                                      Integer: 1
                         Expression
                           Relation
                             Simple
@@ -116,4 +116,4 @@ Program
                                 Summand
                                   Primary node
                                     Primary expresson
-                                      Integer: 5
+                                      Integer: 2

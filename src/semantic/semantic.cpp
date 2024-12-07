@@ -61,8 +61,8 @@ bool checkRoutineDeclarations(AST_Node *node, std::unordered_set<std::string> &d
 
     return true;
 }
-
-bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> declaredVariableNames)
+std::unordered_set<std::string> declaredVariableNames;
+bool checkVariableDeclarations(AST_Node *node)
 {
     if (!node)
         return true;
@@ -85,41 +85,41 @@ bool checkVariableDeclarations(AST_Node *node, std::unordered_set<std::string> d
         {
             AST_Node *grand = child->children[0];
             if (grand->children.size() >= 3)
-                ans &= checkVariableDeclarations(grand->children[2], declaredVariableNames);
+                ans &= checkVariableDeclarations(grand->children[2]);
             declaredVariableNames.insert(GetName(grand));
             continue;
         }
         if (child->type == Node_Type::SIMPLE_DECLARATION && child->children[0]->type == Node_Type::TYPE_DECLARATION)
         {
             AST_Node *grand = child->children[0];
-            if (grand->children.size() >= 3)
-                ans &= checkVariableDeclarations(grand->children[2], declaredVariableNames);
-            continue;
+            if (grand->children.size() >= 2)
+                ans &= checkVariableDeclarations(grand->children[1]->children[0]->children[0]);
+                continue;
+            
         }
         if (child->type == Node_Type::ROUTINE_DECLERATION)
         {
             AST_Node *grand = child->children[1];
-            // printf("%s\n", type_map.at(child->type).c_str());
             for (int j = 0; j < grand->children.size(); j++)
             {
                 declaredVariableNames.insert(GetName(grand->children[j]));
             }
-            ans &= checkVariableDeclarations(child->children[2], declaredVariableNames);
+            ans &= checkVariableDeclarations(child->children[2]);
             continue;
         }
         if (child->type == Node_Type::Routine_Call)
         {
-            ans &= checkVariableDeclarations(child->children[1], declaredVariableNames);
+            ans &= checkVariableDeclarations(child->children[1]);
             continue;
         }
         if (child->type == Node_Type::FOR_STATEMENT)
         {
             declaredVariableNames.insert(GetNameID(child->children[0]));
-            ans &= checkVariableDeclarations(child->children[1], declaredVariableNames);
-            ans &= checkVariableDeclarations(child->children[2], declaredVariableNames);
+            ans &= checkVariableDeclarations(child->children[1]);
+            ans &= checkVariableDeclarations(child->children[2]);
             continue;
         }
-        ans &= checkVariableDeclarations(child, declaredVariableNames);
+        ans &= checkVariableDeclarations(child);
     }
     return ans;
 }
@@ -229,11 +229,11 @@ void Semantic_Analysis::Semantic_Analysis_Checks(AST_Node *root)
         return;
     }
 
-    if (!checkVariableDeclarations(root, declaredVariableNames))
+    /* if (!checkVariableDeclarations(root))
     {
         printf("varible is not deaclerd \n");
         return;
-    }
+    } */
     if (!checkRoutineDeclarations(root, declaredRoutineNames))
     {
         printf("function is not deaclerd \n");
