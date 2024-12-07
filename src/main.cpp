@@ -54,13 +54,17 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Access the root node of the AST
     if (root != nullptr)
     {
+        print_ast(root, 0, "output.txt");
+
         Semantic_Analysis semantic_analysis(root);
         semantic_analysis.Semantic_Analysis_Checks(root);
         semantic_analysis.optimize(root);
         print_ast(root, 0, "optimize.txt");
+
+        Codegen codegen_llvm(root);
+        codegen_llvm.start_llvm(root);
     }
 
     delete tokens;

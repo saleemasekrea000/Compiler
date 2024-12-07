@@ -49,11 +49,7 @@ program
   : declarations { 
       $$ = new None_Terminal_Node("PROGRAM"); 
       $$->children.push_back($1); 
-      print_ast($$, 0,"output.txt");
       root = $$;
-
-      Codegen codegen_llvm(root);
-      codegen_llvm.start_llvm(root);
     }
   ;
 
